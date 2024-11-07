@@ -1,21 +1,29 @@
 import React, { useState } from 'react';
-import Sidebar from './components/Sidebar';
+import { AppBar, Box, Button, Toolbar, Typography, Snackbar } from '@mui/material';
 import HorizontalStepper from './components/HorizontalStepper';
-import { Box, Button, Snackbar } from '@mui/material';
 import StepContent from './pages/StepContent';
+import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
 
-const TOTAL_STEPS = 5;
-const TOTAL_SUBSTEPS = 5;
+const steps = [
+  { label: 'Organizational Profile', subSteps: 2 },
+  { label: 'Energy Profile', subSteps: 3 },
+  { label: 'Goals & Priorities', subSteps: 3 },
+  { label: 'Site Assessment', subSteps: 3 },
+  { label: 'Financial Info', subSteps: 3 },
+  { label: 'Data Verification', subSteps: 1 },
+  { label: 'Onboarding', subSteps: 1 },
+];
+const TOTAL_STEPS = steps.length;
 
 const App: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [currentSubStep, setCurrentSubStep] = useState(0);
   const [visitedSteps, setVisitedSteps] = useState(
     Array.from({ length: TOTAL_STEPS }, (_, i) =>
-      Array.from({ length: TOTAL_SUBSTEPS }, (_, j) => i === 0 && j === 0)
+      Array.from({ length: steps[i].subSteps }, (_, j) => i === 0 && j === 0)
     )
   );
-  
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const handleStepChange = (step: number) => {
@@ -32,15 +40,20 @@ const App: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (currentSubStep < TOTAL_SUBSTEPS - 1) {
+    const isLastSubStep = currentSubStep === steps[currentStep].subSteps - 1;
+    const isLastStep = currentStep === TOTAL_STEPS - 1;
+
+    if (isLastSubStep) {
+      if (!isLastStep) {
+        setCurrentStep(currentStep + 1);
+        setCurrentSubStep(0);
+        markVisited(currentStep + 1, 0);
+      } else {
+        setOpenSnackbar(true);
+      }
+    } else {
       setCurrentSubStep(currentSubStep + 1);
       markVisited(currentStep, currentSubStep + 1);
-    } else if (currentStep < TOTAL_STEPS - 1) {
-      setCurrentStep(currentStep + 1);
-      setCurrentSubStep(0);
-      markVisited(currentStep + 1, 0);
-    } else {
-      setOpenSnackbar(true);
     }
   };
 
@@ -49,7 +62,7 @@ const App: React.FC = () => {
       setCurrentSubStep(currentSubStep - 1);
     } else if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
-      setCurrentSubStep(TOTAL_SUBSTEPS - 1);
+      setCurrentSubStep(steps[currentStep - 1].subSteps - 1);
     }
   };
 
@@ -62,33 +75,70 @@ const App: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <Sidebar currentStep={currentStep} visitedSteps={visitedSteps} onStepChange={handleStepChange} />
-      <Box component="main" sx={{ flexGrow: 1, p: 3, ml: '200px' }}>
-        <HorizontalStepper
-          currentSubStep={currentSubStep}
-          visitedSteps={visitedSteps[currentStep]}
-          onSubStepChange={handleSubStepChange}
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      {/* Top Navbar */}
+      <Navbar/>
+      {/* <AppBar position="fixed" sx={{ bgcolor: 'white', color: 'black', zIndex: 1000 }}> 
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Bradley.ai
+          </Typography>
+          <Button color="inherit">Logout</Button>
+        </Toolbar>
+      </AppBar> */}
+
+      {/* Content Section with Sidebar and Main Content */}
+      <Box sx={{ display: 'flex', flexGrow: 1, mt: '64px', overflowY: 'auto' }}> {/* Adjust margin-top for navbar height */}
+        {/* Sidebar */}
+        <Sidebar
+          currentStep={currentStep}
+          steps={steps}
+          visitedSteps={visitedSteps}
+          onStepChange={handleStepChange}
+          sx={{ width: '240px' }} // Adjust width as needed
         />
-        <Box sx={{ mt: 2 }}>
-          <StepContent step={currentStep} subStep={currentSubStep} />
-        </Box>
-        <Box display="flex" justifyContent="space-between" mt={4}>
-          <Button
-            variant="outlined"
-            onClick={handleBack}
-            disabled={currentStep === 0 && currentSubStep === 0}
-          >
-            Back
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleNext}
-          >
-            {currentStep === TOTAL_STEPS - 1 && currentSubStep === TOTAL_SUBSTEPS - 1 ? 'Finish' : 'Next'}
-          </Button>
+
+        {/* Main Content Area */}
+        <Box component="main" sx={{ flexGrow: 1, p: 4, bgcolor: '#f5f5f5', overflowY: 'auto' }}>
+          {/* Horizontal Stepper */}
+          <HorizontalStepper
+            currentSubStep={currentSubStep}
+            totalSubSteps={steps[currentStep].subSteps}
+            visitedSteps={visitedSteps[currentStep]}
+            onSubStepChange={handleSubStepChange}
+          />
+          
+          {/* Step Content */}
+          <Box sx={{ mt: 4, p: 4, borderRadius: '8px', bgcolor: 'white', boxShadow: 1 }}>
+            <StepContent step={currentStep} subStep={currentSubStep} />
+          </Box>
+
+          {/* Navigation Buttons */}
+          <Box display="flex" justifyContent="space-between" mt={4}>
+            <Button
+              variant="outlined"
+              onClick={handleBack}
+              disabled={currentStep === 0 && currentSubStep === 0}
+            >
+              Back
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {}}
+            >
+              Save and Continue Later
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleNext}
+            >
+              {currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 ? 'Finish' : 'Next'}
+            </Button>
+          </Box>
         </Box>
       </Box>
+
       <Snackbar
         open={openSnackbar}
         autoHideDuration={2000}
