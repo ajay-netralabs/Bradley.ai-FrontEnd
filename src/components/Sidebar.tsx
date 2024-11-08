@@ -1,24 +1,47 @@
 import React from 'react';
 import { Stepper, Step, StepLabel, ListItemButton, ListItemText, Paper } from '@mui/material';
 
-const steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5'];
+const steps = ['Step 1: Organizational Profile',
+               'Step 2: Energy Profile',
+               'Step 3: Goals & Priorities',
+               'Step 4: Site Assessment',
+               'Step 5: Financial Info',
+               'Data Verification',
+               'Onboarding'];
 
 interface SidebarProps {
   currentStep: number;
-  visitedSteps: boolean[][];
+  visitedSteps: boolean[][]; 
   onStepChange: (step: number) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChange }) => {
   return (
-    <Paper sx={{ height: '100vh', position: 'fixed', width: '200px', padding: '10px' }}>
-      <Stepper activeStep={currentStep} orientation="vertical" nonLinear>
+    <Paper sx={{ width: '277px', position: 'fixed', height: '100vh', top: 0, mt: '50px', padding: '10px', paddingTop: '40px' }}>
+      <Stepper 
+        activeStep={currentStep} 
+        orientation="vertical" 
+        nonLinear 
+        sx={{ 
+          padding: 0, 
+          '.MuiStep-root': {
+            padding: 0,
+          },
+          '.MuiStepLabel-root': {
+            fontSize: '0.875rem',
+            padding: 0,
+          },
+        }}
+      >
         {steps.map((label, index) => (
           <Step key={label} completed={visitedSteps[index][0]}>
             <StepLabel>
               <ListItemButton
                 selected={currentStep === index}
-                onClick={() => visitedSteps[index][0] && onStepChange(index)}  // Enable click only for visited steps
+                onClick={() => visitedSteps[index][0] && onStepChange(index)}
+                sx={{
+                  padding: '3px 0',
+                }}
               >
                 <ListItemText primary={label} />
               </ListItemButton>

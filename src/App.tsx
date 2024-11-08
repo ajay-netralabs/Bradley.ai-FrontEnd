@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { AppBar, Box, Button, Toolbar, Typography, Snackbar } from '@mui/material';
+import { Box, Button, Snackbar } from '@mui/material';
 import HorizontalStepper from './components/HorizontalStepper';
 import StepContent from './pages/StepContent';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 
 const steps = [
-  { label: 'Organizational Profile', subSteps: 2 },
-  { label: 'Energy Profile', subSteps: 3 },
-  { label: 'Goals & Priorities', subSteps: 3 },
-  { label: 'Site Assessment', subSteps: 3 },
-  { label: 'Financial Info', subSteps: 3 },
+  { label: 'Step 1: Organizational Profile', subSteps: 2 },
+  { label: 'Step 2: Energy Profile', subSteps: 3 },
+  { label: 'Step 3: Goals & Priorities', subSteps: 3 },
+  { label: 'Step 4: Site Assessment', subSteps: 3 },
+  { label: 'Step 5: Financial Info', subSteps: 3 },
   { label: 'Data Verification', subSteps: 1 },
   { label: 'Onboarding', subSteps: 1 },
 ];
@@ -76,45 +76,32 @@ const App: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      {/* Top Navbar */}
-      <Navbar/>
-      {/* <AppBar position="fixed" sx={{ bgcolor: 'white', color: 'black', zIndex: 1000 }}> 
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Bradley.ai
-          </Typography>
-          <Button color="inherit">Logout</Button>
-        </Toolbar>
-      </AppBar> */}
-
-      {/* Content Section with Sidebar and Main Content */}
-      <Box sx={{ display: 'flex', flexGrow: 1, mt: '64px', overflowY: 'auto' }}> {/* Adjust margin-top for navbar height */}
-        {/* Sidebar */}
-        <Sidebar
-          currentStep={currentStep}
-          steps={steps}
-          visitedSteps={visitedSteps}
-          onStepChange={handleStepChange}
-          sx={{ width: '240px' }} // Adjust width as needed
-        />
-
-        {/* Main Content Area */}
-        <Box component="main" sx={{ flexGrow: 1, p: 4, bgcolor: '#f5f5f5', overflowY: 'auto' }}>
-          {/* Horizontal Stepper */}
+      <Navbar />
+      <Box sx={{ display: 'flex', flexGrow: 1, mt: '64px', width: '100vw' }}>
+        
+        <Box sx={{ width: '277px', flexShrink: 0 }}>
+          <Sidebar
+            currentStep={currentStep}
+            steps={steps}
+            visitedSteps={visitedSteps}
+            onStepChange={handleStepChange}
+          />
+        </Box>
+  
+        <Box component="main" sx={{ flexGrow: 1, p: 4, bgcolor: '#f5f5f5', overflowX: 'auto' }}>
           <HorizontalStepper
             currentSubStep={currentSubStep}
             totalSubSteps={steps[currentStep].subSteps}
             visitedSteps={visitedSteps[currentStep]}
             onSubStepChange={handleSubStepChange}
+            currentStep={currentStep}
           />
           
-          {/* Step Content */}
-          <Box sx={{ mt: 4, p: 4, borderRadius: '8px', bgcolor: 'white', boxShadow: 1 }}>
+          <Box sx={{ mt: 4, p: 15, mb: 10, borderRadius: '8px', bgcolor: 'white', boxShadow: 1, color: 'black' }}>
             <StepContent step={currentStep} subStep={currentSubStep} />
           </Box>
-
-          {/* Navigation Buttons */}
-          <Box display="flex" justifyContent="space-between" mt={4}>
+  
+          <Box display="flex" justifyContent="space-between" mb={0}>
             <Button
               variant="outlined"
               onClick={handleBack}
@@ -138,7 +125,7 @@ const App: React.FC = () => {
           </Box>
         </Box>
       </Box>
-
+  
       <Snackbar
         open={openSnackbar}
         autoHideDuration={2000}
@@ -147,6 +134,9 @@ const App: React.FC = () => {
       />
     </Box>
   );
+  
+  
+  
 };
 
 export default App;
