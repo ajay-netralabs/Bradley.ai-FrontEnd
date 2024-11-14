@@ -13,7 +13,7 @@ const SubStep2: React.FC = () => {
   
   <Box sx={{ display: 'flex', gap: 2, p: '10px' }}>
       
-      <Box sx={{ flex: 1, height: '200px', border: '1px solid lightgrey' }}>
+      <Box sx={{ flex: 1, height: '200px', border: '1px solid lightgrey', borderRadius: 1 }}>
         <iframe 
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.086238560343!2d-122.41941548468154!3d37.77492977975966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085808c2e5b1bff%3A0xdbf30509b4e22a90!2sGoogle!5e0!3m2!1sen!2sus!4v1666474302084!5m2!1sen!2sus" 
           width="100%" 
