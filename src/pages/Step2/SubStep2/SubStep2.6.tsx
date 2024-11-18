@@ -13,13 +13,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const SubStep2: React.FC = () => {
   const [showWasteHeat, setShowWasteHeat] = useState(false);
   const [wasteHeatSources, setWasteHeatSources] = useState([
-    { type: '', temperature: '', flowRate: '', utilization: '', fuelSource: '' },
+    { type: '', capacity: '', fuelSource: '', efficiency: '', age: '' , operatingPressure: '', history: '', utilization: '', volume: ''},
   ]);  
 
   const handleAddWasteHeatSource = () => {
     setWasteHeatSources([
       ...wasteHeatSources,
-      { type: '', temperature: '', flowRate: '', utilization: '', fuelSource: '' },
+      { type: '', capacity: '', fuelSource: '', efficiency: '', age: '' , operatingPressure: '', history: '', utilization: '', volume: ''},
     ]);
   };
 
@@ -88,11 +88,11 @@ const SubStep2: React.FC = () => {
                   type="number"
                   fullWidth
                   placeholder="in Mlbs per hour"
-                  value={source.temperature}
+                  value={source.capacity}
                   onChange={(e) =>
                     setWasteHeatSources(
                       wasteHeatSources.map((s, i) =>
-                        i === index ? { ...s, temperature: e.target.value } : s
+                        i === index ? { ...s, capacity: e.target.value } : s
                       )
                     )
                   }
@@ -154,11 +154,11 @@ const SubStep2: React.FC = () => {
                   type="number"
                   fullWidth
                   placeholder="In Percentage"
-                  value={source.temperature}
+                  value={source.efficiency}
                   onChange={(e) =>
                     setWasteHeatSources(
                       wasteHeatSources.map((s, i) =>
-                        i === index ? { ...s, temperature: e.target.value } : s
+                        i === index ? { ...s, efficiency: e.target.value } : s
                       )
                     )
                   }
@@ -184,11 +184,11 @@ const SubStep2: React.FC = () => {
                   type="number"
                   fullWidth
                   placeholder="In Years"
-                  value={source.temperature}
+                  value={source.age}
                   onChange={(e) =>
                     setWasteHeatSources(
                       wasteHeatSources.map((s, i) =>
-                        i === index ? { ...s, temperature: e.target.value } : s
+                        i === index ? { ...s, age: e.target.value } : s
                       )
                     )
                   }
@@ -214,11 +214,11 @@ const SubStep2: React.FC = () => {
                   type="number"
                   fullWidth
                   placeholder="In Psi"
-                  value={source.temperature}
+                  value={source.operatingPressure}
                   onChange={(e) =>
                     setWasteHeatSources(
                       wasteHeatSources.map((s, i) =>
-                        i === index ? { ...s, temperature: e.target.value } : s
+                        i === index ? { ...s, operatingPressure: e.target.value } : s
                       )
                     )
                   }
@@ -245,11 +245,11 @@ const SubStep2: React.FC = () => {
                   type="text"
                   fullWidth
                   placeholder="Maintenance History (Optional)"
-                  value={source.temperature}
+                  value={source.history}
                   onChange={(e) =>
                     setWasteHeatSources(
                       wasteHeatSources.map((s, i) =>
-                        i === index ? { ...s, temperature: e.target.value } : s
+                        i === index ? { ...s, history: e.target.value } : s
                       )
                     )
                   }
@@ -311,11 +311,11 @@ const SubStep2: React.FC = () => {
                   type="number"
                   fullWidth
                   placeholder="Annual Waste Heat Volume in MMBTu"
-                  value={source.temperature}
+                  value={source.volume}
                   onChange={(e) =>
                     setWasteHeatSources(
                       wasteHeatSources.map((s, i) =>
-                        i === index ? { ...s, temperature: e.target.value } : s
+                        i === index ? { ...s, volume: e.target.value } : s
                       )
                     )
                   }
