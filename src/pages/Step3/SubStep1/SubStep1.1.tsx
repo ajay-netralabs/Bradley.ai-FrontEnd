@@ -32,8 +32,8 @@ const SubStep1: React.FC = () => {
       </Typography>
       <Box
         sx={{
-          width: 'calc(100% - 320px)', // Ensure proper left/right padding without overflow
-          marginLeft: 'auto', // Center-align the box
+          width: 'calc(100% - 320px)',
+          marginLeft: 'auto',
           marginRight: 'auto',
           display: 'flex',
           flexDirection: 'column',
