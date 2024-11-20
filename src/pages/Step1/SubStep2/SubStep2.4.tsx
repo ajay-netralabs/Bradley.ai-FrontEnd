@@ -31,7 +31,7 @@ const SubStep2: React.FC = () => {
             size="small" 
             sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', minWidth: '60px', padding: '2px 4px', textTransform: 'none' }}
           >
-            Confirm Location
+            Save Pinned Location
           </Button>
         </Typography><br />
         <Box sx={{ fontFamily: 'Nunito Sans, sans-serif', display: 'flex', flexDirection: 'column', gap: 1.5 }}>

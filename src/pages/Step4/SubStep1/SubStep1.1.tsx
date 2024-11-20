@@ -32,22 +32,20 @@ const SubStep1: React.FC = () => {
       </Typography>
       <Box
         sx={{
-          width: '100%',
+          width: 'calc(100% - 320px)',
+          marginLeft: 'auto',
+          marginRight: 'auto',
           display: 'flex',
           flexDirection: 'column',
           gap: 2,
-          pt: '10px',
-          pb: '10px',
-          pl: '160px',
-          pr: '160px',
           textAlign: 'justify',
+          lineHeight: 1.5,
         }}
       >
         <Typography
           sx={{
             fontFamily: 'Nunito Sans, sans-serif',
             fontSize: '0.75rem',
-            lineHeight: '1.5',
           }}
         >
           <b>Welcome, [User Name]!</b>
@@ -56,7 +54,6 @@ const SubStep1: React.FC = () => {
           sx={{
             fontFamily: 'Nunito Sans, sans-serif',
             fontSize: '0.75rem',
-            lineHeight: '1.5',
           }}
         >
           <b>Access Your Site's DER Potential</b>
@@ -65,7 +62,6 @@ const SubStep1: React.FC = () => {
           sx={{
             fontFamily: 'Nunito Sans, sans-serif',
             fontSize: '0.75rem',
-            lineHeight: '1.5',
           }}
         >
           In this step, you will provide more granular details about your use of energy across various systems. Bradley will analyze your inputs to determine its suitability for alternate Distributed Energy Resources system arrangements. This part of the assessment will consider factors such as solar potential, wind resources, geothermal feasibility, grid connection, space constraints, interconnect limitations, and local regulations.
@@ -74,7 +70,6 @@ const SubStep1: React.FC = () => {
           sx={{
             fontFamily: 'Nunito Sans, sans-serif',
             fontSize: '0.75rem',
-            lineHeight: '1.5',
           }}
         >
           This will take about 20 minutes.
@@ -83,7 +78,6 @@ const SubStep1: React.FC = () => {
           sx={{
             fontFamily: 'Nunito Sans, sans-serif',
             fontSize: '0.75rem',
-            lineHeight: '1.5',
           }}
         >
           <b>Here's what we'll cover:</b>
@@ -93,7 +87,6 @@ const SubStep1: React.FC = () => {
           sx={{
             fontFamily: 'Nunito Sans, sans-serif',
             fontSize: '0.75rem',
-            lineHeight: '1.5',
             mb: 2,
           }}
         >
@@ -105,7 +98,6 @@ const SubStep1: React.FC = () => {
           sx={{
             fontFamily: 'Nunito Sans, sans-serif',
             fontSize: '0.75rem',
-            lineHeight: '1.5',
             mb: 2,
           }}
         >
