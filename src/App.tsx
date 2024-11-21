@@ -11,7 +11,7 @@ const steps = [
   { label: 'Energy Profile', subSteps: 3, furtherSubSteps: [1, 7, 2] },
   { label: 'Goals & Priorities', subSteps: 3, furtherSubSteps: [1, 2, 2] },
   { label: 'Site Assessment', subSteps: 3, furtherSubSteps: [1, 6, 6] },
-  { label: 'Financial Info', subSteps: 3, furtherSubSteps: [1, 6, 1] },
+  { label: 'Financial Info', subSteps: 3, furtherSubSteps: [2, 6, 1] },
   { label: 'Data Verification', subSteps: 1, furtherSubSteps: [2] },
   { label: 'Onboarding', subSteps: 1, furtherSubSteps: [4] },
 ];

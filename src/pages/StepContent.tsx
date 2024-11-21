@@ -68,6 +68,7 @@ const stepSubStepMapping = {
   4: {
     0: {
       0: lazy(() => import('./Step5/SubStep1/SubStep1.1')),
+      1: lazy(() => import('./Step5/SubStep1/SubStep1.2')),
     },
     1: {
       0: lazy(() => import('./Step5/SubStep2/SubStep2.1')),
