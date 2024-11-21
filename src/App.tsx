@@ -5,6 +5,7 @@ import StepContent from './pages/StepContent';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
+import SubStep1 from './pages/Step5/SubStep1/SubStep1.2';
 
 const steps = [
   { label: 'Organizational Profile', subSteps: 2, furtherSubSteps: [1, 5] },
@@ -33,6 +34,11 @@ const App: React.FC = () => {
     )
   );
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [ownership, setOwnership] = useState<string>('');
+
+  const handleOwnershipSelect = (selection: string) => {
+    setOwnership(selection);
+  };
 
   const handleStepChange = (step: number) => {
     if (visitedSteps[step][0]) {
@@ -104,7 +110,10 @@ const App: React.FC = () => {
     });
   };
 
-  const calculateProgress = () => { const totalFurtherSubSteps = steps[currentStep].furtherSubSteps[currentSubStep]; return ((currentFurtherSubStep + 1) / totalFurtherSubSteps) * 100; };
+  const calculateProgress = () => {
+    const totalFurtherSubSteps = steps[currentStep].furtherSubSteps[currentSubStep];
+    return ((currentFurtherSubStep + 1) / totalFurtherSubSteps) * 100;
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', zIndex: 500 }}>
