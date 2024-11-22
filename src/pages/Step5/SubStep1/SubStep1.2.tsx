@@ -38,31 +38,8 @@ const SubStep1: React.FC<SubStep1Props> = ({ onOwnershipSelect }) => {
 
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 0 }}>
           <Typography sx={{ mt: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', textAlign: 'center' }}>
-            <b>Would You Prefer To Own The DER System Or Have A Third Party Own And Operate It?</b>
+            Would You Prefer To <b>Own</b> The DER System Or Have A <b>Third Party</b> Own And Operate It?
           </Typography>
-          <RadioGroup
-            row
-            sx={{
-              fontSize: '0.8rem',
-              mt: 3,
-              mb: 0,
-              gap: 5.5,
-              justifyContent: 'center',
-            }}
-            value={ownership}
-            onChange={handleChange}
-          >
-            <FormControlLabel
-              value="own"
-              control={<Radio sx={{ padding: '2px' }} />}
-              label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>Own</Typography>}
-            />
-            <FormControlLabel
-              value="third-party"
-              control={<Radio sx={{ padding: '2px' }} />}
-              label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>Third-Party</Typography>}
-            />
-          </RadioGroup>
         </Box>
       </Box>
     </Box>

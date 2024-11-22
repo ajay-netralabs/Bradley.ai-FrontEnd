@@ -20,7 +20,7 @@ const SubStep2: React.FC = () => {
 </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
   <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}>
-    <b>Reduce your existing SCOPE 2 carbon emissions by:</b>
+    <b>Reduce your existing SCOPE 2 carbon emissions by: </b>(in %)
   </Typography>
   <Slider
 	sx={{
@@ -29,12 +29,13 @@ const SubStep2: React.FC = () => {
   defaultValue={50}
   aria-label="Small"
   valueLabelDisplay="auto"
+  valueLabelFormat={(value) => `${value} %`}
 />
 </Box>
 
 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
   <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}>
-    <b>Reduce your energy costs by:</b>
+    <b>Reduce your energy costs by: </b>(in %)
   </Typography>
   <Slider
 	sx={{
@@ -43,6 +44,7 @@ const SubStep2: React.FC = () => {
   defaultValue={50}
   aria-label="Small"
   valueLabelDisplay="auto"
+  valueLabelFormat={(value) => `${value} %`}
 />
 </Box>
 
