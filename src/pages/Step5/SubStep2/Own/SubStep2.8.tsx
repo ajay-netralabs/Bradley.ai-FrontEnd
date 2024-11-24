@@ -50,7 +50,7 @@ const SubStep2: React.FC = () => {
     How Would You Prefer To Finance This Project?
     <br />
     <span style={{ fontWeight: 'normal' }}>
-      (<i>You must pick one.</i>)
+      (You must pick one.)
     </span>
   </b>
   <FormGroup
