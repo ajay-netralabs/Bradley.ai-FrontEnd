@@ -3,28 +3,7 @@ import { Box, TextField, Typography, Radio, RadioGroup, FormControlLabel, MenuIt
 
 const SubStep2: React.FC = () => { 
   const [showSteam, setShowSteam] = useState(false);
-  const [showHotWater, setShowHotWater] = useState(false);
-  const [showChilledWater, setShowChilledWater] = useState(false);
-  const [showWasteHeat, setShowWasteHeat] = useState(false);
-  const [showBoiler, setShowBoiler] = useState(false);
-  const [wasteHeatSources, setWasteHeatSources] = useState([]);
-  const [boilerSystems, setBoilerSystems] = useState([]);
 
-  const handleAddWasteHeatSource = () => {
-    setWasteHeatSources([...wasteHeatSources, { type: '', temperature: '', flowRate: '', utilization: '' }]);
-  };
-
-  const handleRemoveWasteHeatSource = (index) => {
-    setWasteHeatSources(wasteHeatSources.filter((_, i) => i !== index));
-  };
-
-  const handleAddBoilerSystem = () => {
-    setBoilerSystems([...boilerSystems, { type: '', capacity: '', fuelSource: '', efficiency: '', age: '', operatingPressure: '', maintenanceHistory: '', wasteHeatUtilization: '', wasteHeatVolume: '' }]);
-  };
-
-  const handleRemoveBoilerSystem = (index) => {
-    setBoilerSystems(boilerSystems.filter((_, i) => i !== index));
-  };
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
       <style>

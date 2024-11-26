@@ -30,9 +30,15 @@ const steps = [
 
 interface SidebarProps {
   currentStep: number;
-  visitedSteps: boolean[];
+  steps: { 
+    label: string; 
+    subSteps: number; 
+    furtherSubSteps: number[]; 
+  }[];
+  visitedSteps: boolean[][];
   onStepChange: (step: number) => void;
 }
+
 
 const CustomStepConnector = styled(StepConnector)(() => ({
   [`& .MuiStepConnector-line`]: {
