@@ -87,7 +87,7 @@ const SubStep3: React.FC = () => {
                 sx={{
                   fontFamily: 'Nunito Sans, sans-serif',
                   fontSize: '0.75rem',
-                  textAlign: 'left',
+                  textAlign: 'justify',
                 }}
               >
                 Your Letter of Authorization has been signed and sent. It is now pending a response from your regulated Utility Co. You will be notified via email confirmation once the interval data has been received by Bradley.
