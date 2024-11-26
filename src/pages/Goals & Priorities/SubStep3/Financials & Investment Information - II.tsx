@@ -1,7 +1,19 @@
-import React from 'react'; 
-import { Box, TextField, Typography, MenuItem, Select } from '@mui/material'; 
+import React, { useState } from 'react'; 
+import { Box, TextField, Typography, MenuItem, Select, IconButton } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const SubStep3: React.FC = () => { 
+  const [investmentAmounts, setinvestmentAmounts] = useState<number[]>([0, 1, 2]);
+
+  const handleAddSection = () => {
+    setinvestmentAmounts([...investmentAmounts, investmentAmounts.length]);
+  };
+
+  const handleRemoveSection = (index: number) => {
+    setinvestmentAmounts(investmentAmounts.filter((_, i) => i !== index));
+  }; 
+  
   return ( 
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
       <style>
@@ -20,57 +32,51 @@ const SubStep3: React.FC = () => {
 </Box>
 
 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-  <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.305 }}>
+  <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.30 }}>
 		<b>Maximum Investment Amount: </b>(Optional, in USD)<br />Enter your DER investment budget for each year.
   </Typography>
-  <TextField
-            variant="outlined" 
-            size="small" 
-            type="number" 
-						placeholder='Year 1 - Budget Amt.'
-            sx={{
-              flex: 0.1466, fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.7rem',
-              '& .MuiInputBase-root': { height: '24px', padding: '0 6px' },
-              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
-							'& .MuiInputBase-input::placeholder': {
-                fontFamily: 'Nunito Sans, sans-serif',
-                fontSize: '0.7rem',
-              }
-            }}
-          />
-	<TextField
-            variant="outlined" 
-            size="small" 
-            type="number" 
-						placeholder='Year 2 - Budget Amt.'
-            sx={{
-              flex: 0.1466, fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.7rem',
-              '& .MuiInputBase-root': { height: '24px', padding: '0 6px' },
-              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
-							'& .MuiInputBase-input::placeholder': {
-                fontFamily: 'Nunito Sans, sans-serif',
-                fontSize: '0.7rem',
-              }
-            }}
-          />
-					<TextField
-            variant="outlined" 
-            size="small" 
-            type="number" 
-						placeholder='Year 3 - Budget Amt.'
-            sx={{
-              flex: 0.1466, fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.7rem',
-              '& .MuiInputBase-root': { height: '24px', padding: '0 6px' },
-              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
-							'& .MuiInputBase-input::placeholder': {
-                fontFamily: 'Nunito Sans, sans-serif',
-                fontSize: '0.7rem',
-              }
-            }}
-          />
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 1,
+      flex: 0.5,
+      maxWidth: 'calc(100% - 665px)',
+    }}
+  >
+    {investmentAmounts.map((_, index) => (
+      <TextField
+        key={index}
+        variant="outlined"
+        size="small"
+        type="number"
+        placeholder={`Year ${index + 1} - Budget Amt.`}
+        sx={{
+          flex: 1,
+          fontFamily: 'Nunito Sans, sans-serif',
+          fontSize: '0.7rem',
+          '& .MuiInputBase-root': { height: '24px', padding: '0 6px' },
+          '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
+        }}
+      />
+    ))}
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
+      <IconButton
+        onClick={handleAddSection}
+        color="primary"
+        sx={{ p: 0 }}
+      >
+        <AddCircleOutlineIcon fontSize="small" />
+      </IconButton>
+      <IconButton
+        onClick={() => handleRemoveSection(investmentAmounts.length - 1)}
+        sx={{ p: 0 }}
+        disabled={investmentAmounts.length === 1}
+      >
+        <DeleteIcon fontSize="small" />
+      </IconButton>
+    </Box>
+  </Box>
 </Box>
 
 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>

@@ -30,7 +30,7 @@ const SubStep2: React.FC = () => {
           </Box>
 
           {showSteam && (
-            <Box sx={{ mb: 0, pl: 2 }}>
+            <Box sx={{ mb: 0, pl: 0 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
