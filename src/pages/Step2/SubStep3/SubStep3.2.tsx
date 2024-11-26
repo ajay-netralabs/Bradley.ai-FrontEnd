@@ -36,65 +36,68 @@ const SubStep3: React.FC = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: '160px' }}>
 
 			<Table
-          sx={{
-            border: '1px solid #ccc',
-            borderRadius: '8px',
-            overflow: 'hidden',
-          }}
-        >
-          <TableBody>
-            <TableRow>
-              <TableCell
-                sx={{
-                  fontFamily: 'Nunito Sans, sans-serif',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold',
-                  backgroundColor: '#f9f9f9',
-                  textAlign: 'right',
-                  width: '50%',
-                  borderBottom: '1px solid #ccc',
-                }}
-              >
-                Current Status:
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontFamily: 'Nunito Sans, sans-serif',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold',
-                  color: '#036CA1',
-                  textAlign: 'justify',
-                  borderBottom: '1px solid #ccc',
-                }}
-              >
-                Awaiting Approval
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell
-                sx={{
-                  fontFamily: 'Nunito Sans, sans-serif',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold',
-                  backgroundColor: '#f9f9f9',
-                  textAlign: 'right',
-                  width: '50%',
-                }}
-              >
-                Details:
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontFamily: 'Nunito Sans, sans-serif',
-                  fontSize: '0.75rem',
-                  textAlign: 'justify',
-                }}
-              >
-                Your Letter of Authorization has been signed and sent. It is now pending a response from your regulated Utility Co. You will be notified via email confirmation once the interval data has been received by Bradley.
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+  sx={{
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    overflow: 'hidden',
+  }}
+>
+  <TableBody>
+    <TableRow>
+      <TableCell
+        sx={{
+          fontFamily: 'Nunito Sans, sans-serif',
+          fontSize: '0.75rem',
+          fontWeight: 'bold',
+          backgroundColor: '#f9f9f9',
+          textAlign: 'right',
+          width: '25%',
+          borderBottom: '1px solid #ccc',
+        }}
+      >
+        Current Status:
+      </TableCell>
+      <TableCell
+        sx={{
+          fontFamily: 'Nunito Sans, sans-serif',
+          fontSize: '0.75rem',
+          fontWeight: 'bold',
+          color: '#036CA1',
+          textAlign: 'justify',
+          width: '75%',
+          borderBottom: '1px solid #ccc',
+        }}
+      >
+        Awaiting Approval
+      </TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell
+        sx={{
+          fontFamily: 'Nunito Sans, sans-serif',
+          fontSize: '0.75rem',
+          fontWeight: 'bold',
+          backgroundColor: '#f9f9f9',
+          textAlign: 'right',
+          width: '25%',
+        }}
+      >
+        Details:
+      </TableCell>
+      <TableCell
+        sx={{
+          fontFamily: 'Nunito Sans, sans-serif',
+          fontSize: '0.75rem',
+          textAlign: 'justify',
+          width: '75%',
+        }}
+      >
+        Your Letter of Authorization has been signed and sent. It is now pending a response from your regulated Utility Co. You will be notified via email confirmation once the interval data has been received by Bradley.
+      </TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
       </Box>
     </Box>
   );
