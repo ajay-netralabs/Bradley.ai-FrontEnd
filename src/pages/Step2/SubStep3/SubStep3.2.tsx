@@ -63,7 +63,7 @@ const SubStep3: React.FC = () => {
                   fontSize: '0.75rem',
                   fontWeight: 'bold',
                   color: '#036CA1',
-                  textAlign: 'left',
+                  textAlign: 'justify',
                   borderBottom: '1px solid #ccc',
                 }}
               >
