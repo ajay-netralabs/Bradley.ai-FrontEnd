@@ -44,7 +44,7 @@ const SubStep3: React.FC = () => {
           />
 </Box>
 
-<Typography sx={{ mt: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+<Typography sx={{ mt: 1.5, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
   <b>What Is The Condition Of Your Roof?</b>
   <RadioGroup row sx={{ fontSize: '0.7rem', m: 0, gap: 5.5 }}>
     <FormControlLabel value="great" control={<Radio sx={{ padding: '2px' }} />} label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Great</Typography>} />
@@ -53,7 +53,7 @@ const SubStep3: React.FC = () => {
   </RadioGroup>
 </Typography>
 
-<Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 10 }}>
+<Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 10 }}>
   <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.685 }}>
     <b>Roof Insurance Provider: </b>(Optional)
   </Typography>
@@ -65,9 +65,9 @@ const SubStep3: React.FC = () => {
   </Typography>
 </Box>
 
-<Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 10 }}>
+<Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 10 }}>
   <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.685 }}>
-	<ul><b>Enter Your Provider Name:</b></ul>
+	<li><b>Enter Your Provider Name:</b></li>
   </Typography>
   <TextField
             variant="outlined" 
@@ -87,9 +87,9 @@ const SubStep3: React.FC = () => {
           />
 </Box>
 
-<Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 10 }}>
+<Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 10 }}>
   <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.685 }}>
-    <ul><b>Enter Your Policy ID:</b></ul>
+    <li><b>Enter Your Policy ID:</b></li>
   </Typography>
   <TextField
             variant="outlined" 

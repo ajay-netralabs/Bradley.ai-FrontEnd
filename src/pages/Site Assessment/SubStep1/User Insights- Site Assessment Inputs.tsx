@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 
 const SubStep1: React.FC = () => {
+  // State to manage the user's name
+  const [username, setUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Simulate an asynchronous username fetch
+    const fetchUsername = () => {
+      setTimeout(() => {
+        setUsername('User Name'); // Placeholder for dynamic data fetch
+      }, 1000); // Simulating network delay
+    };
+    fetchUsername();
+  }, []);
+
   return (
     <Box
       sx={{
@@ -48,7 +61,7 @@ const SubStep1: React.FC = () => {
             fontSize: '0.75rem',
           }}
         >
-          <b>Welcome, [User Name]!</b>
+          <b>Welcome, {username || 'Loading...'}!</b>
         </Typography>
         <Typography
           sx={{
