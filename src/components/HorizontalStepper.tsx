@@ -29,10 +29,7 @@ const HorizontalStepper: React.FC<HorizontalStepperProps> = ({
   onSubStepChange,
   currentStep,
 }) => {
-  if (totalSubSteps === 1) {
-    return null;
-  }
-
+  
   const subSteps = Array.from({ length: totalSubSteps }, (_, index) => `Step ${currentStep + 1}.${index + 1}`);
 
   return (

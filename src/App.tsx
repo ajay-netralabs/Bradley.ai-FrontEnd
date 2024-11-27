@@ -12,7 +12,7 @@ const steps = [
   { label: 'Goals & Priorities', subSteps: 3, furtherSubSteps: [1, 2, 2] },
   { label: 'Site Assessment', subSteps: 3, furtherSubSteps: [1, 6, 6] },
   { label: 'Financial Info', subSteps: 2, furtherSubSteps: [2, 8, 3] }, 
-  { label: 'Data Verification', subSteps: 1, furtherSubSteps: [2] },
+  { label: 'Data Verification', subSteps: 1, furtherSubSteps: [1] },
   { label: 'Onboarding', subSteps: 1, furtherSubSteps: [4] },
 ];
 
@@ -278,8 +278,14 @@ const App: React.FC = () => {
           color="primary"
           onClick={handleNext}
         >
-          {currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? 'Finish' : 'Next'}
-        </Button>
+          {currentStep === 1 && currentSubStep === 2 && currentFurtherSubStep === 0
+    ? 'Authorize & Send Request'
+    : currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0
+    ? 'Submit'
+    : currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1
+    ? 'Finish'
+    : 'Next'}
+</Button>
       </>
     )}
   </Box>

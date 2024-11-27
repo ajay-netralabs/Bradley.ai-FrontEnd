@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { AppBar, Box, IconButton, Toolbar, Typography, Menu, MenuItem } from '@mui/material';
+import { AppBar, IconButton, Toolbar, Typography, Menu, MenuItem } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+// import NotificationsIcon from '@mui/icons-material/Notifications';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
+// import LightModeIcon from '@mui/icons-material/LightMode';
 
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
