@@ -47,7 +47,7 @@ const SubStep1: React.FC = () => {
         backgroundColor: '#f4f4f4',
         borderRadius: '8px',
         padding: '8px',
-        marginBottom: '0px',  // Decreased gap between cards
+        marginBottom: '0px',
         position: 'relative',
         width: '100%',
       }}
