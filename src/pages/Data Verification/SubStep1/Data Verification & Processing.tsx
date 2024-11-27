@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableRow, IconButton, TextField, Checkbox } from '@mui/material';
+import { Box, Typography, IconButton, TextField, Checkbox } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
 const SubStep1: React.FC = () => {
@@ -34,17 +34,19 @@ const SubStep1: React.FC = () => {
     setEditIndex(null);
   };
 
-  const renderEditableRow = (header: string, value: string, index: number) => (
+  const renderEditableCard = (header: string, value: string, index: number) => (
     <Box
+      key={index}
       sx={{
         backgroundColor: '#f4f4f4',
         borderRadius: '8px',
-        padding: '8px 12px',
-        marginBottom: '8px',
+        padding: '16px',
+        marginBottom: '16px',
         position: 'relative',
+        width: '100%',
       }}
     >
-      <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', fontWeight: 'bold', marginBottom: '4px' }}>
+      <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '8px' }}>
         {header}
       </Typography>
       {editIndex === index ? (
@@ -73,7 +75,7 @@ const SubStep1: React.FC = () => {
       <IconButton
         size="small"
         onClick={() => handleEditClick(index)}
-        sx={{ position: 'absolute', top: '4px', right: '4px' }}
+        sx={{ position: 'absolute', top: '8px', right: '8px' }}
       >
         <EditIcon sx={{ fontSize: '1rem' }} />
       </IconButton>
@@ -109,65 +111,64 @@ const SubStep1: React.FC = () => {
       >
         <h2>DATA VERIFICATION AND PROCESSING</h2>
         <br />
-        <h2>Processing Status & Profile Summary</h2>
+        <h2>Processing Status</h2>
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: '160px' }}>
-        <Table
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+          padding: '10px',
+          borderRadius: '8px',
+          backgroundColor: '#f9f9f9',
+          mb: 2,
+        }}
+      >
+        <Typography
           sx={{
-            border: '1px solid #ccc',
-            borderRadius: '8px',
-            overflow: 'hidden',
+            fontFamily: 'Nunito Sans, sans-serif',
+            fontSize: '0.85rem',
+            fontWeight: 'bold',
+            textAlign: 'left',
+            flex: 1,
           }}
         >
-          <TableBody>
-            <TableRow>
-              <TableCell
-                sx={{
-                  fontFamily: 'Nunito Sans, sans-serif',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold',
-                  backgroundColor: '#f9f9f9',
-                  textAlign: 'right',
-                  width: '50%',
-                  borderBottom: '1px solid #ccc',
-                }}
-              >
-                Overall Progress to Completing the DER Analysis:
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontFamily: 'Nunito Sans, sans-serif',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold',
-                  color: '#036CA1',
-                  textAlign: 'justify',
-                  width: '50%',
-                  borderBottom: '1px solid #ccc',
-                }}
-              >
-                x% Completed
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell
-                sx={{
-                  fontFamily: 'Nunito Sans, sans-serif',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bold',
-                  backgroundColor: '#f9f9f9',
-                  textAlign: 'right',
-                  width: '50%',
-                  verticalAlign: 'middle',
-                }}
-              >
-                Overall Profile Summary:
-              </TableCell>
-              <TableCell sx={{ pb: '0px' }}>
-                {rowValues.map((value, index) => renderEditableRow(headers[index], value, index))}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+          Overall Progress to Completing the DER Analysis:
+        </Typography>
+        <Typography
+          sx={{
+            fontFamily: 'Nunito Sans, sans-serif',
+            fontSize: '0.85rem',
+            fontWeight: 'bold',
+            color: '#036CA1',
+            textAlign: 'right',
+            flex: 1,
+          }}
+        >
+          x% Completed
+        </Typography>
+      </Box>
+
+        <Typography
+        variant="h6"
+        sx={{
+          mb: -1,
+          fontFamily: 'Nunito Sans, sans-serif',
+          fontSize: '0.85rem',
+          fontWeight: 'bold',
+          textAlign: 'center',
+        }}
+      >
+        <h2>Overall Profile Summary</h2>
+      </Typography>
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%', mt: 2 }}>
+          {rowValues.map((value, index) => renderEditableCard(headers[index], value, index))}
+        </Box>
+
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center', mt: 1 }}>
           <Checkbox
             sx={{
