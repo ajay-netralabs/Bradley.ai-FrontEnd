@@ -13,7 +13,7 @@ const steps = [
   { label: 'Site Assessment', subSteps: 3, furtherSubSteps: [1, 6, 6] },
   { label: 'Financial Info', subSteps: 2, furtherSubSteps: [2, 8, 3] }, 
   { label: 'Data Verification', subSteps: 1, furtherSubSteps: [1] },
-  { label: 'Onboarding', subSteps: 1, furtherSubSteps: [4] },
+  { label: 'Onboarding', subSteps: 1, furtherSubSteps: [2] },
 ];
 
 const TOTAL_STEPS = steps.length;
@@ -142,9 +142,6 @@ const App: React.FC = () => {
 
         <Box component="main" sx={{ flexGrow: 1, p: 4, bgcolor: '#f5f5f5', overflowX: 'auto', scrollbarWidth: 'none' }}>
           <Box sx={{ mt: 1, pl: 2, pb: 1, pt: 3, mb: 7, ml: 3, borderRadius: '8px', bgcolor: 'white', boxShadow: 1, color: 'black', display: 'flex' }}>
-            {/* <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '10px', mr: 2 }}>
-              <LinearProgress variant="determinate" value={calculateProgress()} sx={{ width: '100px', height: '0.5%', transform: 'rotate(90deg)', transformOrigin: 'top left' }} />
-            </Box> */}
             <Box sx={{ flexGrow: 1 }}>
               <HorizontalStepper
                 currentSubStep={currentSubStep}

@@ -103,8 +103,6 @@ const stepSubStepMapping: StepSubStepMapping = {
     0: {
       0: lazy(() => import('./Onboarding/SubStep1/SubStep1.1')),
       1: lazy(() => import('./Onboarding/SubStep1/SubStep1.2')),
-      2: lazy(() => import('./Onboarding/SubStep1/SubStep1.3')),
-      3: lazy(() => import('./Onboarding/SubStep1/SubStep1.4')),
     },
   },
 };
