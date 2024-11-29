@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, IconButton, TextField, Checkbox, Collapse } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import { IoEnterOutline } from "react-icons/io5";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const SubStep1: React.FC = () => {
@@ -106,7 +106,7 @@ const SubStep1: React.FC = () => {
           }}
           sx={{ position: 'absolute', top: '8px', right: '36px' }}
         >
-          <EditIcon sx={{ fontSize: '1rem' }} />
+          <IoEnterOutline />
         </IconButton>
       </Collapse>
     </Box>
