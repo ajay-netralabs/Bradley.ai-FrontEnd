@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, TextField, Checkbox, Collapse } from '@mui/material';
+import { Box, Typography, IconButton, Checkbox, Collapse } from '@mui/material';
 import { IoEnterOutline } from "react-icons/io5";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const SubStep1: React.FC = () => {
-  const [editIndex, setEditIndex] = useState<number | null>(null);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const [rowValues, setRowValues] = useState([
+  const [rowValues] = useState([
     'Company Name: ABC Group\nIndustry: Manufacturing\nLocation: New York, NY',
     'Annual Energy Usage: 1,200,000 kWh\nPeak Demand: 500kW\nEnergy Source: Solar, Wind',
     'Budget: $500,000\nROI Expectation: 5 Years',
@@ -22,25 +21,11 @@ const SubStep1: React.FC = () => {
     'Financial Info',
   ];
 
-  const handleEditClick = (index: number) => {
-    setEditIndex(index);
-  };
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
-    const newRows = [...rowValues];
-    newRows[index] = event.target.value;
-    setRowValues(newRows);
-  };
-
-  const handleBlur = () => {
-    setEditIndex(null);
-  };
-
   const handleExpandClick = (index: number) => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
 
-  const renderEditableCard = (header: string, value: string, index: number) => (
+  const renderCard = (header: string, value: string, index: number) => (
     <Box
       key={index}
       sx={{
@@ -74,19 +59,6 @@ const SubStep1: React.FC = () => {
         </Box>
       </Box>
       <Collapse in={expandedIndex === index} timeout="auto" unmountOnExit>
-        {editIndex === index ? (
-          <TextField
-            multiline
-            value={value}
-            onChange={(e) => handleInputChange(e, index)}
-            onBlur={handleBlur}
-            autoFocus
-            fullWidth
-            variant="standard"
-            InputProps={{ disableUnderline: true }}
-            sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', marginTop: '8px' }}
-          />
-        ) : (
           <Typography
             sx={{
               fontFamily: 'Nunito Sans, sans-serif',
@@ -97,12 +69,10 @@ const SubStep1: React.FC = () => {
           >
             {value}
           </Typography>
-        )}
         <IconButton
           size="small"
-          onClick={(event) => {
-            event.stopPropagation();
-            handleEditClick(index);
+          onClick={() => {
+            // Enter the handleStepChange here
           }}
           sx={{ position: 'absolute', top: '8px', right: '36px' }}
         >
@@ -196,7 +166,7 @@ const SubStep1: React.FC = () => {
       </Typography>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%', mt: 2 }}>
-          {rowValues.map((value, index) => renderEditableCard(headers[index], value, index))}
+          {rowValues.map((value, index) => renderCard(headers[index], value, index))}
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center', mt: 1 }}>
