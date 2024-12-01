@@ -221,6 +221,7 @@ const App: React.FC = () => {
             setCurrentStep(4);
             setCurrentSubStep(1);
             setCurrentFurtherSubStep(0);
+            markCompleted(4,0);
           }}
         >
           Own
@@ -241,6 +242,7 @@ const App: React.FC = () => {
             setCurrentStep(4);
             setCurrentSubStep(2);
             setCurrentFurtherSubStep(0);
+            markCompleted(4,0);
           }}
         >
           Third Party
