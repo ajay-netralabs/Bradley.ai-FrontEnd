@@ -71,12 +71,9 @@ const SubStep1: React.FC = () => {
                     </Box>
                     <Collapse in={expandedIndex === 1} timeout="auto" unmountOnExit>
                         <Typography sx={{ fontFamily:'Nunito Sans, sans-serif', fontSize:'0.75rem', whiteSpace:'pre-wrap', marginTop:'8px' }}>
-                            Annual Energy Usage:
-                            1,200,000 kWh<br />
-                            Peak Demand:
-                            500kW<br />
-                            Energy Source:
-                            Solar, Wind
+                            Annual Energy Usage: 1,200,000 kWh<br />
+                            Peak Demand: 500kW<br />
+                            Energy Source: Solar, Wind
                         </Typography>
                         <IconButton size="small" onClick={() => { setCurrentStep(1), setCurrentSubStep(0) }} sx={{ position:'absolute', top:'8px', right:'36px' }}>
                             <IoEnterOutline />
@@ -95,10 +92,8 @@ const SubStep1: React.FC = () => {
                     </Box>
                     <Collapse in={expandedIndex === 2} timeout="auto" unmountOnExit>
                         <Typography sx={{ fontFamily:'Nunito Sans, sans-serif', fontSize:'0.75rem', whiteSpace:'pre-wrap', marginTop:'8px' }}>
-                            Budget:
-                            $500,000<br />
-                            ROI Expectation:
-                            5 Years
+                            Budget: $500,000<br />
+                            ROI Expectation: 5 Years
                         </Typography>
                         <IconButton size="small" onClick={() => { setCurrentStep(2), setCurrentSubStep(0) }} sx={{ position:'absolute', top:'8px', right:'36px' }}>
                             <IoEnterOutline />
@@ -117,12 +112,9 @@ const SubStep1: React.FC = () => {
                     </Box >
                     <Collapse in={expandedIndex === 3} timeout="auto" unmountOnExit>
                         <Typography sx= {{fontFamily :'Nunito Sans,sans-serif ',fontSize :'0.75rem ',whiteSpace :'pre-wrap ',marginTop :'8px'}}>
-                            Site Size:
-                            100,000 sq. ft<br />
-                            Roof Condition:
-                            Excellent<br />
-                            Shading:
-                            Minimal
+                            Site Size: 100,000 sq. ft<br />
+                            Roof Condition: Excellent<br />
+                            Shading: Minimal
                         </Typography >
                         <IconButton size="small" onClick={() => { setCurrentStep(3), setCurrentSubStep(0) }} sx= {{position :'absolute ',top :'8px ',right :'36px'}}>
                             <IoEnterOutline />
@@ -141,8 +133,7 @@ const SubStep1: React.FC = () => {
                     </Box >
                     <Collapse in={expandedIndex === 4} timeout="auto" unmountOnExit>
                         <Typography sx= {{fontFamily :'Nunito Sans,sans-serif ',fontSize :'0.75rem ',whiteSpace :'pre-wrap ',marginTop :'8px'}}>
-                            Down Payment:
-                            $50,000
+                            Down Payment: $50,000
                         </Typography >
                         <IconButton size="small" onClick={() => { setCurrentStep(4), setCurrentSubStep(0) }} sx= {{position :'absolute ',top :'8px ',right :'36px'}}>
                             <IoEnterOutline />
