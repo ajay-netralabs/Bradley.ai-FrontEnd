@@ -125,7 +125,7 @@ const StepContent: React.FC<StepContentProps> = ({ step, subStep, furtherSubStep
   return (
     <Suspense
       fallback={
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
           <CircularProgress />
         </div>
       }
