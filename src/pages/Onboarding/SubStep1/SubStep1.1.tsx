@@ -88,7 +88,11 @@ const SubStep1: React.FC = () => {
                                 <Typography sx={{ fontFamily:'Nunito Sans,sans-serif',fontSize:'0.85rem',fontWeight:'bold'}}>{step.title}</Typography>
                                 <Box sx={{ display:'flex',alignItems:'center'}}>
                                     {getStatusIcon(step.status)}
-                                    <IconButton>{expanded === index ? <ExpandLess /> : <ExpandMore />}</IconButton>
+                                    <IconButton sx={{
+    '&:focus': {
+      outline: 'none',
+    },
+  }}>{expanded === index ? <ExpandLess /> : <ExpandMore />}</IconButton>
                                 </Box>
                             </Box>
                             <Collapse in={expanded === index} timeout="auto" unmountOnExit>

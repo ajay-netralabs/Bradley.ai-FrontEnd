@@ -29,7 +29,9 @@ const SubStep2: React.FC = () => {
           <Button 
             variant="outlined" 
             size="small" 
-            sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', minWidth: '60px', padding: '2px 4px', textTransform: 'none' }}
+            sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', minWidth: '60px', padding: '2px 4px', textTransform: 'none', '&:focus': {
+      outline: 'none',
+    } }}
           >
             Confirm Location
           </Button>

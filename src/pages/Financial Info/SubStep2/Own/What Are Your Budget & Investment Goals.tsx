@@ -144,13 +144,17 @@ const SubStep2: React.FC = () => {
       <IconButton
         onClick={handleAddSection}
         color="primary"
-        sx={{ p: 0 }}
+        sx={{ p: 0, '&:focus': {
+      outline: 'none',
+    } }}
       >
         <AddCircleOutlineIcon fontSize="small" />
       </IconButton>
       <IconButton
         onClick={() => handleRemoveSection(yearBudget.length - 1)}
-        sx={{ p: 0 }}
+        sx={{ p: 0, '&:focus': {
+      outline: 'none',
+    } }}
         disabled={yearBudget.length === 1}
       >
         <DeleteIcon fontSize="small" />

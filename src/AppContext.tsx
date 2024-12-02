@@ -12,8 +12,6 @@ interface AppContextProps {
     setVisitedSteps: React.Dispatch<React.SetStateAction<boolean[][]>>;
     completedSubSteps: boolean[][];
     setCompletedSubSteps: React.Dispatch<React.SetStateAction<boolean[][]>>;
-    openSnackbar: boolean;
-    setOpenSnackbar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -40,7 +38,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       Array.from({ length: steps[i].subSteps }, () => false)
     )
   );
-  const [openSnackbar, setOpenSnackbar] = useState(false);
 
     return (
         <AppContext.Provider value={{
@@ -54,8 +51,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             setVisitedSteps,
             completedSubSteps,
             setCompletedSubSteps,
-            openSnackbar,
-            setOpenSnackbar
         }}>
             {children}
         </AppContext.Provider>

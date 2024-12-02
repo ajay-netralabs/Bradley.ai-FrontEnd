@@ -342,6 +342,9 @@ const SubStep2: React.FC = () => {
                 textTransform: 'none',
                 fontFamily: 'Nunito Sans, sans-serif',
                 fontSize: '0.8rem',
+                '&:focus': {
+      outline: 'none',
+    }
               }}
             >
               Add Another Entry
@@ -350,7 +353,9 @@ const SubStep2: React.FC = () => {
                   onClick={() => handleRemoveWasteHeatSource(index)}
                   size="large"
                   disabled={wasteHeatSources.length === 1}
-                  sx={{ ml: 'auto' }}
+                  sx={{ ml: 'auto', '&:focus': {
+      outline: 'none',
+    } }}
                 >
                   <DeleteIcon fontSize="medium" />
                 </IconButton>

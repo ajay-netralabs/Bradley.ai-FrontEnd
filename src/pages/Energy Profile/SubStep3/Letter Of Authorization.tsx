@@ -304,6 +304,9 @@ const SubStep3: React.FC = () => {
                 pl: '15px',
                 alignSelf: 'flex-end',
                 textTransform: 'none',
+                '&:focus': {
+      outline: 'none',
+    }
               }}
             >
               Clear Signature

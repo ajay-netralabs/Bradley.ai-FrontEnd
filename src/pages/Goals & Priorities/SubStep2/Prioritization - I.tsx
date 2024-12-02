@@ -51,7 +51,10 @@ const SubStep2: React.FC = () => {
       pr: '15px',
       pl: '15px',
       alignSelf: 'flex-end',
-      textTransform: 'none'
+      textTransform: 'none',
+      '&:focus': {
+      outline: 'none',
+    }
     }}
   >
     Explain
@@ -91,7 +94,10 @@ const SubStep2: React.FC = () => {
       pr: '15px',
       pl: '15px',
       alignSelf: 'flex-end',
-      textTransform: 'none'
+      textTransform: 'none',
+      '&:focus': {
+      outline: 'none',
+    }
     }}
   >
     Explain
@@ -131,7 +137,10 @@ const SubStep2: React.FC = () => {
       pr: '15px',
       pl: '15px',
       alignSelf: 'flex-end',
-      textTransform: 'none'
+      textTransform: 'none',
+      '&:focus': {
+      outline: 'none',
+    }
     }}
   >
     Explain
@@ -171,7 +180,10 @@ const SubStep2: React.FC = () => {
       pr: '15px',
       pl: '15px',
       alignSelf: 'flex-end',
-      textTransform: 'none'
+      textTransform: 'none',
+      '&:focus': {
+      outline: 'none',
+    }
     }}
   >
     Explain

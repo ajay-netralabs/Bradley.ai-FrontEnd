@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Snackbar, LinearProgress } from '@mui/material';
+import { Box, Button, LinearProgress } from '@mui/material';
 import HorizontalStepper from './components/HorizontalStepper';
 import StepContent from './pages/StepContent';
 import Navbar from './components/Navbar';
@@ -14,8 +14,7 @@ const App: React.FC = () => {
     currentSubStep, setCurrentSubStep,
     currentFurtherSubStep, setCurrentFurtherSubStep,
     visitedSteps, setVisitedSteps,
-    completedSubSteps, setCompletedSubSteps,
-    openSnackbar, setOpenSnackbar
+    completedSubSteps, setCompletedSubSteps
 } = useAppContext();
 
   const handleStepChange = (step: number) => {
@@ -51,7 +50,7 @@ const App: React.FC = () => {
     if (isLastFurtherSubStep) {
       if (isLastSubStep) {
         if (isLastStep) {
-          setOpenSnackbar(true);
+          markCompleted(currentStep, currentSubStep);
         } else {
           setCurrentStep(currentStep + 1);
           setCurrentSubStep(0);
@@ -156,23 +155,27 @@ const App: React.FC = () => {
 
               <StepContent step={currentStep} subStep={currentSubStep} furtherSubStep={currentFurtherSubStep} />
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3, mr: 5.2, ml: 1, mb: 1 }}>
-  <Button
-    sx={{
-      fontFamily: 'Nunito Sans, sans-serif',
-      fontSize: '0.75rem',
-      padding: '2px 10px',
-      minWidth: '10px',
-      maxHeight: '25px',
-      textTransform: 'none',
-    }}
-    variant="outlined"
-    onClick={handleBack}
-    disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 0}
-  >
-    Back
-  </Button>
+  {!(currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
+    <Button
+      sx={{
+        fontFamily: 'Nunito Sans, sans-serif',
+        fontSize: '0.75rem',
+        padding: '2px 10px',
+        minWidth: '10px',
+        maxHeight: '25px',
+        textTransform: 'none','&:focus': {
+                                  outline: 'none',
+                                },
+      }}
+      variant="outlined"
+      onClick={handleBack}
+      disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 0}
+    >
+      Back
+    </Button>
+  )}
 
-  <Box sx={{ display: 'flex', gap: 1 }}>
+  <Box sx={{ display: 'flex', gap: 1, ml: 'auto' }}>
     {currentStep === 4 && currentSubStep === 0 && currentFurtherSubStep === 1 ? (
       <>
         <Button
@@ -182,7 +185,9 @@ const App: React.FC = () => {
             padding: '2px 10px',
             minWidth: '10px',
             maxHeight: '25px',
-            textTransform: 'none',
+            textTransform: 'none','&:focus': {
+                                  outline: 'none',
+                                },
           }}
           variant="outlined"
           onClick={() => {}}
@@ -196,7 +201,9 @@ const App: React.FC = () => {
             padding: '2px 10px',
             minWidth: '10px',
             maxHeight: '25px',
-            textTransform: 'none',
+            textTransform: 'none','&:focus': {
+                                  outline: 'none',
+                                },
           }}
           variant="contained"
           color="primary"
@@ -204,7 +211,7 @@ const App: React.FC = () => {
             setCurrentStep(4);
             setCurrentSubStep(1);
             setCurrentFurtherSubStep(0);
-            markCompleted(4,0);
+            markCompleted(4, 0);
           }}
         >
           Own
@@ -217,7 +224,9 @@ const App: React.FC = () => {
             minWidth: '10px',
             maxHeight: '25px',
             textTransform: 'none',
-            boxShadow: 'none',
+            boxShadow: 'none','&:focus': {
+                                  outline: 'none',
+                                },
           }}
           variant="contained"
           color="primary"
@@ -225,7 +234,7 @@ const App: React.FC = () => {
             setCurrentStep(4);
             setCurrentSubStep(2);
             setCurrentFurtherSubStep(0);
-            markCompleted(4,0);
+            markCompleted(4, 0);
           }}
         >
           Third Party
@@ -233,20 +242,24 @@ const App: React.FC = () => {
       </>
     ) : (
       <>
-        <Button
-          sx={{
-            fontFamily: 'Nunito Sans, sans-serif',
-            fontSize: '0.75rem',
-            padding: '2px 10px',
-            minWidth: '10px',
-            maxHeight: '25px',
-            textTransform: 'none',
-          }}
-          variant="outlined"
-          onClick={() => {}}
-        >
-          Save and Continue Later
-        </Button>
+        {!(currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
+          <Button
+            sx={{
+              fontFamily: 'Nunito Sans, sans-serif',
+              fontSize: '0.75rem',
+              padding: '2px 10px',
+              minWidth: '10px',
+              maxHeight: '25px',
+              textTransform: 'none','&:focus': {
+                                  outline: 'none',
+                                },
+            }}
+            variant="outlined"
+            onClick={() => {}}
+          >
+            Save and Continue Later
+          </Button>
+        )}
         <Button
           sx={{
             fontFamily: 'Nunito Sans, sans-serif',
@@ -256,36 +269,49 @@ const App: React.FC = () => {
             maxHeight: '25px',
             textTransform: 'none',
             boxShadow: 'none',
+            '&:focus': {
+                                  outline: 'none',
+                                },
           }}
           variant="contained"
           color="primary"
-          onClick={handleNext}
+          onClick={() => {
+            if (
+              currentStep === TOTAL_STEPS - 1 &&
+              currentSubStep === steps[currentStep].subSteps - 1 &&
+              currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1
+            ) {
+              markCompleted(currentStep, currentSubStep);
+            } else {
+              handleNext();
+            }
+          }}
         >
-          {currentStep === 1 && currentSubStep === 2 && currentFurtherSubStep === 0
-    ? 'Authorize & Send Request'
-    : currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0
-    ? 'Submit'
-    : currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1
-    ? 'Finish'
-    : 'Next'}
-</Button>
+          {currentStep === TOTAL_STEPS - 1 &&
+          currentSubStep === steps[currentStep].subSteps - 1 &&
+          currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2
+            ? 'Generate Report'
+            : currentStep === TOTAL_STEPS - 1 &&
+              currentSubStep === steps[currentStep].subSteps - 1 &&
+              currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1
+            ? 'Download Report'
+            : currentStep === 1 && currentSubStep === 2 && currentFurtherSubStep === 0
+            ? 'Authorize & Send Request'
+            : currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0
+            ? 'Submit'
+            : 'Next'}
+        </Button>
       </>
     )}
   </Box>
 </Box>
+
 
             </Box>
           </Box>
         </Box>
       </Box>
       <Footer />
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={2000}
-        onClose={() => setOpenSnackbar(false)}
-        message="Done!"
-      />
     </Box>
   );
 };
