@@ -5,8 +5,10 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 // import NotificationsIcon from '@mui/icons-material/Notifications';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 // import LightModeIcon from '@mui/icons-material/LightMode';
+import { useAppContext } from '../AppContext';
 
 const Navbar: React.FC = () => {
+  const { logout } = useAppContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -18,6 +20,7 @@ const Navbar: React.FC = () => {
   };
 
   const handleLogout = () => {
+    logout();
     handleMenuClose();
   };
 
