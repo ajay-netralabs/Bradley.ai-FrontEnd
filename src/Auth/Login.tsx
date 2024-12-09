@@ -5,6 +5,7 @@ import { IoIosLogIn } from 'react-icons/io';
 import { useAppContext } from '../AppContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import bg from "../../public/bg.webp"
 
 const Login: React.FC = () => {
   const { setUser, credentials } = useAppContext();
@@ -84,7 +85,7 @@ const Login: React.FC = () => {
         padding: 4,}}>
             <b>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</b>
           </Typography>
-          <img src="public\cube1-dd27c2c5.webp" alt="Welcome" style={{ width: '100%', 
+          <img src={bg} alt="Welcome" style={{ width: '100%', 
         fontFamily: '"Nunito Sans", sans-serif', }} />
         </Box>
 
