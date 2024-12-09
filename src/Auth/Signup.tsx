@@ -84,7 +84,7 @@ const Signup: React.FC = () => {
             <b>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</b>
           </Typography>
           <img
-            src="src/Auth/cube1-dd27c2c5.webp"
+            src="public/cube1-dd27c2c5.webp"
             alt="Welcome"
             style={{ width: '100%' }}
           />
