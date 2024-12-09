@@ -7,6 +7,7 @@ import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
 import { useAppContext } from '../AppContext';
 import { steps, TOTAL_STEPS } from '../components/steps';
+import { useNavigate } from 'react-router-dom';
 
 const ClientApp: React.FC = () => {
   const {
@@ -14,8 +15,11 @@ const ClientApp: React.FC = () => {
     currentSubStep, setCurrentSubStep,
     currentFurtherSubStep, setCurrentFurtherSubStep,
     visitedSteps, setVisitedSteps,
-    completedSubSteps, setCompletedSubSteps
+    completedSubSteps, setCompletedSubSteps,
+    setUser,
 } = useAppContext();
+
+  const navigate = useNavigate();
 
   const handleStepChange = (step: number) => {
     if (visitedSteps[step][0]) {
@@ -110,6 +114,19 @@ const ClientApp: React.FC = () => {
     return ((currentFurtherSubStep + 1) / totalFurtherSubSteps) * 100;
   };
 
+  const handleSaveAndContinueLater = () => {
+    const progress = {
+      currentStep,
+      currentSubStep,
+      currentFurtherSubStep,
+    };
+    localStorage.setItem('userProgress', JSON.stringify(progress));
+
+    setUser(null);
+
+    navigate('/login');
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', zIndex: 500 }}>
       <Navbar />
@@ -190,7 +207,7 @@ const ClientApp: React.FC = () => {
                                 },
           }}
           variant="outlined"
-          onClick={() => {}}
+          onClick={handleSaveAndContinueLater}
         >
           Save and Continue Later
         </Button>
@@ -255,7 +272,7 @@ const ClientApp: React.FC = () => {
                                 },
             }}
             variant="outlined"
-            onClick={() => {}}
+            onClick={handleSaveAndContinueLater}
           >
             Save and Continue Later
           </Button>

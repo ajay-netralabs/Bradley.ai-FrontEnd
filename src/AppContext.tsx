@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { steps, TOTAL_STEPS } from './components/steps';
 
 interface User {
@@ -20,6 +20,8 @@ interface AppContextProps {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   credentials: { [key in User['role']]: { email: string; password: string } };
+  login: (user: User) => void;
+  logout: () => void;
 }
 
 const defaultCredentials = {
@@ -56,6 +58,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [user, setUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  const login = (user: User) => {
+    setUser(user);
+    localStorage.setItem('user', JSON.stringify(user));
+    // You can also store a token if needed, e.g., localStorage.setItem('token', 'your-token');
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    // You can also handle any token clearing or additional logout logic here
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -72,6 +93,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         user,
         setUser,
         credentials: defaultCredentials,
+        login,
+        logout,
       }}
     >
       {children}
