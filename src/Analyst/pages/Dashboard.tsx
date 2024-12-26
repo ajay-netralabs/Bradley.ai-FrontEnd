@@ -143,12 +143,12 @@ const Dashboard: React.FC = () => {
             }}>
               <CardContent>
                 <Box sx={{
-                  minHeight: '64px',
+                  minHeight: '25px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <Typography sx={{ fontWeight: 'bold', fontSize: '1rem', pb: 1 }}>
+                  <Typography sx={{ fontWeight: 'bold', fontSize: '0.79249rem', pb: 2 }}>
                     <b>{status.title}</b>
                   </Typography>
                 </Box>
@@ -170,8 +170,8 @@ const Dashboard: React.FC = () => {
                       },
                     }}
                   >
-                    <Typography sx={{ fontWeight: 'bold', fontSize: '0.85rem' }}>{project.name}</Typography>
-                    <Typography sx={{ fontSize: '0.75rem', color: 'gray' }}>{project.shortDesc}</Typography>
+                    <Typography sx={{ fontWeight: 'bold', fontSize: '0.75rem' }}>{project.name}</Typography>
+                    <Typography sx={{ fontSize: '0.65rem', color: 'gray' }}>{project.shortDesc}</Typography>
                   </Box>
                 ))}
               </CardContent>
@@ -264,7 +264,7 @@ const Dashboard: React.FC = () => {
             </TableHead>
             <TableBody>
               {paginatedCustomers.map((customer) => (
-                <TableRow key={customer.id} sx={{ backgroundColor: '#fff', borderRadius: '8px', height: '40px' }}>
+                <TableRow key={customer.id} sx={{ backgroundColor: '#fff', borderRadius: '8px', height: '60px' }}>
                   <TableCell sx={{ fontSize: '0.75rem' }}>{customer.user}</TableCell>
                   <TableCell sx={{ fontSize: '0.75rem' }}>{customer.email}</TableCell>
                   <TableCell sx={{ fontSize: '0.75rem' }}>{customer.memberSince}</TableCell>
@@ -291,7 +291,7 @@ const Dashboard: React.FC = () => {
         </Box>
       ) : (
         <Grid container spacing={2} px={2}>
-          {paginatedCustomers.map((customer) => (
+          {filteredCustomers.map((customer) => (
             <Grid item xs={12} sm={6} md={4} key={customer.id}>
               <Card sx={{ boxShadow: 1, borderRadius: '8px', padding: 2 }}>
                 <CardContent>
