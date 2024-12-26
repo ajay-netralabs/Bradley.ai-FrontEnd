@@ -1,28 +1,10 @@
 import React, { useState } from 'react';
 import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  TextField,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  IconButton,
-  ToggleButton,
-  ToggleButtonGroup,
-  Grid,
-  Pagination
+  Box, Typography, Card, CardContent, TextField, Table, TableHead, TableBody,
+  TableRow, TableCell, IconButton, ToggleButton, ToggleButtonGroup, Grid,
+  Pagination, Checkbox
 } from '@mui/material';
-import {
-  Search,
-  TableChart,
-  ViewModule,
-  Edit,
-  Delete
-} from '@mui/icons-material';
+import { Search, TableChart, ViewModule, Edit, Delete } from '@mui/icons-material';
 
 const projectStatuses = [
   {
@@ -77,9 +59,39 @@ const Dashboard: React.FC = () => {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(5);
+  const [selectedCustomers, setSelectedCustomers] = useState<number[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [sortColumn, setSortColumn] = useState<keyof typeof customers[0] | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   const handleViewChange = (_: React.MouseEvent<HTMLElement>, newView: 'table' | 'card') => {
     if (newView) setView(newView);
+  };
+
+  const handleSort = (column: keyof typeof customers[0]) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = event.target.checked;
+    setSelectAll(checked);
+    setSelectedCustomers(checked ? filteredCustomers.map(c => c.id) : []);
+  };
+
+  const handleSelectCustomer = (customerId: number) => {
+    setSelectedCustomers(prev => {
+      const newSelection = prev.includes(customerId)
+        ? prev.filter(id => id !== customerId)
+        : [...prev, customerId];
+      
+      setSelectAll(newSelection.length === filteredCustomers.length);
+      return newSelection;
+    });
   };
 
   const filteredCustomers = customers.filter((customer) =>
@@ -87,89 +99,42 @@ const Dashboard: React.FC = () => {
     customer.email.toLowerCase().includes(search.toLowerCase())
   );
 
+  const sortedCustomers = [...filteredCustomers].sort((a, b) => {
+    if (sortColumn) {
+      if (a[sortColumn] < b[sortColumn]) return sortDirection === 'asc' ? -1 : 1;
+      if (a[sortColumn] > b[sortColumn]) return sortDirection === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
   };
 
-  const totalPages = Math.ceil(filteredCustomers.length / pageSize);
-  const paginatedCustomers = filteredCustomers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const totalPages = Math.ceil(sortedCustomers.length / pageSize);
+  const paginatedCustomers = sortedCustomers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
-    <Box sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      fontFamily: 'Nunito Sans, sans-serif',
-      fontSize: '0.75rem',
-      p: 1,
-      maxWidth: '1200px',
-      margin: '0 auto',
-      width: '100%'
-    }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200..1000&display=swap');
       </style>
-
-      <Typography variant="h6" sx={{
-        mb: 1,
-        px: { xs: '20px', md: '20px' },
-        fontFamily: 'Nunito Sans, sans-serif',
-        fontSize: '0.85rem',
-        fontWeight: 'bold',
-        textAlign: 'left',
-      }}>
+      
+      <Typography variant="h6" sx={{ mb: 1, px: { xs: '20px', md: '20px' }, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'left' }}>
         <h2>Project Status:</h2>
       </Typography>
-
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        pb: '10px',
-        px: { xs: '20px', md: '20px' }
-      }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pb: '10px', px: { xs: '20px', md: '20px' } }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mt: 1 }}>
           {projectStatuses.map((status, index) => (
-            <Card key={index} sx={{
-              flex: 1,
-              padding: 1,
-              textAlign: 'center',
-              backgroundColor: '#f5f5f5',
-              boxShadow: 0,
-              borderRadius: '8px',
-              pb: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'flex-start',
-            }}>
+            <Card key={index} sx={{ flex: 1, padding: 1, textAlign: 'center', backgroundColor: '#f5f5f5', boxShadow: 0, borderRadius: '8px', pb: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
               <CardContent>
-                <Box sx={{
-                  minHeight: '25px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
+                <Box sx={{ minHeight: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Typography sx={{ fontWeight: 'bold', fontSize: '0.79249rem', pb: 2 }}>
                     <b>{status.title}</b>
                   </Typography>
                 </Box>
                 {status.projects.map((project, projectIndex) => (
-                  <Box
-                    key={projectIndex}
-                    onClick={() => {}}
-                    sx={{
-                      backgroundColor: '#fff',
-                      boxShadow: 1,
-                      borderRadius: '8px',
-                      mb: 1,
-                      textAlign: 'left',
-                      padding: 1,
-                      fontSize: '0.8rem',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        boxShadow: 2,
-                      },
-                    }}
-                  >
+                  <Box key={projectIndex} onClick={() => {}} sx={{ backgroundColor: '#fff', boxShadow: 1, borderRadius: '8px', mb: 1, textAlign: 'left', padding: 1, fontSize: '0.8rem', cursor: 'pointer', '&:hover': { boxShadow: 2 } }}>
                     <Typography sx={{ fontWeight: 'bold', fontSize: '0.75rem' }}>{project.name}</Typography>
                     <Typography sx={{ fontSize: '0.65rem', color: 'gray' }}>{project.shortDesc}</Typography>
                   </Box>
@@ -180,22 +145,8 @@ const Dashboard: React.FC = () => {
         </Box>
       </Box>
 
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        px: { xs: '20px', md: '20px' },
-        mt: 3,
-        mb: 1
-      }}>
-        <Typography variant="h6" sx={{
-          flexGrow: 1,
-          mr: 2,
-          fontFamily: 'Nunito Sans, sans-serif',
-          fontSize: '0.85rem',
-          fontWeight: 'bold',
-          textAlign: 'left'
-        }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: { xs: '20px', md: '20px' }, mt: 3, mb: 1 }}>
+        <Typography variant="h6" sx={{ flexGrow: 1, mr: 2, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'left' }}>
           <h2>Customer List:</h2>
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -256,15 +207,41 @@ const Dashboard: React.FC = () => {
           <Table sx={{ minWidth: 600, borderCollapse: 'collapse', border: '1px solid #ddd' }}>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', borderBottom: '1px solid #ddd' }}>User</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderBottom: '1px solid #ddd' }}>Email</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderBottom: '1px solid #ddd' }}>Member Since</TableCell>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectAll}
+                    indeterminate={selectedCustomers.length > 0 && selectedCustomers.length < sortedCustomers.length}
+                    onChange={handleSelectAll}
+                  />
+                </TableCell>
+                {['user', 'email', 'memberSince'].map((column) => (
+                  <TableCell
+                    key={column}
+                    sx={{
+                      fontWeight: 'bold',
+                      borderBottom: '1px solid #ddd',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => handleSort(column as keyof typeof customers[0])}
+                  >
+                    {column.charAt(0).toUpperCase() + column.slice(1)}
+                    {sortColumn === column && (
+                      <span>{sortDirection === 'asc' ? ' ▲' : ' ▼'}</span>
+                    )}
+                  </TableCell>
+                ))}
                 <TableCell sx={{ fontWeight: 'bold', borderBottom: '1px solid #ddd' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {paginatedCustomers.map((customer) => (
                 <TableRow key={customer.id} sx={{ backgroundColor: '#fff', borderRadius: '8px', height: '60px' }}>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedCustomers.includes(customer.id)}
+                      onChange={() => handleSelectCustomer(customer.id)}
+                    />
+                  </TableCell>
                   <TableCell sx={{ fontSize: '0.75rem' }}>{customer.user}</TableCell>
                   <TableCell sx={{ fontSize: '0.75rem' }}>{customer.email}</TableCell>
                   <TableCell sx={{ fontSize: '0.75rem' }}>{customer.memberSince}</TableCell>
@@ -281,17 +258,12 @@ const Dashboard: React.FC = () => {
             </TableBody>
           </Table>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Pagination
-              count={totalPages}
-              page={currentPage}
-              onChange={handlePageChange}
-              size="small"
-            />
+            <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} size="small" />
           </Box>
         </Box>
       ) : (
         <Grid container spacing={2} px={2}>
-          {filteredCustomers.map((customer) => (
+          {sortedCustomers.map((customer) => (
             <Grid item xs={12} sm={6} md={4} key={customer.id}>
               <Card sx={{ boxShadow: 1, borderRadius: '8px', padding: 2 }}>
                 <CardContent>
