@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { steps, TOTAL_STEPS } from './components/steps';
+import { steps, TOTAL_STEPS } from '../components/steps';
 
 interface User {
   role: 'client' | 'analyst';

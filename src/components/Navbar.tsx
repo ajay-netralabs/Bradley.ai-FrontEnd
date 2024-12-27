@@ -5,7 +5,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 // import NotificationsIcon from '@mui/icons-material/Notifications';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 // import LightModeIcon from '@mui/icons-material/LightMode';
-import { useAppContext } from '../AppContext';
+import { useAppContext } from '../Context API/AppContext';
 
 const Navbar: React.FC = () => {
   const { logout } = useAppContext();

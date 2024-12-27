@@ -4,7 +4,7 @@ import Login from './Auth/Login';
 import Signup from './Auth/Signup';
 import ClientApp from './Client/ClientApp';
 import AnalystApp from './Analyst/AnalystApp';
-import { useAppContext } from './AppContext';
+import { useAppContext } from './Context API/AppContext';
 
 const App: React.FC = () => {
   const { user } = useAppContext();

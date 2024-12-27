@@ -5,7 +5,7 @@ import StepContent from './StepContent';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
-import { useAppContext } from '../AppContext';
+import { useAppContext } from '../Context API/AppContext';
 import { steps, TOTAL_STEPS } from '../components/steps';
 import { useNavigate } from 'react-router-dom';
 

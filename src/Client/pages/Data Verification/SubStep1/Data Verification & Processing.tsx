@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, IconButton, Checkbox, Collapse } from '@mui/material'; 
 import { IoEnterOutline } from "react-icons/io5"; 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; 
-import { useAppContext } from '../../../../AppContext'; 
+import { useAppContext } from '../../../../Context API/AppContext'; 
 
 const SubStep1: React.FC = () => { 
 
