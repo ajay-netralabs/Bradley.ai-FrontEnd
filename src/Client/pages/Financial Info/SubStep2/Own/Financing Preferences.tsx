@@ -1,7 +1,8 @@
-import React from 'react';
-import { Box, TextField, Typography, FormControlLabel, Checkbox, FormGroup } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, TextField, Typography, FormControlLabel, Radio, RadioGroup, FormControl } from '@mui/material';
 
 const SubStep2: React.FC = () => {
+  const [selectedOption, setSelectedOption] = useState('');
 
   return (
     <Box
@@ -33,100 +34,100 @@ const SubStep2: React.FC = () => {
       </Typography>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: '160px' }}>
-        
-        
-
-			<Typography
-  sx={{
-    mt: 1,
-    fontFamily: 'Nunito Sans, sans-serif',
-    fontSize: '0.75rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    flex: 0.5,
-  }}
->
-<b>
-    How Would You Prefer To Finance This Project?
-    <br />
-    <span style={{ fontWeight: 'normal' }}>
-      (You must pick one.)
-    </span>
-  </b>
-  <FormGroup
-    row
-    sx={{
-      fontSize: '0.7rem',
-      m: 0,
-      gap: 1,
-      flex: 0.8,
-      flexDirection: 'column',
-    }}
-  >
-    <FormControlLabel
-      control={<Checkbox sx={{ padding: '2px' }} />}
-      label={
         <Typography
           sx={{
+            mt: 1,
             fontFamily: 'Nunito Sans, sans-serif',
-            fontSize: '0.7rem',
+            fontSize: '0.75rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            flex: 0.5,
           }}
         >
-          Pay For The Project (Cash Payments During Construction Period)
+          <b>
+            How Would You Prefer To Finance This Project?
+            <br />
+            <span style={{ fontWeight: 'normal' }}>(You must pick one.)</span>
+          </b>
+          <FormControl component="fieldset" sx={{ flex: 0.8, display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <RadioGroup
+              value={selectedOption}
+              onChange={(e) => setSelectedOption(e.target.value)}
+              sx={{ gap: 1 }}
+            >
+              <FormControlLabel
+                value="cash"
+                control={<Radio sx={{ padding: '2px' }} />}
+                label={
+                  <Typography
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Pay For The Project (Cash Payments During Construction Period)
+                  </Typography>
+                }
+              />
+              <FormControlLabel
+                value="finance"
+                control={<Radio sx={{ padding: '2px' }} />}
+                label={
+                  <Typography
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Finance The Project (You Own & Operate The DER System And Start Payments When System Is Operating)
+                  </Typography>
+                }
+              />
+              {/* <FormControlLabel
+                value="third-party"
+                control={<Radio sx={{ padding: '2px' }} />}
+                label={
+                  <Typography
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Have a 3rd Party Own & Operate The DER System And You Contract For Energy Supply Through ESA/PPA
+                  </Typography>
+                }
+              /> */}
+              <FormControlLabel
+                value="other"
+                control={<Radio sx={{ padding: '2px' }} />}
+                label={
+                  <Typography
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Explore Other Options
+                  </Typography>
+                }
+              />
+            </RadioGroup>
+          </FormControl>
         </Typography>
-      }
-    />
-    <FormControlLabel
-      control={<Checkbox sx={{ padding: '2px' }} />}
-      label={
-        <Typography
-          sx={{
-            fontFamily: 'Nunito Sans, sans-serif',
-            fontSize: '0.7rem',
-          }}
-        >
-          Finance The Project (You Own & Operate The DER System And Start Payments When System Is Operating)
-        </Typography>
-      }
-    />
-    <FormControlLabel
-      control={<Checkbox sx={{ padding: '2px' }} />}
-      label={
-        <Typography
-          sx={{
-            fontFamily: 'Nunito Sans, sans-serif',
-            fontSize: '0.7rem',
-          }}
-        >
-          Have a 3rd Party Own & Operate The DER System And You Contract For Energy Supply Through ESA/PPA
-        </Typography>
-      }
-    />
-    <FormControlLabel
-      control={<Checkbox sx={{ padding: '2px' }} />}
-      label={
-        <Typography
-          sx={{
-            fontFamily: 'Nunito Sans, sans-serif',
-            fontSize: '0.7rem',
-          }}
-        >
-          Explore Other Options
-        </Typography>
-      }
-    />
-  </FormGroup>
-</Typography>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Please Specify Other Financing: </b>(Optional)</Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}>
+            <b>Please Specify Other Financing: </b>(Optional)
+          </Typography>
           <TextField
-            variant="outlined" 
-            size="small" 
+            variant="outlined"
+            size="small"
             type="text"
-            placeholder='Describe Your Preferred Financing Method Here...' 
+            placeholder='Describe Your Preferred Financing Method Here...'
+            disabled={selectedOption !== 'other'}
             sx={{
-              flex: 0.68, fontFamily: 'Nunito Sans, sans-serif',
+              flex: 0.68,
+              fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
               '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
@@ -137,9 +138,8 @@ const SubStep2: React.FC = () => {
             }}
           />
         </Box>
-</Box>
-
       </Box>
+    </Box>
   );
 };
 

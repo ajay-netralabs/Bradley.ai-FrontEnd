@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, TextField, Typography, Radio, RadioGroup, FormControlLabel, MenuItem, Switch, Select, Tooltip } from '@mui/material';
 
 const SubStep2: React.FC = () => {
@@ -6,32 +6,43 @@ const SubStep2: React.FC = () => {
   const [annualSteamUsage, setAnnualSteamUsage] = useState<number | null>(null);
   const [condensateReturn, setCondensateReturn] = useState<number | null>(null);
   const [condensateReturnEfficiency, setCondensateReturnEfficiency] = useState<number | null>(null);
-  const [newWaterGallonsPerMonth, setNewWaterGallonsPerMonth] = useState<number | null>(null);
+  const [returnFLOW, setReturnFLOW] = useState<number | null>(null);
+  const [returnMass, setReturnMass] = useState<number | null>(null);
+  const [makeUpWater, setMakeUpWater] = useState<number | null>(null);
 
-  const calculateCondensateReturnEfficiency = () => {
-    if (annualSteamUsage !== null && condensateReturn !== null) {
-      const efficiency = (condensateReturn / annualSteamUsage) * 100;
-      setCondensateReturnEfficiency(efficiency);
+  useEffect(() => {
+    if (annualSteamUsage !== null && condensateReturn !== null && annualSteamUsage > 0) {
+      setCondensateReturnEfficiency((condensateReturn / annualSteamUsage) * 100);
     } else {
       setCondensateReturnEfficiency(null);
     }
-  };
+  }, [annualSteamUsage, condensateReturn]);
 
   const handleAnnualSteamUsageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value ? parseFloat(event.target.value) : null;
     setAnnualSteamUsage(value);
-    calculateCondensateReturnEfficiency();
+    // calculateCondensateReturnEfficiency();
   };
 
   const handleCondensateReturnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value ? parseFloat(event.target.value) : null;
     setCondensateReturn(value);
-    calculateCondensateReturnEfficiency();
+    // calculateCondensateReturnEfficiency();
   };
 
-  const handleNewWaterGallonsPerMonthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleReturnFLOWChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value ? parseFloat(event.target.value) : null;
-    setNewWaterGallonsPerMonth(value);
+    setReturnFLOW(value);
+  };
+
+  const handleReturnMassChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value ? parseFloat(event.target.value) : null;
+    setReturnMass(value);
+  };
+
+  const handleMakeUpWaterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value ? parseFloat(event.target.value) : null;
+    setMakeUpWater(value);
   };
 
   return (
@@ -214,16 +225,60 @@ const SubStep2: React.FC = () => {
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}>
-                      <b>New Water Added:</b> (gallons/month)
+                      <b>Return FLOW:</b> (in gallons/minute)
                     </Typography>
-                    <Tooltip title="Enter the amount of new water added in gallons per month" placement='top-end' arrow>
+                    <Tooltip title="Enter the amount of return FLOW in gallons per minute" placement='top-end' arrow>
                       <TextField
                         variant="outlined"
                         size="small"
                         type="number"
-                        placeholder='Enter gallons per month'
-                        value={newWaterGallonsPerMonth === null ? '' : newWaterGallonsPerMonth}
-                        onChange={handleNewWaterGallonsPerMonthChange}
+                        placeholder='Enter gallons per minute'
+                        value={returnFLOW === null ? '' : returnFLOW}
+                        onChange={handleReturnFLOWChange}
+                        sx={{
+                          flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
+                          fontSize: '0.7rem',
+                          '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+                          '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }
+                        }}
+                      />
+                    </Tooltip>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}>
+                      <b>Return Mass:</b> (in K)
+                    </Typography>
+                    <Tooltip title="Enter the temperature of the average condensate that is returned at a specific atmospheric pressure in K" placement='top-end' arrow>
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        type="number"
+                        placeholder='Enter return mass (temperature) in K'
+                        value={returnMass === null ? '' : returnMass}
+                        onChange={handleReturnMassChange}
+                        sx={{
+                          flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
+                          fontSize: '0.7rem',
+                          '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+                          '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }
+                        }}
+                      />
+                    </Tooltip>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}>
+                      <b>Make up water:</b> (in gallons/minute)
+                    </Typography>
+                    <Tooltip title="Enter the amount of make up water in gallons per minute added to steam loop" placement='top-end' arrow>
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        type="number"
+                        placeholder='Enter gallons per minute'
+                        value={makeUpWater === null ? '' : makeUpWater}
+                        onChange={handleMakeUpWaterChange}
                         sx={{
                           flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
                           fontSize: '0.7rem',

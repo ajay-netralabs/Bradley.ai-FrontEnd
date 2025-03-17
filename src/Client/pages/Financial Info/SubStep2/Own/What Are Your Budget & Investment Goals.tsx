@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Box, TextField, Typography, IconButton, Select, MenuItem, FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { Box, TextField, Typography, IconButton, Select, MenuItem, FormControlLabel, Radio, RadioGroup, Tooltip } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const SubStep2: React.FC = () => {
   const [yearBudget, setyearBudget] = useState<number[]>([0, 1, 2]);
+  const [availableFunds, setAvailableFunds] = useState<string>('no');
 
   const handleAddSection = () => {
     setyearBudget([...yearBudget, yearBudget.length]);
@@ -45,59 +46,48 @@ const SubStep2: React.FC = () => {
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: '160px' }}>
         
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography
-            sx={{
-              fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.75rem',
-              minWidth: '200px',
-              flex: 0.5,
-            }}
-          >
-            <b>Maximum Acceptable Payback Period:</b><br />
-						(Select this only if you're going to own/finance the DER ownership system.)
-          </Typography>
-          <Select
-            size="small"
-            defaultValue="default"
-            sx={{
-              flex: 0.5,
-              fontFamily: 'Nunito Sans, sans-serif',
-							marginLeft: 'auto',
-              fontSize: '0.7rem',
-              height: '40px',
-              '& .MuiInputBase-root': { padding: '0 6px' },
-              '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' },
-            }}
-          >
-            <MenuItem value="default" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              Select
-            </MenuItem>
-            <MenuItem value="<5" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              Less Than 5 Years
-            </MenuItem>
-            <MenuItem value="5-10" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              5 - 10 Years
-            </MenuItem>
-						<MenuItem value=">10" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              More Than 10 Years
-            </MenuItem>
-          </Select>
-        </Box>
+        
 
-				<Typography sx={{ mt: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flex: 0.5 }}>
-  <b>Do You Have Available Funds For This Project?</b>
-  <RadioGroup row sx={{ fontSize: '0.7rem', m: 0, gap: 5.5, flex: 0.69 }}>
-    <FormControlLabel value="yes" control={<Radio sx={{ padding: '2px' }} />} label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Yes</Typography>} />
-    <FormControlLabel value="no" control={<Radio sx={{ padding: '2px' }} />} label={<Typography sx={{  fontFamily: 'Nunito Sans, sans-serif',fontSize: '0.7rem' }}>No</Typography>} />
+				<Typography 
+  sx={{ 
+    mt: 1, 
+    fontFamily: 'Nunito Sans, sans-serif', 
+    fontSize: '0.75rem', 
+    display: 'flex', 
+    justifyContent: 'space-between', 
+    alignItems: 'center' 
+  }}
+>
+  <Box sx={{ width: '413px', flexShrink: 0 }}> 
+    <b>Do you have a current budget (this year) to invest in carbon reduction, energy resiliency or cost reductions that could be applied to this project?</b>
+  </Box>
+  
+  <RadioGroup 
+    row 
+    sx={{ fontSize: '0.7rem', m: 0, gap: 5.5, flexShrink: 0, width: '440px' }} 
+    value={availableFunds} 
+    onChange={(e) => setAvailableFunds(e.target.value)}
+  >
+    <FormControlLabel 
+      value="yes" 
+      control={<Radio sx={{ padding: '2px' }} />} 
+      label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Yes</Typography>} 
+    />
+    <FormControlLabel 
+      value="no" 
+      control={<Radio sx={{ padding: '2px' }} />} 
+      label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>No</Typography>} 
+    />
   </RadioGroup>
 </Typography>
+
 
 <Box
   sx={{
     display: 'flex',
     alignItems: 'center',
     gap: 1,
+    opacity: availableFunds !== 'yes' ? 0.5 : 1,
   }}
 >
   <Typography
@@ -127,6 +117,7 @@ const SubStep2: React.FC = () => {
         size="small"
         type="number"
         placeholder={`Year ${index + 1}`}
+        disabled={availableFunds !== 'yes'}
         sx={{
           flex: 1,
           fontFamily: 'Nunito Sans, sans-serif',
@@ -144,6 +135,7 @@ const SubStep2: React.FC = () => {
       <IconButton
         onClick={handleAddSection}
         color="primary"
+        disabled={availableFunds !== 'yes'}
         sx={{ p: 0, '&:focus': {
       outline: 'none',
     } }}
@@ -155,7 +147,7 @@ const SubStep2: React.FC = () => {
         sx={{ p: 0, '&:focus': {
       outline: 'none',
     } }}
-        disabled={yearBudget.length === 1}
+        disabled={availableFunds !== 'yes' || yearBudget.length === 1}
       >
         <DeleteIcon fontSize="small" />
       </IconButton>
@@ -163,6 +155,50 @@ const SubStep2: React.FC = () => {
   </Box>
 </Box>
 
+<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+<Typography
+  sx={{
+    fontFamily: 'Nunito Sans, sans-serif',
+    fontSize: '0.75rem',
+    minWidth: '200px',
+    flex: 0.5,
+  }}
+>
+  <Tooltip title="The average range for DER simple paybacks is 7-15 years." placement="bottom-start" arrow>
+    <span>
+      <b>Preferred Simple Payback in Years:</b><br />
+      (Select this only if you're going to own/finance the DER ownership system.)
+    </span>
+  </Tooltip>
+</Typography>
+
+          <Select
+            size="small"
+            defaultValue="default"
+            sx={{
+              flex: 0.5,
+              fontFamily: 'Nunito Sans, sans-serif',
+							marginLeft: 'auto',
+              fontSize: '0.7rem',
+              height: '40px',
+              '& .MuiInputBase-root': { padding: '0 6px' },
+              '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' },
+            }}
+          >
+            <MenuItem value="default" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
+              Select
+            </MenuItem>
+            <MenuItem value="<5" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
+              Less Than 5 Years
+            </MenuItem>
+            <MenuItem value="5-10" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
+              5 - 10 Years
+            </MenuItem>
+						<MenuItem value=">10" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
+              More Than 10 Years
+            </MenuItem>
+          </Select>
+        </Box>
 
       </Box>
     </Box>

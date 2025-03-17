@@ -11,7 +11,7 @@ const SubStep2: React.FC = () => {
         @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
       </style>
       <Typography variant="h6" sx={{ mb: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'center' }}>
-        <h2>Existing Energy Contracts - II</h2>
+        <h2>Existing Power Purchase Agreement (PPA) for Combined Heat and/or Power (CHP) Contracts – III</h2>
       </Typography>
       
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
@@ -19,7 +19,7 @@ const SubStep2: React.FC = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <FormControlLabel
             control={<Switch checked={showSteam} onChange={() => setShowSteam(!showSteam)} size="small" />}
-            label="Do you have any existing Power Purchase Agreements (PPAs)?"
+            label="Do you have any existing Power Purchase Agreements (PPAs) for thermal energy or Combined Heat and Power (CHP)?"
             sx={{
               '& .MuiFormControlLabel-label': {
                 fontFamily: 'Nunito Sans, sans-serif',
@@ -37,49 +37,12 @@ const SubStep2: React.FC = () => {
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px' }}>
 
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>PPA Provider:</b></Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Rate: </b>(In $/kWh Or $/therm)</Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="text"
-            placeholder='Enter Provider Name' 
-            sx={{
-              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.7rem',
-              '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
-              '& .MuiInputBase-input::placeholder': {
-                fontFamily: 'Nunito Sans, sans-serif',
-                fontSize: '0.7rem',
-              }
-            }}
-          />
-        </Box>
-
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>PPA Term Start Date:</b></Typography>
-          <TextField
-            variant="outlined" 
-            size="small" 
-            type="date"
-            sx={{
-              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.7rem',
-              '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
-              '& .MuiInputBase-input::placeholder': {
-                fontFamily: 'Nunito Sans, sans-serif',
-                fontSize: '0.7rem',
-              }
-            }}
-          />
-        </Box>
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>PPA End Date:</b></Typography>
-          <TextField
-            variant="outlined" 
-            size="small" 
-            type="date"
+            placeholder='Input' 
             sx={{
               flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
@@ -93,12 +56,12 @@ const SubStep2: React.FC = () => {
           />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>PPA Rate (Initial Year): </b>(Per kWh)</Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Escalator: </b>(in %)</Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="number"
-            placeholder='Rate' 
+            placeholder='Input' 
             sx={{
               flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
@@ -112,12 +75,12 @@ const SubStep2: React.FC = () => {
           />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>PPA Escalation Rate: </b>(In %)</Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Term: </b>(In Years)</Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="number"
-            placeholder='Rate' 
+            placeholder='Input' 
             sx={{
               flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
@@ -146,7 +109,7 @@ const SubStep2: React.FC = () => {
             }}
           >
             <i><b>* </b>If <b>Yes</b>, please provide details in the fields or upload the agreement and Bradley will autopopulate the fields for you.</i><br />
-            <i><b>** </b>If <b>No</b>, Bradley will assume you are on the standard offer rate from the regulated electric utility and will gather data from the utility tariff.</i>
+            {/* <i><b>** </b>If <b>No</b>, Bradley will assume you are on the standard offer rate from the regulated electric utility and will gather data from the utility tariff.</i> */}
           </Typography>
         </Box>
         </Box>

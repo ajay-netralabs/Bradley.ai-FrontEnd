@@ -5,6 +5,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 const SubStep3: React.FC = () => { 
   const [investmentAmounts, setinvestmentAmounts] = useState<number[]>([0, 1, 2]);
+  const [financeOption, setFinanceOption] = useState('default');
+  const [financeDetails, setFinanceDetails] = useState('');
 
   const handleAddSection = () => {
     setinvestmentAmounts([...investmentAmounts, investmentAmounts.length]);
@@ -137,33 +139,61 @@ const SubStep3: React.FC = () => {
 </Box>
 
 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-  <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}>
-		<b>How would you prefer to finance your DER system?</b>
-  </Typography>
-  <Select
-            size="small"
-            variant="outlined"
-            defaultValue="Option 1"
-            sx={{
-              flex: 0.448,
-              fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.7rem',
-              height: '40px',
-              '& .MuiInputBase-root': { padding: '0 6px' },
-              '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' },
-            }}
-          >
-            <MenuItem value="Option 1" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Cash Purchase</MenuItem>
-            <MenuItem value="Option 2" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Loan</MenuItem>
-            <MenuItem value="Option 3" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Power Purchase Agreement (PPA)</MenuItem>
-            <MenuItem value="Option 4" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Lease</MenuItem>
-						<MenuItem value="Option 5" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Other</MenuItem>
-          </Select>
-</Box>
+            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}>
+              <b>How would you prefer to finance your DER system?</b>
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1, flex: 0.448 }}>
+              <Select
+                size="small"
+                variant="outlined"
+                value={financeOption}
+                onChange={(e) => setFinanceOption(e.target.value)}
+                sx={{
+                  flex: financeOption !== "default" ? 0.5 : 1,
+                  fontFamily: 'Nunito Sans, sans-serif',
+                  fontSize: '0.7rem',
+                  height: '40px',
+                  '& .MuiInputBase-root': { padding: '0 6px' },
+                  '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' },
+                }}
+              >
+                <MenuItem value="default" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select</MenuItem>
+                <MenuItem value="Cash Purchase" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Cash Purchase</MenuItem>
+                <MenuItem value="Loan" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Loan</MenuItem>
+                <MenuItem value="Power Purchase Agreement (PPA)" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Power Purchase Agreement (PPA)</MenuItem>
+                <MenuItem value="Lease" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Lease</MenuItem>
+                <MenuItem value="Other" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Other</MenuItem>
+              </Select>
+              {financeOption !== "default" && (
+                <TextField
+                  size="small"
+                  variant="outlined"
+                  type="number"
+                  placeholder="Enter amount in USD"
+                  value={financeDetails}
+                  onChange={(e) => setFinanceDetails(e.target.value)}
+                  sx={{
+                    flex: 0.5,
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.7rem',
+                    '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+                    '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
+                    '& .MuiInputBase-input::placeholder': {
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    },
+                  }}
+                  InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      }}
+                />
+              )}
+            </Box>
+          </Box>
         </Box>
       </Box>
-    </Box> 
-  ); 
-}; 
+    </Box>
+  );
+};
 
 export default SubStep3;

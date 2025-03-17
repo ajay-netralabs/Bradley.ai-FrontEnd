@@ -37,6 +37,25 @@ const SubStep2: React.FC = () => {
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px' }}>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Name of 3rd Party Supplier: </b>(Optional)</Typography>
+          <TextField
+            variant="outlined" 
+            size="small" 
+            type="text"
+            placeholder='Input'
+            sx={{
+              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
+              fontSize: '0.7rem',
+              '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
+              '& .MuiInputBase-input::placeholder': {
+                fontFamily: 'Nunito Sans, sans-serif',
+                fontSize: '0.7rem',
+              }
+            }}
+          />
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Contract End Date:</b></Typography>
           <TextField
             variant="outlined" 
@@ -55,12 +74,12 @@ const SubStep2: React.FC = () => {
           />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Early Termination Fee: </b>(In $)</Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Early Termination Fee: </b>(If any, in $)</Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="number"
-            placeholder='Inout' 
+            placeholder='Input or Leave Blank if None' 
             sx={{
               flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
@@ -74,12 +93,12 @@ const SubStep2: React.FC = () => {
           />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Annual Electricity Usage :</b>(In MWh)</Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Annual Electricity Take or Pay Amt.:</b> (In kWh)</Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="number"
-            placeholder='Enter Usage' 
+            placeholder='Enter Amount in kWh' 
             sx={{
               flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
@@ -92,7 +111,7 @@ const SubStep2: React.FC = () => {
             }}
           />
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Monthly Gas Consumption:</b></Typography>
           <TextField
             variant="outlined" 
@@ -110,7 +129,7 @@ const SubStep2: React.FC = () => {
               }
             }}
           />
-        </Box>
+        </Box> */}
         </Box>
       </Box>
               
