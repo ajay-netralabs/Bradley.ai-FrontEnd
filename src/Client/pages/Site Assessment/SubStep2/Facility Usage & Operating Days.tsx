@@ -13,6 +13,28 @@ const SubStep2: React.FC = () => {
     setDaysOfOperation(event.target.value as string[]);
   };
 
+  const dayAbbreviations: { [key: string]: string } = { Monday: "Mon", Tuesday: "Tue", Wednesday: "Wed", Thursday: "Thu", Friday: "Fri", Saturday: "Sat", Sunday: "Sun" };
+  
+  const getContinuousDaysRange = (days: string[]): string => {
+    if (days.length < 2) return "";
+    
+    const sortedDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const selectedIndexes = days.map(day => sortedDays.indexOf(day)).sort((a, b) => a - b);
+    
+    let isContinuous = true;
+    for (let i = 1; i < selectedIndexes.length; i++) {
+      if (selectedIndexes[i] !== selectedIndexes[i - 1] + 1) {
+        isContinuous = false;
+        break;
+      }
+    }
+    
+    return isContinuous
+      ? `(${dayAbbreviations[days[0]]} - ${dayAbbreviations[days[days.length - 1]]})`
+      : "";
+  };
+
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", p: 1, pr: 4, pl: 1, pt: 1 }}>
       <style>
@@ -112,7 +134,7 @@ const SubStep2: React.FC = () => {
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, justifyContent: "center" }}>
             <Typography sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", flex: 0.3 }}>
-              <b>Hours of Operation:</b>
+              <b>Hours of Operation:</b> {getContinuousDaysRange(daysOfOperation)}
             </Typography>
             <TextField
               variant="outlined"

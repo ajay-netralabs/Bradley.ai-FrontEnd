@@ -35,14 +35,14 @@ const SubStep2: React.FC = () => {
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px' }}>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>How many tons of chilled water capacity do you have at the facility?</b>{/*  (in Tons) */}</Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>How many tons of chilled water capacity do you have at the facility?</b>{/*  (in Tons) */}</Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="number"
             placeholder='Chilled water capacity at facility (in Tons)' 
             sx={{
-              flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
+              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
               '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
@@ -55,14 +55,14 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>How many cooling ton hours used annually?</b></Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>How many cooling ton hours used annually?</b></Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="number"
             placeholder='Chilled water ton hours annually' 
             sx={{
-              flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
+              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
               '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
@@ -76,14 +76,14 @@ const SubStep2: React.FC = () => {
 
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Chilled Water Temperature leaving the plant:</b></Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Chilled Water Temperature leaving the plant:</b></Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="number"
             placeholder='Enter Temperature' 
             sx={{
-              flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
+              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
               '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
@@ -97,14 +97,14 @@ const SubStep2: React.FC = () => {
 
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Additional Chilled Water Demand:</b></Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Additional Chilled Water Demand:</b></Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="number" 
             placeholder="Optional (Tons)"
             sx={{
-              flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
+              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
               '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
@@ -117,14 +117,14 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Chilled water temperature returning to the plant:</b></Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Chilled water temperature returning to the plant:</b></Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="number" 
             placeholder="Enter chilled water temperature returning to the plant"
             sx={{
-              flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
+              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
               '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
@@ -137,14 +137,14 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>CW pumps HP size and number of pumps:</b></Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>CW pumps HP size and number of pumps:</b></Typography>
           <TextField
             variant="outlined" 
             size="small" 
             type="number" 
             placeholder="Enter chilled water temperature pump size in HP"
             sx={{
-              flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
+              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
               '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
