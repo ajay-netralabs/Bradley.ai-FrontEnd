@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Box, TextField, Typography, FormControlLabel, Switch } from '@mui/material';
+import { Box, TextField, Typography, FormControlLabel, Switch, InputAdornment, Tooltip, RadioGroup, Radio } from '@mui/material';
 
 const SubStep2: React.FC = () => { 
 
   const [showSteam, setShowSteam] = useState(false);
+  const [condensate, setCondensate] = useState<string>('no');
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -17,6 +18,7 @@ const SubStep2: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Tooltip title="Steam contracts are a third-party agreement to sell therms (in MLBs of steam) to you with pre-agreed upon units of energy (min/max), pricing per unit of energy and escalators. Knowing these commitments will help Bradley propose the most optimized DER recommendation to match to your priorities. Steam contracts are rare, but steam systems like CONED in NY, Baltimore City Maryland, Atlantic City NJ, and Las Vegas NV are good examples where large steam users can access third party contracts for steam." placement='right-start' arrow>
           <FormControlLabel
             control={<Switch checked={showSteam} onChange={() => setShowSteam(!showSteam)} size="small" />}
             label="Do you have any existing Steam Contracts?"
@@ -26,7 +28,7 @@ const SubStep2: React.FC = () => {
                 fontSize: '0.9rem'
               }
             }}
-          />
+          /></Tooltip>
 
           </Box>
           
@@ -37,12 +39,15 @@ const SubStep2: React.FC = () => {
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px' }}>
 
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Rate: </b>(In $/MMBtu Or Other Unit)</Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Rate: </b>(In MLBs of steam)</Typography>
           <TextField
             variant="outlined" 
             size="small" 
-            type="text"
-            placeholder='Input' 
+            type="number"
+            placeholder='Enter Rate in USD' 
+            InputProps={{
+              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            }}
             sx={{
               flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
@@ -58,24 +63,39 @@ const SubStep2: React.FC = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Escalator: </b>(in %)</Typography>
           <TextField
-            variant="outlined" 
-            size="small" 
-            type="number"
-            placeholder='Input' 
-            sx={{
-              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.7rem',
-              '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
-              '& .MuiInputBase-input::placeholder': {
-                fontFamily: 'Nunito Sans, sans-serif',
-                fontSize: '0.7rem',
-              }
-            }}
-          />
+  variant="outlined"
+  size="small"
+  type="number"
+  placeholder="Enter percentage"
+  InputProps={{
+    endAdornment: <InputAdornment position="end">%</InputAdornment>,
+  }}
+  inputProps={{
+    min: 1,
+    max: 9
+  }}
+  onChange={(e) => {
+    let value = parseInt(e.target.value, 10);
+    if (value < 1) value = 1;
+    if (value > 9) value = 9;
+    e.target.value = value.toString();
+  }}
+  sx={{
+    flex: 0.5,
+    fontFamily: "Nunito Sans, sans-serif",
+    fontSize: "0.7rem",
+    "& .MuiInputBase-root": { height: "40px", padding: "0 6px" },
+    "& input": { padding: 0, fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" },
+    "& .MuiInputBase-input::placeholder": {
+      fontFamily: "Nunito Sans, sans-serif",
+      fontSize: "0.7rem",
+    },
+  }}
+/>
+
         </Box>
 				<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Offtake Requirements:</b></Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Offtake Requirements:</b><br />(Required amount of offtake per your agreement, typically narrated as the minimum amount of MLBs)</Typography>
           <TextField
             variant="outlined" 
             size="small" 
@@ -94,24 +114,52 @@ const SubStep2: React.FC = () => {
           />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Condensate Return Percentage: </b>(Optional)</Typography>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.514 }}><b>Contract Requirements for Return of Condensate:</b></Typography>
+          <RadioGroup 
+              row 
+              sx={{ flex: 0.5, gap: 5.5 }} 
+              value={condensate} 
+              onChange={(e) => setCondensate(e.target.value)}
+            >
+              <FormControlLabel 
+                value="yes" 
+                control={<Radio sx={{ padding: '2px' }} />} 
+                label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Yes</Typography>} 
+              />
+              <FormControlLabel 
+                value="no" 
+                control={<Radio sx={{ padding: '2px' }} />} 
+                label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>No</Typography>} 
+              />
+            </RadioGroup>
+        </Box>
+        {condensate === "yes" && (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Typography sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", minWidth: "150px", flex: 0.5 }}>
+            <b>What Percentage of Condensate is Required to be Returned? </b>(in %)
+          </Typography>
           <TextField
-            variant="outlined" 
-            size="small" 
+            variant="outlined"
+            size="small"
             type="number"
-            placeholder='Input' 
+            placeholder="Enter percentage"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">%</InputAdornment>,
+            }}
             sx={{
-              flex: 0.5, fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.7rem',
-              '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
-              '& .MuiInputBase-input::placeholder': {
-                fontFamily: 'Nunito Sans, sans-serif',
-                fontSize: '0.7rem',
-              }
+              flex: 0.5,
+              fontFamily: "Nunito Sans, sans-serif",
+              fontSize: "0.7rem",
+              "& .MuiInputBase-root": { height: "40px", padding: "0 6px" },
+              "& input": { padding: 0, fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" },
+              "& .MuiInputBase-input::placeholder": {
+                fontFamily: "Nunito Sans, sans-serif",
+                fontSize: "0.7rem",
+              },
             }}
           />
         </Box>
+      )}
         </Box>
       </Box>
               
@@ -128,7 +176,7 @@ const SubStep2: React.FC = () => {
             }}
           >
             <i><b>* </b>If <b>Yes</b>, please provide details in the fields or upload the agreement and Bradley will autopopulate the fields for you.</i><br />
-            <i><b>** </b>If <b>No</b>, Bradley will assume you are on the standard offer rate from the regulated electric utility and will gather data from the utility tariff.</i>
+            {/* <i><b>** </b>If <b>No</b>, Bradley will assume you are on the standard offer rate from the regulated electric utility and will gather data from the utility tariff.</i> */}
           </Typography>
         </Box>
         </Box>
