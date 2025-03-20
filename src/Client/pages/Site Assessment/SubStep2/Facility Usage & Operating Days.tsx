@@ -17,10 +17,10 @@ const SubStep2: React.FC = () => {
   
   const getContinuousDaysRange = (days: string[]): string => {
     if (days.length < 2) return "";
-    
+  
     const sortedDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const selectedIndexes = days.map(day => sortedDays.indexOf(day)).sort((a, b) => a - b);
-    
+  
     let isContinuous = true;
     for (let i = 1; i < selectedIndexes.length; i++) {
       if (selectedIndexes[i] !== selectedIndexes[i - 1] + 1) {
@@ -28,11 +28,11 @@ const SubStep2: React.FC = () => {
         break;
       }
     }
-    
+  
     return isContinuous
-      ? `(${dayAbbreviations[days[0]]} - ${dayAbbreviations[days[days.length - 1]]})`
+      ? `(${dayAbbreviations[sortedDays[selectedIndexes[0]]]} - ${dayAbbreviations[sortedDays[selectedIndexes[selectedIndexes.length - 1]]]})`
       : "";
-  };
+  };  
 
 
   return (
@@ -79,27 +79,27 @@ const SubStep2: React.FC = () => {
             </Select>
           </Box>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-  <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}>
-        <b>Facility Details:</b>
-  </Typography>
-  <TextField
-            variant="outlined" 
-            size="small" 
-            type="text" 
-                        placeholder='Provide any additional information regarding your facility.'
-            sx={{
-              flex: 0.448, fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.7rem',
-              '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
-                            '& .MuiInputBase-input::placeholder': {
-                fontFamily: 'Nunito Sans, sans-serif',
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
+            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}>
+              <b>Facility Details:</b>
+            </Typography>
+            <TextField
+              variant="outlined" 
+              size="small" 
+              type="text" 
+              placeholder='Provide any additional information regarding your facility.'
+              sx={{
+                flex: 0.448, fontFamily: 'Nunito Sans, sans-serif',
                 fontSize: '0.7rem',
-              }
-            }}
-          />
-</Box>
+                '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+                '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
+                '& .MuiInputBase-input::placeholder': {
+                  fontFamily: 'Nunito Sans, sans-serif',
+                  fontSize: '0.7rem',
+                }
+              }}
+            />
+          </Box>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, justifyContent: "center" }}>
             <Typography sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", flex: 0.3 }}>
@@ -132,25 +132,35 @@ const SubStep2: React.FC = () => {
             </Select>
           </Box>
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, justifyContent: "center" }}>
-            <Typography sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", flex: 0.3 }}>
-              <b>Hours of Operation:</b> {getContinuousDaysRange(daysOfOperation)}
-            </Typography>
-            <TextField
-              variant="outlined"
-              size="small"
-              type="text"
-              placeholder="Provide the HVAC operating hours of the building."
-              sx={{
-                flex: 0.448,
-                fontFamily: "Nunito Sans, sans-serif",
-                fontSize: "0.7rem",
-                "& .MuiInputBase-root": { height: "40px", padding: "0 6px" },
-                "& input": { padding: 0, fontFamily: "Nunito Sans, sans-serif", fontSize: "0.8rem" },
-                "& .MuiInputBase-input::placeholder": { fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" },
-              }}
-            />
-          </Box>
+          {daysOfOperation.length > 0 && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, justifyContent: "center"}}>
+              <Typography sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", flex: 0.3 }}>
+                <b>Hours of Operation:</b> {getContinuousDaysRange(daysOfOperation)}
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'nowrap', justifyContent: 'center', flex: 0.448}}>
+                {daysOfOperation.sort((a, b) => {
+                  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                  return daysOfWeek.indexOf(a) - daysOfWeek.indexOf(b);
+                }).map((day) => (
+                  <TextField
+                    key={day}
+                    variant="outlined"
+                    size="small"
+                    type="text"
+                    placeholder={dayAbbreviations[day]}
+                    sx={{
+                      fontFamily: "Nunito Sans, sans-serif",
+                      fontSize: "0.7rem",
+                      "& .MuiInputBase-root": { height: "40px", padding: "0 6px" },
+                      "& input": { padding: 0, fontFamily: "Nunito Sans, sans-serif", fontSize: "0.8rem" },
+                      "& .MuiInputBase-input::placeholder": { fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" },
+                      flex: `calc(${1 / daysOfOperation.length})`,
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>
