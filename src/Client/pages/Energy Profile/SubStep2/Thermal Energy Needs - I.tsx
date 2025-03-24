@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Typography, Radio, RadioGroup, FormControlLabel, MenuItem, Switch, Select, Tooltip } from '@mui/material';
+import { Box, TextField, Typography, FormControlLabel, MenuItem, Switch, Select, Tooltip } from '@mui/material';
 
 const SubStep2: React.FC = () => {
   const [showSteam, setShowSteam] = useState(false);
@@ -144,41 +144,25 @@ const SubStep2: React.FC = () => {
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}>
                       <b>Steam Usage Consistency:</b>
                     </Typography>
-                    <RadioGroup
-                      row
-                      sx={{
-                        flex: 0.75,
-                        display: 'flex',
-                        gap: 10,
-                      }}
-                    >
-                      <FormControlLabel
-                        value="constant"
-                        control={<Radio size="small" sx={{ padding: '0 9px' }} />}
-                        label="Constant"
+                    <Tooltip title="Select the steam pressure range" placement='top-end' arrow>
+                      <Select
+                        size="small"
+                        variant="outlined"
+                        defaultValue="select"
                         sx={{
+                          flex: 0.75,
                           fontFamily: 'Nunito Sans, sans-serif',
                           fontSize: '0.7rem',
-                          '& .MuiFormControlLabel-label': {
-                            fontSize: '0.8rem',
-                            fontFamily: 'Nunito Sans, sans-serif',
-                          },
+                          height: '40px',
+                          '& .MuiInputBase-root': { padding: '0 6px' },
+                          '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' },
                         }}
-                      />
-                      <FormControlLabel
-                        value="variable"
-                        control={<Radio size="small" sx={{ padding: '0 4px' }} />}
-                        label="Variable"
-                        sx={{
-                          fontFamily: 'Nunito Sans, sans-serif',
-                          fontSize: '0.7rem',
-                          '& .MuiFormControlLabel-label': {
-                            fontSize: '0.8rem',
-                            fontFamily: 'Nunito Sans, sans-serif',
-                          },
-                        }}
-                      />
-                    </RadioGroup>
+                      >
+                        <MenuItem disabled value="select" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select</MenuItem>
+                        <MenuItem value="constant" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Constant</MenuItem>
+                        <MenuItem value="variable" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Variable</MenuItem>
+                      </Select>
+                    </Tooltip>
                   </Box>
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

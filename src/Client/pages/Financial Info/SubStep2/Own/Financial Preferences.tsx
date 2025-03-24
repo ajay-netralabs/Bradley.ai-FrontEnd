@@ -1,8 +1,27 @@
 import React, { useState } from 'react';
-import { Box, TextField, Typography, Select, MenuItem, FormControlLabel, Radio, RadioGroup, Tooltip } from '@mui/material';
+import { Box, TextField, Typography, Select, MenuItem, Tooltip } from '@mui/material';
 
 const SubStep2: React.FC = () => {
   const [taxAppetite, setTaxAppetite] = useState<string>('yes');
+  const [taxAppetiteReturnDate, setTaxAppetiteReturnDate] = useState<string>('');
+  const [depreciationMethod, setDepreciationMethod] = useState<string>('default');
+  const [taxRate, setTaxRate] = useState<number>(24);
+
+  const handleTaxAppetiteChange = (event: { target: { value: string } }) => {
+    setTaxAppetite(event.target.value);
+  };
+
+  const handleTaxAppetiteReturnDateChange = (event: { target: { value: string } }) => {
+    setTaxAppetiteReturnDate(event.target.value);
+  };
+
+  const handleDepreciationMethodChange = (event: { target: { value: string } }) => {
+    setDepreciationMethod(event.target.value);
+  };
+
+  // const handleTaxRateChange = (event: { target: { value: number } }) => {
+  //   setTaxRate(event.target.value);
+  // };
 
   return (
     <Box
@@ -34,8 +53,7 @@ const SubStep2: React.FC = () => {
       </Typography>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: '160px' }}>
-
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
           <Typography
             sx={{
               fontFamily: 'Nunito Sans, sans-serif',
@@ -48,10 +66,11 @@ const SubStep2: React.FC = () => {
           </Typography>
           <Select
             size="small"
-            defaultValue="default"
+            value={depreciationMethod}
+            onChange={handleDepreciationMethodChange}
             sx={{
               flex: 0.5,
-							marginLeft: 'auto',
+              marginLeft: 'auto',
               fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               height: '40px',
@@ -66,22 +85,21 @@ const SubStep2: React.FC = () => {
               MACRS 3-Year
             </MenuItem>
             <MenuItem value="5year" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-            MACRS 5-Year
+              MACRS 5-Year
             </MenuItem>
-						<MenuItem value="7year" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-            MACRS 7-Year
+            <MenuItem value="7year" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
+              MACRS 7-Year
             </MenuItem>
-						<MenuItem value="straight line" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
+            <MenuItem value="straight line" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
               Straight Line
             </MenuItem>
             <MenuItem value="other" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-            Other
+              Other
             </MenuItem>
           </Select>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-					
           <Typography
             sx={{
               fontFamily: 'Nunito Sans, sans-serif',
@@ -96,36 +114,65 @@ const SubStep2: React.FC = () => {
             variant="outlined"
             size="small"
             type="number"
-						placeholder='Input'
-            defaultValue='24'
+            placeholder="Input"
+            value={taxRate}
+            onChange={(e) => setTaxRate(Number(e.target.value))}
             sx={{
               flex: 0.5,
-							marginLeft: 'auto',
+              marginLeft: 'auto',
               fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
               '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
-							'& .MuiInputBase-input::placeholder': {
+              '& .MuiInputBase-input::placeholder': {
                 fontFamily: 'Nunito Sans, sans-serif',
                 fontSize: '0.7rem',
-              }
+              },
             }}
           />
         </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-				<Typography sx={{ mt: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flex: 0.5 }}>
-        <Tooltip title="Bradley wants to know if your company can take tax deductions or depreciate assets in the current year. If yes, choose yes, if no, enter in a date in the box below as to when your company can begin taking advantage of these tax benefits." placement='top-start' arrow>
-  <b>Tax Appetite In First Year?</b></Tooltip>
-  <RadioGroup row sx={{ fontSize: '0.7rem', m: 0, gap: 5.5, flex: 0.58 }} value={taxAppetite} onChange={(e) => setTaxAppetite(e.target.value)}>
-    <FormControlLabel value="yes" control={<Radio sx={{ padding: '2px' }} />} label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Yes</Typography>} />
-    <FormControlLabel value="no" control={<Radio sx={{ padding: '2px' }} />} label={<Typography sx={{  fontFamily: 'Nunito Sans, sans-serif',fontSize: '0.7rem' }}>No</Typography>} />
-  </RadioGroup>
-</Typography>
-</Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography
+            sx={{
+              fontFamily: 'Nunito Sans, sans-serif',
+              fontSize: '0.75rem',
+              minWidth: '200px',
+              flex: 0.5,
+            }}
+          >
+            <Tooltip
+              title="Bradley wants to know if your company can take tax deductions or depreciate assets in the current year. If yes, choose yes, if no, enter in a date in the box below as to when your company can begin taking advantage of these tax benefits."
+              placement="top-start"
+              arrow
+            >
+              <b>Tax Appetite In First Year?</b>
+            </Tooltip>
+          </Typography>
+          <Select
+            size="small"
+            value={taxAppetite}
+            onChange={handleTaxAppetiteChange}
+            sx={{
+              flex: 0.5,
+              marginLeft: 'auto',
+              fontFamily: 'Nunito Sans, sans-serif',
+              fontSize: '0.7rem',
+              height: '40px',
+              '& .MuiInputBase-root': { padding: '0 6px' },
+              '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' },
+            }}
+          >
+            <MenuItem value="yes" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
+              Yes
+            </MenuItem>
+            <MenuItem value="no" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
+              No
+            </MenuItem>
+          </Select>
+        </Box>
 
-<Box sx={{ display: 'flex', alignItems: 'center', gap: 1, opacity: taxAppetite !== 'no' ? 0.5 : 1 }}>
-					
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, opacity: taxAppetite !== 'no' ? 0.5 : 1 }}>
           <Typography
             sx={{
               fontFamily: 'Nunito Sans, sans-serif',
@@ -141,9 +188,11 @@ const SubStep2: React.FC = () => {
             size="small"
             type="date"
             disabled={taxAppetite !== 'no'}
+            value={taxAppetiteReturnDate}
+            onChange={handleTaxAppetiteReturnDateChange}
             sx={{
               flex: 0.5,
-							marginLeft: 'auto',
+              marginLeft: 'auto',
               fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
@@ -151,7 +200,7 @@ const SubStep2: React.FC = () => {
             }}
           />
         </Box>
-      </Box>
+        </Box>
     </Box>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, Typography, FormControlLabel, Switch, InputAdornment, Tooltip, RadioGroup, Radio } from '@mui/material';
+import { Box, TextField, Typography, FormControlLabel, Switch, InputAdornment, Tooltip, Select, MenuItem } from '@mui/material';
 
 const SubStep2: React.FC = () => { 
 
@@ -126,25 +126,32 @@ const SubStep2: React.FC = () => {
           />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.514 }}><b>Contract Requirements for Return of Condensate:</b></Typography>
-          <RadioGroup 
-              row 
-              sx={{ flex: 0.5, gap: 5.5 }} 
-              value={condensate} 
-              onChange={(e) => setCondensate(e.target.value)}
-            >
-              <FormControlLabel 
-                value="yes" 
-                control={<Radio sx={{ padding: '2px' }} />} 
-                label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Yes</Typography>} 
-              />
-              <FormControlLabel 
-                value="no" 
-                control={<Radio sx={{ padding: '2px' }} />} 
-                label={<Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>No</Typography>} 
-              />
-            </RadioGroup>
-        </Box>
+  <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}>
+    <b>Contract Requirements for Return of Condensate:</b>
+  </Typography>
+    <Select
+                size="small"
+                id="condensate-select"
+                value={condensate}
+                onChange={(e) => setCondensate(e.target.value)}
+                sx={{
+                  flex: 0.5,
+                  marginLeft: 'auto',
+                  fontFamily: 'Nunito Sans, sans-serif',
+                  fontSize: '0.7rem',
+                  height: '40px',
+                  '& .MuiInputBase-root': { padding: '0 6px' },
+                  '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' },
+                }}
+              >
+      <MenuItem value="yes" sx={{ fontSize: '0.7rem' }}>
+        Yes
+      </MenuItem>
+      <MenuItem value="no" sx={{ fontSize: '0.7rem' }}>
+        No
+      </MenuItem>
+    </Select>
+</Box>
         {condensate === "yes" && (
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Typography sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", minWidth: "150px", flex: 0.5 }}>

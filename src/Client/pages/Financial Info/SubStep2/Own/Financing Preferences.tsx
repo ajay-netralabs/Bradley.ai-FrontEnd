@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, Typography, FormControlLabel, Radio, RadioGroup, FormControl } from '@mui/material';
+import { Box, TextField, Typography, Select, MenuItem } from '@mui/material';
 
 const SubStep2: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState('');
@@ -34,107 +34,67 @@ const SubStep2: React.FC = () => {
       </Typography>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: '160px' }}>
-        <Typography
-          sx={{
-            mt: 1,
-            fontFamily: 'Nunito Sans, sans-serif',
-            fontSize: '0.75rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            flex: 0.5,
-          }}
-        >
-          <b>
-            How Would You Prefer To Finance This Project?
-            <br />
-            <span style={{ fontWeight: 'normal' }}>(You must pick one.)</span>
-          </b>
-          <FormControl component="fieldset" sx={{ flex: 0.8, display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <RadioGroup
-              value={selectedOption}
-              onChange={(e) => setSelectedOption(e.target.value)}
-              sx={{ gap: 1 }}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography
+            sx={{
+              mt: 1,
+              fontFamily: 'Nunito Sans, sans-serif',
+              fontSize: '0.75rem',
+              flex: 0.5,
+            }}
+          >
+            <b>
+              How Would You Prefer To Finance This Project?
+              <br />
+              <span style={{ fontWeight: 'normal' }}>(You must pick one.)</span>
+            </b>
+          </Typography>
+          <Select
+            id='financing-preferences'
+            value={selectedOption}
+            onChange={(e) => setSelectedOption(e.target.value)}
+            displayEmpty
+            sx={{
+              flex: 0.68,
+              fontFamily: 'Nunito Sans, sans-serif',
+              marginLeft: 'auto',
+              fontSize: '0.7rem',
+              height: '40px',
+              '& .MuiInputBase-root': { padding: '0 6px' },
+                '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' },
+              }}
             >
-              <FormControlLabel
-                value="cash"
-                control={<Radio sx={{ padding: '2px' }} />}
-                label={
-                  <Typography
-                    sx={{
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.7rem',
-                    }}
-                  >
-                    Pay For The Project (Cash Payments During Construction Period)
-                  </Typography>
-                }
-              />
-              <FormControlLabel
-                value="finance"
-                control={<Radio sx={{ padding: '2px' }} />}
-                label={
-                  <Typography
-                    sx={{
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.7rem',
-                    }}
-                  >
-                    Finance The Project (You Own & Operate The DER System And Start Payments When System Is Operating)
-                  </Typography>
-                }
-              />
-              {/* <FormControlLabel
-                value="third-party"
-                control={<Radio sx={{ padding: '2px' }} />}
-                label={
-                  <Typography
-                    sx={{
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.7rem',
-                    }}
-                  >
-                    Have a 3rd Party Own & Operate The DER System And You Contract For Energy Supply Through ESA/PPA
-                  </Typography>
-                }
-              /> */}
-              <FormControlLabel
-                value="other"
-                control={<Radio sx={{ padding: '2px' }} />}
-                label={
-                  <Typography
-                    sx={{
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.7rem',
-                    }}
-                  >
-                    Explore Other Options
-                  </Typography>
-                }
-              />
-            </RadioGroup>
-          </FormControl>
-        </Typography>
+            <MenuItem disabled value="" sx={{ fontSize: '0.7rem' }}>Select</MenuItem>
+            <MenuItem value="cash" sx={{ fontSize: '0.7rem' }}>Pay For The Project<br />(Cash Payments During Construction Period)</MenuItem>
+            <MenuItem value="finance" sx={{ fontSize: '0.7rem' }}>Finance The Project<br />(You Own & Operate The DER System And Start Payments When System Is Operating)</MenuItem>
+            <MenuItem value="other" sx={{ fontSize: '0.7rem' }}>Explore Other Options</MenuItem>
+          </Select>
+        </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}>
+            <Typography
+            sx={{
+              fontFamily: 'Nunito Sans, sans-serif',
+              fontSize: '0.75rem',
+              flex: 0.5,
+              opacity: selectedOption !== 'other' ? 0.5 : 1,
+            }}
+            >
             <b>Please Specify Other Financing: </b>(Optional)
-          </Typography>
+            </Typography>
           <TextField
             variant="outlined"
             size="small"
             type="text"
-            placeholder='Describe Your Preferred Financing Method Here...'
+            placeholder="Describe Your Preferred Financing Method Here..."
             disabled={selectedOption !== 'other'}
             sx={{
               flex: 0.68,
+              width: '100%',
               fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
               '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
-              '& .MuiInputBase-input::placeholder': {
-                fontFamily: 'Nunito Sans, sans-serif',
-                fontSize: '0.7rem',
-              }
+              '& input': { padding: '10px', fontSize: '0.7rem' },
             }}
           />
         </Box>
