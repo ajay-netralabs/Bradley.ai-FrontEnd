@@ -120,6 +120,7 @@ const SubStep2: React.FC = () => {
               sx={{ flex: 0.0 }}
             />
           </Tooltip>
+          <Tooltip title="Add description here." placement='right' arrow>
           <TextField
             fullWidth
             variant="outlined"
@@ -130,7 +131,7 @@ const SubStep2: React.FC = () => {
             size="small"
             sx={inputStyle}
             disabled={!checked.twoPipeSystem}
-          />
+          /></Tooltip>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
@@ -151,6 +152,7 @@ const SubStep2: React.FC = () => {
               sx={{ flex: 0.0 }}
             />
           </Tooltip>
+          <Tooltip title="Add description here." placement='right' arrow>
           <TextField
             fullWidth
             variant="outlined"
@@ -161,7 +163,7 @@ const SubStep2: React.FC = () => {
             size="small"
             sx={inputStyle}
             disabled={!checked.fourPipeSystem}
-          />
+          /></Tooltip>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
@@ -182,6 +184,7 @@ const SubStep2: React.FC = () => {
               sx={{ flex: 0.0 }}
             />
           </Tooltip>
+          <Tooltip title="Add description here." placement='right' arrow>
           <TextField
             fullWidth
             variant="outlined"
@@ -192,7 +195,7 @@ const SubStep2: React.FC = () => {
             size="small"
             sx={inputStyle}
             disabled={!checked.steamDistribution}
-          />
+          /></Tooltip>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
@@ -213,6 +216,7 @@ const SubStep2: React.FC = () => {
               sx={{ flex: 0.0 }}
             />
           </Tooltip>
+          <Tooltip title="Add description here." placement='right' arrow>
           <TextField
             fullWidth
             variant="outlined"
@@ -223,7 +227,7 @@ const SubStep2: React.FC = () => {
             size="small"
             sx={inputStyle}
             disabled={!checked.steamToBuilding}
-          />
+          /></Tooltip>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
@@ -326,6 +330,7 @@ const SubStep2: React.FC = () => {
               sx={{ flex: 0.0 }}
             />
           </Tooltip>
+          <Tooltip title="Add description here." placement='right' arrow>
           <TextField
             fullWidth
             variant="outlined"
@@ -336,7 +341,7 @@ const SubStep2: React.FC = () => {
             size="small"
             sx={inputStyle}
             disabled={!checked.autoLightSensors}
-          />
+          /></Tooltip>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
@@ -357,6 +362,7 @@ const SubStep2: React.FC = () => {
               sx={{ flex: 0.0 }}
             />
           </Tooltip>
+          <Tooltip title="Add description here." placement='right' arrow>
           <TextField
             fullWidth
             variant="outlined"
@@ -367,7 +373,7 @@ const SubStep2: React.FC = () => {
             size="small"
             sx={inputStyle}
             disabled={!checked.waterTreatment}
-          />
+          /></Tooltip>
         </Box>
       </Box>
     </Box>

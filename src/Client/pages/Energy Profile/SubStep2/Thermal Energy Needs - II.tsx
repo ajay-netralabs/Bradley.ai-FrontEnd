@@ -26,6 +26,7 @@ const SubStep2: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Tooltip title="Click to expand or move on to the next step." placement='right' arrow>
           <FormControlLabel
             control={<Switch checked={showSteam} onChange={() => setShowSteam(!showSteam)} size="small" />}
             label="Does your facility require hot water for HVAC / other non-domestic processes?"
@@ -35,7 +36,7 @@ const SubStep2: React.FC = () => {
                 fontSize: '0.9rem'
               }
             }}
-          />
+          /></Tooltip>
 
           </Box>
 
@@ -220,6 +221,7 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pt: '10px', pb: '10px' }}>
+        <Tooltip title="Click to expand if you have HW Boilers for domestic use." placement='right' arrow>
           <FormControlLabel
             control={<Switch checked={showHotWaterBoilers} onChange={() => setShowHotWaterBoilers(!showHotWaterBoilers)} size="small" />}
             label="Do you have Hot Water Boilers for domestic use?"
@@ -229,7 +231,7 @@ const SubStep2: React.FC = () => {
                 fontSize: '0.9rem'
               }
             }}
-          />
+          /></Tooltip>
 
           </Box>
 

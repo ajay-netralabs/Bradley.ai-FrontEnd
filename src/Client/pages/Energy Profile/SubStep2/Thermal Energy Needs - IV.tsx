@@ -8,7 +8,8 @@ import {
   MenuItem, 
   Switch, 
   IconButton,
-  Select
+  Select,
+  Tooltip
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -42,6 +43,7 @@ const SubStep2: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Tooltip title="Click to expand or move on to the next step." placement='right' arrow>
         <FormControlLabel
           control={<Switch checked={showWasteHeat} onChange={() => setShowWasteHeat(!showWasteHeat)} size="small" />}
           label="Does your facility generate waste heat? If so from what type of source, pick from the options below."
@@ -51,7 +53,7 @@ const SubStep2: React.FC = () => {
               fontSize: '0.9rem',
             }
           }}
-        /></ Box>
+        /></Tooltip></ Box>
 
 {showWasteHeat && (
         <Box>

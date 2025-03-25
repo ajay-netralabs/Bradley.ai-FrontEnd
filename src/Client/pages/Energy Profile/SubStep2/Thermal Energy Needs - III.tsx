@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, Typography, FormControlLabel, /* MenuItem, */ Switch/* , Select */ } from '@mui/material';
+import { Box, TextField, Typography, FormControlLabel, /* MenuItem, */ Switch/* , Select */, Tooltip } from '@mui/material';
 
 const SubStep2: React.FC = () => { 
   const [showSteam, setShowSteam] = useState(false);
@@ -16,6 +16,7 @@ const SubStep2: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Tooltip title="Click to expand or move on to the next step." placement='right' arrow>
           <FormControlLabel
             control={<Switch checked={showSteam} onChange={() => setShowSteam(!showSteam)} size="small" />}
             label="Does your facility require chilled water?"
@@ -25,7 +26,7 @@ const SubStep2: React.FC = () => {
                 fontSize: '0.9rem'
               }
             }}
-          />
+          /></Tooltip>
 
           </Box>
 
@@ -36,6 +37,7 @@ const SubStep2: React.FC = () => {
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>How many tons of chilled water capacity do you have at the facility?</b>{/*  (in Tons) */}</Typography>
+          <Tooltip title="Enter capacity in Tons" placement='right' arrow>
           <TextField
             variant="outlined" 
             size="small" 
@@ -51,11 +53,12 @@ const SubStep2: React.FC = () => {
                 fontSize: '0.7rem',
               }
             }}
-          />
+          /></Tooltip>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>How many cooling ton hours used annually?</b></Typography>
+          <Tooltip title="Enter annual usage in hours" placement='right' arrow>
           <TextField
             variant="outlined" 
             size="small" 
@@ -71,12 +74,13 @@ const SubStep2: React.FC = () => {
                 fontSize: '0.7rem',
               }
             }}
-          />
+          /></Tooltip>
         </Box>
 
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Chilled Water Temperature leaving the plant:</b></Typography>
+          <Tooltip title="Enter temperature in K" placement='right' arrow>
           <TextField
             variant="outlined" 
             size="small" 
@@ -92,12 +96,13 @@ const SubStep2: React.FC = () => {
                 fontSize: '0.7rem',
               }
             }}
-          />
+          /></Tooltip>
         </Box>
 
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Additional Chilled Water Demand:</b></Typography>
+          <Tooltip title="Enter CW Demand in Tons" placement='right' arrow>
           <TextField
             variant="outlined" 
             size="small" 
@@ -113,11 +118,12 @@ const SubStep2: React.FC = () => {
                 fontSize: '0.7rem',
               }
             }}
-          />
+          /></Tooltip>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Chilled water temperature returning to the plant:</b></Typography>
+          <Tooltip title="Enter temperature in K" placement='right' arrow>
           <TextField
             variant="outlined" 
             size="small" 
@@ -133,11 +139,12 @@ const SubStep2: React.FC = () => {
                 fontSize: '0.7rem',
               }
             }}
-          />
+          /></Tooltip>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>CW pumps HP size and number of pumps:</b></Typography>
+          <Tooltip title="Enter size in HP" placement='right' arrow>
           <TextField
             variant="outlined" 
             size="small" 
@@ -153,7 +160,7 @@ const SubStep2: React.FC = () => {
                 fontSize: '0.7rem',
               }
             }}
-          />
+          /></Tooltip>
         </Box>
 
         </Box>
