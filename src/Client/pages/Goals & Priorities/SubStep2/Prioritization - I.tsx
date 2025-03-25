@@ -1,5 +1,5 @@
-import React, { useState } from 'react'; 
-import { Box, Button, Typography, MenuItem, Select, TextField } from '@mui/material'; 
+import React, { useState } from 'react';
+import { Box, Button, Typography, MenuItem, Select, TextField, Tooltip } from '@mui/material';
 
 const options = [
   "Select one",
@@ -18,12 +18,11 @@ const SubStep2: React.FC = () => {
     { 1: "", 2: "", 3: "", 4: "" }
   );
 
-
   const handleChange = (rank: number, value: string) => {
     setSelectedRanks((prev) => {
       const newRanks = { ...prev };
       if (newRanks[rank] === value) {
-        newRanks[rank] = "Select One";
+        newRanks[rank] = "Select one";
       } else {
         const existingRank = Object.keys(newRanks).find(
           (key) => newRanks[Number(key)] === value
@@ -57,9 +56,10 @@ const SubStep2: React.FC = () => {
               <b>Rank Your Priorities:</b> (1 being the most important)
               <p></p>
             </Typography>
+            <Tooltip title="Click to clear current form" placement='right' arrow>
             <Button variant="outlined" size="small" onClick={handleClearAll} sx={{ fontSize: '0.7rem', textTransform: 'none', flex: 0.06 }}>
-          Clear All
-        </Button><p></p><br />
+              Clear All
+            </Button></Tooltip><p></p><br />
           </Box>
           {[1, 2, 3, 4].map((rank) => (
             <Box key={rank} sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
@@ -91,31 +91,33 @@ const SubStep2: React.FC = () => {
                   </MenuItem>
                 ))}
               </Select>
+              <Tooltip title="Set rank to add explanation" placement='right' arrow>
               <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Add Explanantion"
-              name={`description-${rank}`}
-              size="small"
-              value={descriptions[rank]}
-              onChange={(e) => setDescriptions({ ...descriptions, [rank]: e.target.value })}
-              sx={{
-                flex: 0.43,
-                height: '40px',
-                fontFamily: 'Nunito Sans, sans-serif',
-                '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-                '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
-                fontSize: '0.7rem',
-                padding: '2px 1px',
-                pr: '15px',
-                pl: '15px',
-                alignSelf: 'flex-end',
-                textTransform: 'none',
-                '&:focus': {
-                  outline: 'none',
-                }
-              }}
-            />
+                fullWidth
+                variant="outlined"
+                placeholder="Add Explanation"
+                name={`description-${rank}`}
+                size="small"
+                value={descriptions[rank]}
+                onChange={(e) => setDescriptions({ ...descriptions, [rank]: e.target.value })}
+                disabled={selectedRanks[rank] === "Select one"}
+                sx={{
+                  flex: 0.43,
+                  height: '40px',
+                  fontFamily: 'Nunito Sans, sans-serif',
+                  '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+                  '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' },
+                  fontSize: '0.7rem',
+                  padding: '2px 1px',
+                  pr: '15px',
+                  pl: '15px',
+                  alignSelf: 'flex-end',
+                  textTransform: 'none',
+                  '&:focus': {
+                    outline: 'none',
+                  }
+                }}
+              /></Tooltip>
             </Box>
           ))}
         </Box>

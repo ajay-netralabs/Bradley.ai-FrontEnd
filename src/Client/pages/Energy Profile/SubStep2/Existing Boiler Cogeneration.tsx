@@ -1,24 +1,44 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  TextField, 
-  Button, 
-  Typography, 
-  MenuItem, 
-  IconButton 
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  MenuItem,
+  IconButton,
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const SubStep2: React.FC = () => {
   const [wasteHeatSources, setWasteHeatSources] = useState([
-    { type: '', capacity: '', fuelSource: '', efficiency: '', age: '' , operatingPressure: '', history: '', utilization: '', volume: ''},
-  ]);  
+    {
+      type: '',
+      capacity: '',
+      fuelSource: '',
+      efficiency: '',
+      age: '',
+      operatingPressure: '',
+      history: '',
+      utilization: '',
+      volume: '',
+    },
+  ]);
 
   const handleAddWasteHeatSource = () => {
     setWasteHeatSources([
       ...wasteHeatSources,
-      { type: '', capacity: '', fuelSource: '', efficiency: '', age: '' , operatingPressure: '', history: '', utilization: '', volume: ''},
+      {
+        type: '',
+        capacity: '',
+        fuelSource: '',
+        efficiency: '',
+        age: '',
+        operatingPressure: '',
+        history: '',
+        utilization: '',
+        volume: '',
+      },
     ]);
   };
 
@@ -27,32 +47,80 @@ const SubStep2: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: 'Nunito Sans, sans-serif',
+        fontSize: '0.75rem',
+        p: 1,
+        pr: 4,
+        pl: 1,
+        pt: 1,
+      }}
+    >
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+        @import
+        url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
       </style>
-      <Typography variant="h6" sx={{ mb: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'center' }}>
+      <Typography
+        variant="h6"
+        sx={{
+          mb: 1,
+          fontFamily: 'Nunito Sans, sans-serif',
+          fontSize: '0.85rem',
+          fontWeight: 'bold',
+          textAlign: 'center',
+        }}
+      >
         <h2>Existing Boiler/Cogeneration</h2>
       </Typography>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
-        <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
-            {wasteHeatSources.map((source, index) => (
-              <Box
-                key={index}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2,
-                  mb: 1,
-                  flexWrap: 'wrap',
-                }}
-              >
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: 0,
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            pt: '10px',
+            pb: '10px',
+            pl: '160px',
+            pr: '160px',
+          }}
+        >
+          {wasteHeatSources.map((source, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                mb: 1,
+              }}
+            >
+              <Box sx={{ display: 'flex', width: '100%', gap: 2, flexWrap: 'wrap' }}>
                 <TextField
                   size="small"
                   label="Type"
                   select
                   fullWidth
+                  sx={{
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.8rem',
+                    height: '40px',
+                    width: '32%',
+                    '& .MuiInputBase-root': {
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.8rem',
+                    },
+                  }}
                   value={source.type}
                   onChange={(e) =>
                     setWasteHeatSources(
@@ -61,15 +129,6 @@ const SubStep2: React.FC = () => {
                       )
                     )
                   }
-                  sx={{
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    fontSize: '0.8rem',
-                    '& .MuiInputBase-root': {
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.8rem',
-                      height: '40px',
-                    },
-                  }}
                   InputLabelProps={{
                     style: {
                       fontFamily: 'Nunito Sans, sans-serif',
@@ -77,8 +136,24 @@ const SubStep2: React.FC = () => {
                     },
                   }}
                 >
-                  <MenuItem value="Boiler" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Boiler</MenuItem>
-                  <MenuItem value="Cogeneration Unit" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Cogeneration Unit</MenuItem>
+                  <MenuItem
+                    value="Boiler"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Boiler
+                  </MenuItem>
+                  <MenuItem
+                    value="Cogeneration Unit"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Cogeneration Unit
+                  </MenuItem>
                 </TextField>
 
                 <TextField
@@ -86,6 +161,16 @@ const SubStep2: React.FC = () => {
                   label="Capacity"
                   type="number"
                   fullWidth
+                  sx={{
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.8rem',
+                    height: '40px',
+                    width: '32%',
+                    '& .MuiInputBase-root': {
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.8rem',
+                    },
+                  }}
                   placeholder="in Mlbs per hour"
                   value={source.capacity}
                   onChange={(e) =>
@@ -95,14 +180,6 @@ const SubStep2: React.FC = () => {
                       )
                     )
                   }
-                  sx={{
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    '& .MuiInputBase-root': {
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.8rem',
-                      height: '40px',
-                    },
-                  }}
                   InputLabelProps={{
                     style: {
                       fontFamily: 'Nunito Sans, sans-serif',
@@ -116,6 +193,16 @@ const SubStep2: React.FC = () => {
                   label="Fuel Source"
                   select
                   fullWidth
+                  sx={{
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.8rem',
+                    height: '40px',
+                    width: '32%',
+                    '& .MuiInputBase-root': {
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.8rem',
+                    },
+                  }}
                   value={source.fuelSource}
                   onChange={(e) =>
                     setWasteHeatSources(
@@ -124,15 +211,6 @@ const SubStep2: React.FC = () => {
                       )
                     )
                   }
-                  sx={{
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    fontSize: '0.8rem',
-                    '& .MuiInputBase-root': {
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.8rem',
-                      height: '40px',
-                    },
-                  }}
                   InputLabelProps={{
                     style: {
                       fontFamily: 'Nunito Sans, sans-serif',
@@ -140,18 +218,70 @@ const SubStep2: React.FC = () => {
                     },
                   }}
                 >
-                  <MenuItem value="Natural Gas" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Natural Gas</MenuItem>
-                  <MenuItem value="Oil" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Oil</MenuItem>
-                  <MenuItem value="Biomass" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Biomass</MenuItem>
-                  <MenuItem value="Coal" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Coal</MenuItem>
-                  <MenuItem value="Electricity" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Electricity</MenuItem>
+                  <MenuItem
+                    value="Natural Gas"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Natural Gas
+                  </MenuItem>
+                  <MenuItem
+                    value="Oil"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Oil
+                  </MenuItem>
+                  <MenuItem
+                    value="Biomass"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Biomass
+                  </MenuItem>
+                  <MenuItem
+                    value="Coal"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Coal
+                  </MenuItem>
+                  <MenuItem
+                    value="Electricity"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Electricity
+                  </MenuItem>
                 </TextField>
+              </Box>
 
+              <Box sx={{ display: 'flex', width: '100%', gap: 2, flexWrap: 'wrap' }}>
                 <TextField
                   size="small"
                   label="Efficiency"
                   type="number"
                   fullWidth
+                  sx={{
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.8rem',
+                    height: '40px',
+                    width: '32%',
+                    '& .MuiInputBase-root': {
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.8rem',
+                    },
+                  }}
                   placeholder="In Percentage"
                   value={source.efficiency}
                   onChange={(e) =>
@@ -161,14 +291,6 @@ const SubStep2: React.FC = () => {
                       )
                     )
                   }
-                  sx={{
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    '& .MuiInputBase-root': {
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.8rem',
-                      height: '40px',
-                    },
-                  }}
                   InputLabelProps={{
                     style: {
                       fontFamily: 'Nunito Sans, sans-serif',
@@ -176,12 +298,21 @@ const SubStep2: React.FC = () => {
                     },
                   }}
                 />
-
-<TextField
+                <TextField
                   size="small"
                   label="Age"
                   type="number"
                   fullWidth
+                  sx={{
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.8rem',
+                    height: '40px',
+                    width: '32%',
+                    '& .MuiInputBase-root': {
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.8rem',
+                    },
+                  }}
                   placeholder="In Years"
                   value={source.age}
                   onChange={(e) =>
@@ -191,14 +322,6 @@ const SubStep2: React.FC = () => {
                       )
                     )
                   }
-                  sx={{
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    '& .MuiInputBase-root': {
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.8rem',
-                      height: '40px',
-                    },
-                  }}
                   InputLabelProps={{
                     style: {
                       fontFamily: 'Nunito Sans, sans-serif',
@@ -207,28 +330,32 @@ const SubStep2: React.FC = () => {
                   }}
                 />
 
-<TextField
+                <TextField
                   size="small"
                   label="Operating Pressure"
                   type="number"
                   fullWidth
+                  sx={{
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.8rem',
+                    height: '40px',
+                    width: '32%',
+                    '& .MuiInputBase-root': {
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.8rem',
+                    },
+                  }}
                   placeholder="In Psi"
                   value={source.operatingPressure}
                   onChange={(e) =>
                     setWasteHeatSources(
                       wasteHeatSources.map((s, i) =>
-                        i === index ? { ...s, operatingPressure: e.target.value } : s
+                        i === index
+                          ? { ...s, operatingPressure: e.target.value }
+                          : s
                       )
                     )
                   }
-                  sx={{
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    '& .MuiInputBase-root': {
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.8rem',
-                      height: '40px',
-                    },
-                  }}
                   InputLabelProps={{
                     style: {
                       fontFamily: 'Nunito Sans, sans-serif',
@@ -236,13 +363,24 @@ const SubStep2: React.FC = () => {
                     },
                   }}
                 />
+              </Box>
 
-
-<TextField
+              <Box sx={{ display: 'flex', width: '100%', gap: 2, flexWrap: 'wrap' }}>
+                <TextField
                   size="small"
                   label="History"
                   type="text"
                   fullWidth
+                  sx={{
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.8rem',
+                    height: '40px',
+                    width: '32%',
+                    '& .MuiInputBase-root': {
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.8rem',
+                    },
+                  }}
                   placeholder="Maintenance History (Optional)"
                   value={source.history}
                   onChange={(e) =>
@@ -252,14 +390,6 @@ const SubStep2: React.FC = () => {
                       )
                     )
                   }
-                  sx={{
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    '& .MuiInputBase-root': {
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.8rem',
-                      height: '40px',
-                    },
-                  }}
                   InputLabelProps={{
                     style: {
                       fontFamily: 'Nunito Sans, sans-serif',
@@ -268,11 +398,21 @@ const SubStep2: React.FC = () => {
                   }}
                 />
 
-<TextField
+                <TextField
                   size="small"
                   label="Utilization"
                   select
                   fullWidth
+                  sx={{
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.8rem',
+                    height: '40px',
+                    width: '32%',
+                    '& .MuiInputBase-root': {
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.8rem',
+                    },
+                  }}
                   value={source.utilization}
                   onChange={(e) =>
                     setWasteHeatSources(
@@ -281,15 +421,6 @@ const SubStep2: React.FC = () => {
                       )
                     )
                   }
-                  sx={{
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    fontSize: '0.8rem',
-                    '& .MuiInputBase-root': {
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.8rem',
-                      height: '40px',
-                    },
-                  }}
                   InputLabelProps={{
                     style: {
                       fontFamily: 'Nunito Sans, sans-serif',
@@ -297,19 +428,68 @@ const SubStep2: React.FC = () => {
                     },
                   }}
                 >
-                  <MenuItem value="Electricity Generation" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Electricity Generation</MenuItem>
-                  <MenuItem value="Space Heating" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Space Heating</MenuItem>
-                  <MenuItem value="Process Heating" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Process Heating</MenuItem>
-                  <MenuItem value="None" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>None</MenuItem>
-                  <MenuItem value="Other" sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem',}}>Other</MenuItem>
+                  <MenuItem
+                    value="Electricity Generation"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Electricity Generation
+                  </MenuItem>
+                  <MenuItem
+                    value="Space Heating"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Space Heating
+                  </MenuItem>
+                  <MenuItem
+                    value="Process Heating"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Process Heating
+                  </MenuItem>
+                  <MenuItem
+                    value="None"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    None
+                  </MenuItem>
+                  <MenuItem
+                    value="Other"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Other
+                  </MenuItem>
                 </TextField>
-
                 <TextField
                   size="small"
                   label="Volume"
                   type="number"
                   fullWidth
-                  placeholder="Annual Waste Heat Volume in MMBTu"
+                  sx={{
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.8rem',
+                    height: '40px',
+                    width: '32%',
+                    '& .MuiInputBase-root': {
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.8rem',
+                    },
+                  }}
+                  placeholder="Annual Waste Heat Vol. in MMBTu"
                   value={source.volume}
                   onChange={(e) =>
                     setWasteHeatSources(
@@ -318,14 +498,6 @@ const SubStep2: React.FC = () => {
                       )
                     )
                   }
-                  sx={{
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    '& .MuiInputBase-root': {
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      fontSize: '0.8rem',
-                      height: '40px',
-                    },
-                  }}
                   InputLabelProps={{
                     style: {
                       fontFamily: 'Nunito Sans, sans-serif',
@@ -333,7 +505,6 @@ const SubStep2: React.FC = () => {
                     },
                   }}
                 />
-                
                 <Button
               startIcon={<AddCircleIcon />}
               onClick={handleAddWasteHeatSource}
@@ -351,7 +522,7 @@ const SubStep2: React.FC = () => {
             </Button>
                 <IconButton
                   onClick={() => handleRemoveWasteHeatSource(index)}
-                  size="large"
+                  size="small"
                   disabled={wasteHeatSources.length === 1}
                   sx={{ ml: 'auto', '&:focus': {
       outline: 'none',
@@ -360,8 +531,9 @@ const SubStep2: React.FC = () => {
                   <DeleteIcon fontSize="medium" />
                 </IconButton>
               </Box>
-            ))}
-          </Box>
+            </Box>
+          ))}
+        </Box>
       </Box>
     </Box>
   );

@@ -57,6 +57,7 @@ const SubStep2: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Tooltip title="Click to expand or move on to the next step." placement='right' arrow>
             <FormControlLabel
               control={<Switch checked={showSteam} onChange={() => setShowSteam(!showSteam)} size="small" />}
               label="Does your facility require steam?"
@@ -66,7 +67,7 @@ const SubStep2: React.FC = () => {
                   fontSize: '0.9rem'
                 }
               }}
-            />
+            /></Tooltip>
           </Box>
 
           {showSteam && (
@@ -191,6 +192,7 @@ const SubStep2: React.FC = () => {
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}>
                       <b>Condensate Return Efficiency:</b>
                     </Typography>
+                    <Tooltip title="C.R. Efficiency will be calculated automatically." placement='top-end' arrow>
                     <TextField
                       variant="outlined"
                       size="small"
@@ -205,6 +207,7 @@ const SubStep2: React.FC = () => {
                         '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }
                       }}
                     />
+                    </Tooltip>
                   </Box>
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

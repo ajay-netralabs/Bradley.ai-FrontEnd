@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppBar, IconButton, Toolbar, Typography, Menu, MenuItem } from '@mui/material';
+import { AppBar, IconButton, Toolbar, Typography, Menu, MenuItem, Tooltip } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 // import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -38,13 +38,15 @@ const Navbar: React.FC = () => {
         <IconButton color="inherit" sx={{'&:focus': {
                                   outline: 'none',
                                 },}}>
-          <DarkModeIcon fontSize='medium'  />
+          <Tooltip title="Switch to dark mode" placement='bottom' arrow>
+          <DarkModeIcon fontSize='medium'  /></Tooltip>
         </IconButton>
 
         <IconButton color="inherit" sx={{'&:focus': {
                                   outline: 'none',
                                 },}}>
-          <NotificationsNoneIcon fontSize='medium'  />
+          <Tooltip title="Notifications" placement='bottom' arrow>
+          <NotificationsNoneIcon fontSize='medium'  /></Tooltip>
         </IconButton>
         
         <IconButton
@@ -53,8 +55,8 @@ const Navbar: React.FC = () => {
           sx={{ fontFamily: 'Nunito Sans, sans-serif', '&:focus': {
                                   outline: 'none',
                                 }, }}
-        >
-          <PersonIcon fontSize='medium' />
+        ><Tooltip title="Profile" placement='bottom' arrow>
+          <PersonIcon fontSize='medium' /></Tooltip>
         </IconButton>
 
         <Menu

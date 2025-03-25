@@ -1,5 +1,5 @@
 import React, { useState } from 'react'; 
-import { Box, Typography, Radio, RadioGroup, FormControlLabel, TextField } from '@mui/material'; 
+import { Box, Typography, Radio, RadioGroup, FormControlLabel, TextField, Tooltip } from '@mui/material'; 
 
 const SubStep2: React.FC = () => { 
   const [leaseSelected, setLeaseSelected] = useState(false);
@@ -43,6 +43,7 @@ const SubStep2: React.FC = () => {
     <b><h3>Lease Period: </h3></b>
   </Box>
   <Box sx={{ flex: 0.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Tooltip title="Start date" placement='left' arrow>
     <TextField
       variant="outlined"
       type="date"
@@ -62,8 +63,9 @@ const SubStep2: React.FC = () => {
           fontSize: '0.8rem',
         },
       }}
-    />
+    /></Tooltip>
       to
+    <Tooltip title="End date" placement='right' arrow>
     <TextField
       variant="outlined"
       type="date"
@@ -83,7 +85,7 @@ const SubStep2: React.FC = () => {
           fontSize: '0.8rem',
         },
       }}
-    />
+    /></Tooltip>
   </Box></Typography>
 )}
 
