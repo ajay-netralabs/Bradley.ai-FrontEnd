@@ -1,0 +1,245 @@
+- .gitignore
+- dist
+  - assets
+    - AddCircle-h8Ah5Fxi.js
+    - AddCircleOutline-BkUUX3VB.js
+    - Additional PPA Preferences (Optional)-jLzu3mJu.js
+    - Annual Energy Spend-Df89FPv-.js
+    - Bradley's Recommendation For Acme Manufacturing-Dk0K9wSl.js
+    - CardContent-1a3sYIDm.js
+    - Carport - Mounted Solar (Optional)-fEIKAGRP.js
+    - Checkbox-BAOso2BQ.js
+    - CloudUpload-C986Lpos.js
+    - Confirm Edit Your Pre-Entered Site Location-CdlTnPWg.js
+    - Dashboard-C3m7ZmXt.js
+    - Data Verification _ Processing-BAnSpudK.js
+    - Delete-B5Jb8xed.js
+    - DER Analysis By Bradley.ai Is Underway!-CpsnFMT5.js
+    - Don't Have Interval Electric Load Data-CF0IVi3P.js
+    - Energy Load Profile-rIeCnfH6.js
+    - Energy Profile Setup-COLpdulZ.js
+    - Equipment Preferences (Optional)-CDHEpv6v.js
+    - Existing Boiler Cogeneration-DWYMnHYe.js
+    - Existing Energy Contracts - I-CfaAj7s6.js
+    - Existing Energy Contracts - IV-D7S6WOll.js
+    - Existing Power Purchase Agreement (PPA) Electricity Contracts - II-C6zrui8x.js
+    - Existing Solar _ Wind Resource (Optional)-Dj9lVoOW.js
+    - ExpandMore-BuO75In5.js
+    - Facility Address-Dd-0I7bx.js
+    - Facility Operation Description-EUx4OO1G.js
+    - Facility Usage _ Operating Days-DWdht6W8.js
+    - Financial Information Step-COdpGYMG.js
+    - Financial Preferences-PvC41pj5.js
+    - Financials _ Investment Information - I-Ci0JToqY.js
+    - Financials _ Investment Information - II-bwB8n0LL.js
+    - Financing Preferences-BQ7FEnDv.js
+    - FormControlLabel-CaY6r8h-.js
+    - Ground - Mounted Solar (Optional)-CPPz7Dlx.js
+    - index-BRgi5ey9.js
+    - index-CJQDf2iW.css
+    - InputAdornment-DxrzwFvt.js
+    - INPUTS TO MAXIMIZE SOLAR DER ASSETS-BiorbPLE.js
+    - Letter Of Authorization-CY24hKhW.js
+    - LOA - Status-B7t_xJHe.js
+    - Natural Gas Energy Load Profile-Cb_5nAuB.js
+    - or Power (CHP) Contracts – III-D2PdAs6T.js
+    - Organization Details-DeFN73iv.js
+    - Organization Profile Setup-CXn27vXI.js
+    - Other Details-CF6j3dqn.js
+    - Other Energy Commitments (Optional)-DWKLs2Cd.js
+    - Other Site Characteristics-D2LgRLsd.js
+    - Ownership Preference-VShduYTS.js
+    - PPA Preferences-Bs88B-I-.js
+    - Prioritization - I-Bez4JtoC.js
+    - Prioritization - II-CvsHg3hC.js
+    - Projects-Blyj2U_B.js
+    - Resources-BzN_WDIs.js
+    - Roofing Considerations-BpsqDjom.js
+    - server-CIGW-MKW.css
+    - server.browser-Cbhw2zMh.js
+    - Settings-ktRXNlJC.js
+    - Site Characteristics - I-yiFlRKd2.js
+    - Site Characteristics - II-aPQjQY1z.js
+    - Slider-BnX2OW5n.js
+    - Switch-DsfubT9T.js
+    - SwitchBase-DVB7YmMD.js
+    - TableRow-DRDT8-G0.js
+    - TextField-BhDEyVWq.js
+    - Thermal Energy Needs - I-CZMslHZR.js
+    - Thermal Energy Needs - II-BiStypeM.js
+    - Thermal Energy Needs - III-DHAfIFZU.js
+    - Thermal Energy Needs - IV-D_mgadfi.js
+    - Upload Existing Drawings-CemZDnwA.js
+    - useFormControl-7HmQbI-k.js
+    - User Insights- Site Assessment Inputs-NOCHYTQ1.js
+    - ViewModule-DgJe6i9h.js
+    - What Are Your Budget _ Investment Goals-j9UsbK3u.js
+    - You Selected A Third Party Ownership Model-DiTpbruB.js
+    - Your Goal(s) _ Priorities Setup-xTMrfApc.js
+  - bg.webp
+  - index.html
+  - vite.svg
+- eslint.config.js
+- index.html
+- package-lock.json
+- package.json
+- public
+  - bg.webp
+  - vite.svg
+- README.md
+- src
+  - Analyst
+    - AnalystApp.tsx
+    - pages
+      - Dashboard.tsx
+      - Projects.tsx
+      - Resources.tsx
+      - Settings.tsx
+  - App.css
+  - App.tsx
+  - assets
+    - react.svg
+  - Auth
+    - Login.tsx
+    - Signup.tsx
+  - Client
+    - ClientApp.tsx
+    - pages
+      - Data Verification
+        - SubStep1
+          - Data Verification & Processing.tsx
+      - Energy Profile
+        - SubStep1
+          - Energy Profile Setup.tsx
+        - SubStep2
+          - Don't Have Interval Electric Load Data.tsx
+          - Energy Load Profile.tsx
+          - Existing Boiler Cogeneration.tsx
+          - Natural Gas Energy Load Profile.tsx
+          - Thermal Energy Needs - I.tsx
+          - Thermal Energy Needs - II.tsx
+          - Thermal Energy Needs - III.tsx
+          - Thermal Energy Needs - IV.tsx
+        - SubStep3
+          - Letter Of Authorization.tsx
+          - LOA - Status.tsx
+      - Financial Info
+        - SubStep1
+          - Financial Information Step.tsx
+          - Ownership Preference.tsx
+        - SubStep2
+          - Own
+            - Existing Energy Contracts - I.tsx
+            - Existing Energy Contracts - IV.tsx
+            - Existing Power Purchase Agreement (PPA) Electricity Contracts - II.tsx
+            - Existing Power Purchase Agreement (PPA) for Combined Heat and
+              - or Power (CHP) Contracts – III.tsx
+            - Financial Preferences.tsx
+            - Financing Preferences.tsx
+            - Other Energy Commitments (Optional).tsx
+            - What Are Your Budget & Investment Goals.tsx
+          - ThirdParty
+            - Additional PPA Preferences (Optional).tsx
+            - PPA Preferences.tsx
+            - You Selected A Third Party Ownership Model.tsx
+      - Goals & Priorities
+        - SubStep1
+          - Your Goal(s) & Priorities Setup.tsx
+        - SubStep2
+          - Prioritization - I.tsx
+          - Prioritization - II.tsx
+        - SubStep3
+          - Financials & Investment Information - I.tsx
+          - Financials & Investment Information - II.tsx
+      - Onboarding
+        - SubStep1
+          - Bradley's Recommendation For Acme Manufacturing.tsx
+          - DER Analysis By Bradley.ai Is Underway!.tsx
+      - Organizational Profile
+        - SubStep1
+          - Organization Profile Setup.tsx
+        - SubStep2
+          - Annual Energy Spend.tsx
+          - Facility Address.tsx
+          - Facility Operation Description.tsx
+          - Organization Details.tsx
+          - Other Details.tsx
+      - Site Assessment
+        - SubStep1
+          - User Insights- Site Assessment Inputs.tsx
+        - SubStep2
+          - Confirm Edit Your Pre-Entered Site Location.tsx
+          - Facility Usage & Operating Days.tsx
+          - Other Site Characteristics.tsx
+          - Site Characteristics - I.tsx
+          - Site Characteristics - II.tsx
+          - Upload Existing Drawings.tsx
+        - SubStep3
+          - Carport - Mounted Solar (Optional).tsx
+          - Equipment Preferences (Optional).tsx
+          - Existing Solar & Wind Resource (Optional).tsx
+          - Ground - Mounted Solar (Optional).tsx
+          - INPUTS TO MAXIMIZE SOLAR DER ASSETS.tsx
+          - Roofing Considerations.tsx
+    - StepContent.tsx
+  - components
+    - AnalystSidebar.tsx
+    - Footer.tsx
+    - HorizontalStepper.css
+    - HorizontalStepper.tsx
+    - Navbar.tsx
+    - Sidebar.tsx
+    - steps.ts
+  - Context
+    - AppContext.tsx
+    - Data Verification
+    - Energy Profile
+      - SubStep2
+        - Energy Load Profile Context.tsx
+        - Existing Boiler Cogeneration Context.tsx
+        - Thermal Energy Needs - I Context.tsx
+        - Thermal Energy Needs - II Context.tsx
+        - Thermal Energy Needs - III Context.tsx
+        - Thermal Energy Needs - IV Context.tsx
+      - SubStep3
+        - Letter Of Authorization Context.tsx
+    - Financial Info
+    - Goals & Priorities
+      - SubStep2
+        - Prioritization - I Context.tsx
+        - Prioritization - II Context.tsx
+      - SubStep3
+        - Financials & Investment Information - I Context.tsx
+        - Financials & Investment Information - II Context.tsx
+    - Onboarding
+    - Organizational Profile
+      - SubStep2
+        - Annual Energy Spend Context.tsx
+        - Facility Address Context.tsx
+        - Facility Operation Description Context.tsx
+        - Organization Details Context.tsx
+        - Other Details Context.tsx
+    - Site Assessment
+      - SubStep2
+        - Confirm Edit Your Pre-Entered Site Location Context.tsx
+        - Facility Usage & Operating Days Context.tsx
+        - Other Site Characteristics Context.tsx
+        - Site Characteristics - I Context.tsx
+        - Site Characteristics - II Context.tsx
+      - SubStep3
+        - Carport - Mounted Solar (Optional) Context.tsx
+        - Equipment Preferences (Optional) Context.tsx
+        - Existing Solar & Wind Resource (Optional) Context.tsx
+        - Ground - Mounted Solar (Optional) Context.tsx
+        - INPUTS TO MAXIMIZE SOLAR DER ASSETS Context.tsx
+        - Roofing Considerations Context.tsx
+  - index.css
+  - lib
+  - main.tsx
+  - vite-env.d.ts
+- tailwind.config.js
+- tsconfig.app.json
+- tsconfig.json
+- tsconfig.node.json
+- vercel.json
+- vite.config.ts
