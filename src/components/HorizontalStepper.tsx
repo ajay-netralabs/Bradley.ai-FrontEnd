@@ -51,6 +51,8 @@ const HorizontalStepper: React.FC<HorizontalStepperProps> = ({
                   '& .MuiStepLabel-label': {
                     fontFamily: 'Nunito Sans, sans-serif',
                     fontSize: '0.800rem',
+                    fontWeight: 'bold',
+                    color: '#036ca1',
                   },
                 }}
               >

@@ -9,14 +9,15 @@ import {
   Typography,
   StepConnector,
   styled,
+  Tooltip,
 } from '@mui/material';
-import { GoOrganization } from "react-icons/go";
-import { MdOutlineEnergySavingsLeaf } from "react-icons/md";
-import { LuGoal } from "react-icons/lu";
-import { MdOutlineWarehouse } from "react-icons/md";
-import { MdOutlineAccountBalanceWallet } from "react-icons/md";
-import { GrDocumentVerified } from "react-icons/gr";
-import { MdDoneOutline } from "react-icons/md";
+import { GoOrganization } from 'react-icons/go';
+import { MdOutlineEnergySavingsLeaf } from 'react-icons/md';
+import { LuGoal } from 'react-icons/lu';
+import { MdOutlineWarehouse } from 'react-icons/md';
+import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
+import { GrDocumentVerified } from 'react-icons/gr';
+import { MdDoneOutline } from 'react-icons/md';
 
 const steps = [
   { label: 'Organizational Profile', icon: GoOrganization },
@@ -30,15 +31,14 @@ const steps = [
 
 interface SidebarProps {
   currentStep: number;
-  steps: { 
-    label: string; 
-    subSteps: number; 
-    furtherSubSteps: number[]; 
+  steps: {
+    label: string;
+    subSteps: number;
+    furtherSubSteps: number[];
   }[];
   visitedSteps: boolean[][];
   onStepChange: (step: number) => void;
 }
-
 
 const CustomStepConnector = styled(StepConnector)(() => ({
   [`& .MuiStepConnector-line`]: {
@@ -65,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
   }, [currentStep, completedSteps]);
 
   const handleStepClick = (index: number) => {
-    if (visitedSteps[index]) {
+    if (visitedSteps[index].some(visited => visited)) {
       onStepChange(index);
     }
   };
@@ -78,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
     });
   };
 
-  const CustomStepIcon = ({ icon: IconComponent, active, completed }: any) => (
+  const CustomStepIcon = ({ icon: IconComponent, active, completed, visited }: any) => (
     <div
       style={{
         display: 'flex',
@@ -87,11 +87,11 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
         width: 24,
         height: 24,
         borderRadius: '50%',
-        backgroundColor: completed || active ? '#036ca1' : '#808080',
-        color: active ? '#036ca1' : '#fff',
+        backgroundColor: completed || active || visited ? '#036ca1' : '#808080',
+        color: '#fff',
       }}
     >
-      <IconComponent fontSize="small" style={{ color: active ? '#fff' : '#fff' }} />
+      <IconComponent fontSize="small" style={{ color: '#fff' }} />
     </div>
   );
 
@@ -117,36 +117,60 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
       >
         {steps.map((step, index) => {
           const IconComponent = step.icon;
+          const isVisited = visitedSteps[index].some(visited => visited);
           return (
             <Step key={step.label} completed={completedSteps[index]}>
               <StepLabel
                 StepIconComponent={(props) => (
-                  <CustomStepIcon icon={IconComponent} active={props.active} completed={props.completed} />
+                  <CustomStepIcon icon={IconComponent} active={props.active} completed={props.completed} visited={isVisited} />
                 )}
               >
-                <ListItemButton
-                  selected={currentStep === index}
-                  onClick={() => handleStepClick(index)}
-                  sx={{
-                    padding: '3px 4px',
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    '&.Mui-selected': {
-                      backgroundColor: 'transparent',
-                    },
-                    color: completedSteps[index] ? '#036ca1' : 'gray',
-                    '&:hover': {
-                      borderRadius: '8px',
-                    },
-                  }}
-                >
-                  <ListItemText
-                    primary={
-                      <Typography sx={{ fontSize: '0.700rem', fontFamily: 'Nunito Sans, sans-serif' }}>
-                        {step.label}
-                      </Typography>
-                    }
-                  />
-                </ListItemButton>
+                {isVisited ? (
+                  <Tooltip title={index === currentStep ? "You are here" : "Navigate to step"} placement="right" arrow>
+                    <ListItemButton
+                      onClick={() => handleStepClick(index)}
+                      selected={currentStep === index}
+                      sx={{
+                        padding: '3px 4px',
+                        fontFamily: 'Nunito Sans, sans-serif',
+                        '&.Mui-selected': {
+                          backgroundColor: 'transparent',
+                        },
+                        color: '#036ca1',
+                        '&:hover': {
+                          borderRadius: '8px',
+                        },
+                      }}
+                    >
+                      <ListItemText
+                        primary={
+                          <Typography sx={{ fontSize: '0.700rem', fontFamily: 'Nunito Sans, sans-serif', fontWeight: index === currentStep ? 'bold' : 'normal' }}>
+                            {step.label}
+                          </Typography>
+                        }
+                      />
+                    </ListItemButton>
+                  </Tooltip>
+                ) : (
+                  <ListItemButton
+                    sx={{
+                      padding: '3px 4px',
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      color: 'gray',
+                      '&:hover': {
+                        borderRadius: '8px',
+                      },
+                    }}
+                  >
+                    <ListItemText
+                      primary={
+                        <Typography sx={{ fontSize: '0.700rem', fontFamily: 'Nunito Sans, sans-serif' }}>
+                          {step.label}
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                )}
               </StepLabel>
             </Step>
           );
