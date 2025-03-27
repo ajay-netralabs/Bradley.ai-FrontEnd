@@ -310,18 +310,20 @@ const ClientApp: React.FC = () => {
           }}
         >
           {currentStep === TOTAL_STEPS - 1 &&
-          currentSubStep === steps[currentStep].subSteps - 1 &&
-          currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2
-            ? 'Generate Report'
-            : currentStep === TOTAL_STEPS - 1 &&
+            currentSubStep === steps[currentStep].subSteps - 1 &&
+            currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2 ? (
+              <Tooltip title="Generate customized DER report" placement='bottom' arrow><span>Generate Report</span></Tooltip>
+            ) : currentStep === TOTAL_STEPS - 1 &&
               currentSubStep === steps[currentStep].subSteps - 1 &&
-              currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1
-            ? 'Download Report'
-            : currentStep === 1 && currentSubStep === 2 && currentFurtherSubStep === 0
-            ? 'Authorize & Send Request'
-            : currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0
-            ? 'Submit'
-            : 'Next'}
+              currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? (
+              <Tooltip title="Download DER report" placement='bottom' arrow><span>Download Report</span></Tooltip>
+            ) : currentStep === 1 && currentSubStep === 2 && currentFurtherSubStep === 0 ? (
+              <Tooltip title="Submit LOA" placement='bottom' arrow><span>Authorize & Send Request</span></Tooltip>
+            ) : currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0 ? (
+              <Tooltip title="Submit your profile" placement='bottom' arrow><span>Submit</span></Tooltip>
+            ) : (
+              <Tooltip title="Navigate to next step" placement='bottom' arrow><span>Next</span></Tooltip>
+          )}
         </Button>
       </>
     )}
