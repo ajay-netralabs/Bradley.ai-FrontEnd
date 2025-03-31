@@ -73,7 +73,7 @@ const ChatbotPanel: React.FC = () => {
 
   return (
     <>
-      <Tooltip title="Query" placement='bottom-start' arrow>
+      <Tooltip title="Query" placement='left' arrow>
         <Box
           ref={panelRef}
           sx={{
