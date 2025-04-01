@@ -57,7 +57,8 @@ const SubStep2: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, p: '10px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Electricity:</b></Typography>
+        <Tooltip title="Bradley collects this data to properly compare pre DER costs to the energy consumed to verify unit prices and extract anomalies; to properly present pre DER costs to the 30% conceptual design post design forecasted costs." placement='left-end' arrow>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Electricity:</b></Typography></Tooltip>
           <Tooltip title="Enter the total annual spend on electricity (in USD)." placement='top-end' arrow>
           <TextField
     fullWidth
@@ -80,7 +81,8 @@ const SubStep2: React.FC = () => {
   /></Tooltip>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Natural Gas:</b></Typography>
+        <Tooltip title="Bradley collects this data to properly compare pre DER costs to the energy consumed to verify unit prices and extract anomalies; to properly present pre DER costs to the 30% conceptual design post design forecasted costs." placement='left-end' arrow>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Natural Gas:</b></Typography></Tooltip>
           <Tooltip title="Enter the total annual spend on natural gas (in USD)." placement='top-end' arrow>
           <TextField
     fullWidth
@@ -103,7 +105,8 @@ const SubStep2: React.FC = () => {
   /></Tooltip>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Water:</b></Typography>
+        <Tooltip title="Bradley collects this data to properly compare pre DER costs to the energy consumed to verify unit prices and extract anomalies; to properly present pre DER costs to the 30% conceptual design post design forecasted costs." placement='left-end' arrow>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Water:</b></Typography></Tooltip>
           <Tooltip title="Enter the total annual spend on water (in USD)." placement='top-end' arrow>
           <TextField
     fullWidth
@@ -127,7 +130,8 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Oil:</b></Typography>
+        <Tooltip title="Bradley collects this data to properly compare pre DER costs to the energy consumed to verify unit prices and extract anomalies; to properly present pre DER costs to the 30% conceptual design post design forecasted costs." placement='left-end' arrow>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Oil:</b></Typography></Tooltip>
           <Tooltip title="Enter the total annual spend on oil (in USD)." placement='top-end' arrow>
           <TextField
     fullWidth
@@ -151,7 +155,8 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Propane:</b></Typography>
+        <Tooltip title="Bradley collects this data to properly compare pre DER costs to the energy consumed to verify unit prices and extract anomalies; to properly present pre DER costs to the 30% conceptual design post design forecasted costs." placement='left-end' arrow>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Propane:</b></Typography></Tooltip>
           <Tooltip title="Enter the total annual spend on propane (in USD)." placement='top-end' arrow>
           <TextField
     fullWidth
@@ -175,19 +180,17 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Steam:</b></Typography>
-          <Tooltip title="Enter the total annual spend on steam (in USD)." placement='top-end' arrow>
+        <Tooltip title="Bradley collects this data to properly compare pre DER costs to the energy consumed to verify unit prices and extract anomalies; to properly present pre DER costs to the 30% conceptual design post design forecasted costs." placement='left-end' arrow>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Steam:</b> (in MLbs)</Typography></Tooltip>
+          <Tooltip title="Enter the total annual spend on steam (in MLbs)." placement='top-end' arrow>
           <TextField
     fullWidth
     variant="outlined"
-    placeholder='Enter the total annual spend on steam (in USD).'
+    placeholder='Enter the total annual spend on steam (in MLbs).'
     size="small"
     type="text"
     value={steam}
     onChange={handleChange}
-    InputProps={{
-          startAdornment: <InputAdornment position="start">$</InputAdornment>,
-        }}
     sx={{
       flex: 0.5,
       fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif',
@@ -199,19 +202,17 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Chilled Water:</b></Typography>
-          <Tooltip title="Enter the total annual spend on chilled water (in USD)." placement='top-end' arrow>
+        <Tooltip title="Bradley collects this data to properly compare pre DER costs to the energy consumed to verify unit prices and extract anomalies; to properly present pre DER costs to the 30% conceptual design post design forecasted costs." placement='left-end' arrow>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Chilled Water:</b> (in Tons/hr)</Typography></Tooltip>
+          <Tooltip title="Enter the total annual spend on chilled water (in Tons/hr)." placement='top-end' arrow>
           <TextField
     fullWidth
     variant="outlined"
-    placeholder='Enter the total annual spend on chilled water (in USD).'
+    placeholder='Enter the total annual spend on chilled water (in Tons/hr).'
     size="small"
     type="text"
     value={chilledWater}
     onChange={handleChange}
-    InputProps={{
-          startAdornment: <InputAdornment position="start">$</InputAdornment>,
-        }}
     sx={{
       flex: 0.5,
       fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif',
@@ -223,7 +224,8 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Other:</b></Typography>
+        <Tooltip title="Bradley collects this data to properly compare pre DER costs to the energy consumed to verify unit prices and extract anomalies; to properly present pre DER costs to the 30% conceptual design post design forecasted costs." placement='left-end' arrow>
+          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Other:</b></Typography></Tooltip>
           <Tooltip title="Enter the total annual spend on other energy sources (in USD)." placement='top-end' arrow>
           <TextField
     fullWidth

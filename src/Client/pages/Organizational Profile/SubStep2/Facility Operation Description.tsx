@@ -9,6 +9,8 @@ const SubStep2: React.FC = () => {
     steamToBuilding: false,
     autoLightSensors: false,
     waterTreatment: false,
+    setbackTemperature: false,
+    freeCooling: false,
   });
 
   const [description, setDescription] = useState({
@@ -18,7 +20,10 @@ const SubStep2: React.FC = () => {
     steamToBuilding: '',
     autoLightSensors: '',
     waterTreatment: '',
+    freeCooling: '',
   });
+
+  const [facilityTenantTemperature, setFacilityTenantTemperature] = useState('');
 
   const [operationalHours, setOperationalHours] = useState({
     startUpTime: '',
@@ -30,9 +35,20 @@ const SubStep2: React.FC = () => {
     setBackTime: '',
   });
 
+  const [setbackTemperature, setSetbackTemperature] = useState({
+    summer: '',
+    winter: '',
+  });
+
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked({ ...checked, [event.target.name]: event.target.checked });
-  };
+      const { name, checked: isChecked } = event.target;
+      setChecked((prev) => ({
+        ...prev,
+        [name]: isChecked,
+        ...(name === 'twoPipeSystem' && isChecked ? { fourPipeSystem: false } : {}),
+        ...(name === 'fourPipeSystem' && isChecked ? { twoPipeSystem: false } : {}),
+      }));
+    };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDescription({ ...description, [event.target.name]: event.target.value });
@@ -46,24 +62,36 @@ const SubStep2: React.FC = () => {
     setTypicalHours({ ...typicalHours, [event.target.name]: event.target.value });
   };
 
+  const handleSetbackTemperatureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSetbackTemperature({ ...setbackTemperature, [event.target.name]: event.target.value });
+  };
+
   const labelStyle = {
     fontFamily: 'Nunito Sans, sans-serif',
     fontSize: '0.75rem',
     minWidth: '150px',
     flex: 0.35,
-    textAlign: 'left'
+    textAlign: 'left',
   };
 
   const labelStyle2 = {
     fontFamily: 'Nunito Sans, sans-serif',
     fontSize: '0.75rem',
-    minWidth: '450px',
-    flex: 0.375,
+    // minWidth: '100px',
+    flex: 0.391,
     textAlign: 'left'
   };
 
   const inputStyle = {
     flex: 0.39,
+    fontSize: '0.7rem',
+    fontFamily: 'Nunito Sans, sans-serif',
+    '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+    '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }
+  };
+
+  const inputStyle2 = {
+    flex: 0.192,
     fontSize: '0.7rem',
     fontFamily: 'Nunito Sans, sans-serif',
     '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
@@ -103,7 +131,7 @@ const SubStep2: React.FC = () => {
       }}>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={labelStyle}>
+        <Typography sx={{ ...labelStyle, opacity: checked.fourPipeSystem ? 0.5 : 1, pointerEvents: checked.fourPipeSystem ? 'none' : 'auto' }}>
             <b>2 pipe system with seasonal change overs:</b>
           </Typography>
           <Tooltip title="Check if your facility uses a 2 pipe system with seasonal change overs occurring in October to heat and April to cooling." placement='left' arrow>
@@ -114,6 +142,11 @@ const SubStep2: React.FC = () => {
                   onChange={handleCheck}
                   name="twoPipeSystem"
                   size="small"
+                  sx={{
+                    opacity: checked.fourPipeSystem ? 0.5 : 1,
+                    pointerEvents: checked.fourPipeSystem ? 'none' : 'auto',
+                  }}
+                  disabled={checked.fourPipeSystem}
                 />
               }
               label=""
@@ -135,7 +168,7 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={labelStyle}>
+        <Typography sx={{ ...labelStyle, opacity: checked.twoPipeSystem ? 0.5 : 1, pointerEvents: checked.twoPipeSystem ? 'none' : 'auto' }}>
             <b>4 pipe system:</b>
           </Typography>
           <Tooltip title="Check if your facility uses a 4 pipe system with simultaneous heating and cooling capability." placement='left' arrow>
@@ -146,6 +179,11 @@ const SubStep2: React.FC = () => {
                   onChange={handleCheck}
                   name="fourPipeSystem"
                   size="small"
+                  sx={{
+                    opacity: checked.twoPipeSystem ? 0.5 : 1,
+                    pointerEvents: checked.twoPipeSystem ? 'none' : 'auto',
+                  }}
+                  disabled={checked.twoPipeSystem}
                 />
               }
               label=""
@@ -166,7 +204,7 @@ const SubStep2: React.FC = () => {
           /></Tooltip>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
+        {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
           <Typography sx={labelStyle}>
             <b>Steam distribution to Hot Water conversion:</b>
           </Typography>
@@ -228,7 +266,7 @@ const SubStep2: React.FC = () => {
             sx={inputStyle}
             disabled={!checked.steamToBuilding}
           /></Tooltip>
-        </Box>
+        </Box> */}
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={labelStyle2}>
@@ -244,7 +282,7 @@ const SubStep2: React.FC = () => {
               onChange={handleOperationalHoursChange}
               size="small"
               sx={{
-                flex: 0.185,
+                flex: 0.177,
                 fontSize: '0.7rem',
                 fontFamily: 'Nunito Sans, sans-serif',
                 '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
@@ -262,7 +300,7 @@ const SubStep2: React.FC = () => {
               onChange={handleOperationalHoursChange}
               size="small"
               sx={{
-                flex: 0.185,
+                flex: 0.177,
                 fontSize: '0.7rem',
                 fontFamily: 'Nunito Sans, sans-serif',
                 '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
@@ -285,7 +323,7 @@ const SubStep2: React.FC = () => {
               onChange={handleTypicalHoursChange}
               size="small"
               sx={{
-                flex: 0.185,
+                flex: 0.177,
                 fontSize: '0.7rem',
                 fontFamily: 'Nunito Sans, sans-serif',
                 '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
@@ -303,7 +341,7 @@ const SubStep2: React.FC = () => {
               onChange={handleTypicalHoursChange}
               size="small"
               sx={{
-                flex: 0.185,
+                flex: 0.177,
                 fontSize: '0.7rem',
                 fontFamily: 'Nunito Sans, sans-serif',
                 '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
@@ -375,6 +413,113 @@ const SubStep2: React.FC = () => {
             disabled={!checked.waterTreatment}
           /></Tooltip>
         </Box>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
+          <Tooltip title="Bradley needs to confirm what temperature you provide to your tenant occupied areas for weather normalization and new load demand forecasting." placement='left' arrow>
+          <Typography sx={{fontFamily: 'Nunito Sans, sans-serif',
+    fontSize: '0.75rem',
+    minWidth: '409px',
+    flex: 0.376,
+    textAlign: 'left'}}>
+            <b>Facility Tenant Temperate:</b> (in °F)
+          </Typography></Tooltip>
+          <Tooltip title="Enter the temperature in °F" placement='right' arrow>
+          <TextField
+            fullWidth
+            type='number'
+            variant="outlined"
+            placeholder='Enter the temperature in °F'
+            name="facilityTenantTemperature"
+            value={facilityTenantTemperature}
+            onChange={(e) => setFacilityTenantTemperature(e.target.value)}
+            size="small"
+            sx={{flex: 0.376,
+              minWidth: '150px',
+              fontSize: '0.7rem',
+              fontFamily: 'Nunito Sans, sans-serif',
+              '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}}
+          /></Tooltip>
+        </Box>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
+          <Typography sx={labelStyle}>
+            <b>Does HVAC Controls allow for setback<br />during unoccupied times?</b> (in °F)
+          </Typography>
+          <Tooltip title="Check if your facility has HVAC controls that allow for setback during unoccupied times." placement='left' arrow>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={checked.setbackTemperature}
+                  onChange={handleCheck}
+                  name="setbackTemperature"
+                  size="small"
+                />
+              }
+              label=""
+              sx={{ flex: 0.0 }}
+            />
+          </Tooltip>
+          <Tooltip title="Setback temp. for summer" placement='left' arrow>
+          <TextField
+            type='number'
+            fullWidth
+            variant="outlined"
+            placeholder={checked.setbackTemperature ? "Enter temp. in °F (Summer)" : "Summer Setback Temp."}
+            name="setbackTemperature"
+            value={setbackTemperature.summer}
+            onChange={handleSetbackTemperatureChange}
+            size="small"
+            sx={inputStyle2}
+            disabled={!checked.setbackTemperature}
+          /></Tooltip>
+          <Tooltip title="Setback temp. for winter" placement='right' arrow>
+          <TextField
+            type='number'
+            fullWidth
+            variant="outlined"
+            placeholder={checked.setbackTemperature ? "Enter temp. in °F (Winter)" : "Winter Setback Temp."}
+            name="setbackTemperature"
+            value={setbackTemperature.winter}
+            onChange={handleSetbackTemperatureChange}
+            size="small"
+            sx={inputStyle2}
+            disabled={!checked.setbackTemperature}
+          /></Tooltip>
+        </Box>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
+          <Typography sx={labelStyle}>
+            <b>Does your facility utilize free cooling?</b>
+          </Typography>
+          <Tooltip title="Check if your facility utilizes free cooling." placement='left' arrow>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={checked.freeCooling}
+                  onChange={handleCheck}
+                  name="freeCooling"
+                  size="small"
+                />
+              }
+              label=""
+              sx={{ flex: 0.0 }}
+            />
+          </Tooltip>
+          <Tooltip title="Add description here." placement='right' arrow>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder={checked.freeCooling ? "Add Description" : "Check the Box to Add Description"}
+            name="freeCooling"
+            value={description.freeCooling}
+            onChange={handleDescriptionChange}
+            size="small"
+            sx={inputStyle}
+            disabled={!checked.freeCooling}
+          /></Tooltip>
+        </Box>
+
       </Box>
     </Box>
   );
