@@ -74,6 +74,14 @@ const SubStep2: React.FC = () => {
     textAlign: 'left',
   };
 
+  const setbackStyle = {
+    fontFamily: 'Nunito Sans, sans-serif',
+    fontSize: '0.75rem',
+    minWidth: '356px',
+    flex: 0.35,
+    textAlign: 'left',
+  };
+
   const labelStyle2 = {
     fontFamily: 'Nunito Sans, sans-serif',
     fontSize: '0.75rem',
@@ -443,7 +451,7 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Typography sx={labelStyle}>
+          <Typography sx={setbackStyle}>
             <b>Does HVAC Controls allow for setback<br />during unoccupied times?</b> (in °F)
           </Typography>
           <Tooltip title="Check if your facility has HVAC controls that allow for setback during unoccupied times." placement='left' arrow>
