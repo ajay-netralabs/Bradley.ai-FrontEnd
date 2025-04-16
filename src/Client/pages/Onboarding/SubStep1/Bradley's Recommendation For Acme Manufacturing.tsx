@@ -107,7 +107,7 @@ const benefitDataTop = [
 ];
 
 const benefitDataBottom = [
-    { value: '$1.583 million annual', description: 'reduction in utility costs' },
+    { value: '$1.583 million', description: 'annual reduction in utility costs' },
     { value: '$1.178 million', description: 'From Utility rebates' },
     { value: '$100 thousand', description: 'From Maryland Energy Administration grant' },
     { value: '$13.287 million', description: 'Invested in addressing deffered mechanical and electrical infrastructure' },
