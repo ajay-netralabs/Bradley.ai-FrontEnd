@@ -14,6 +14,7 @@ import { FinancialIncentives } from './Recommendation Diagrams/Financial Incenti
 import { FinanceOptions } from './Recommendation Diagrams/Finance Options';
 import { Resources } from './Recommendation Diagrams/Resources';
 import { GeneralArrangement } from './Recommendation Diagrams/General Arrangement';
+import { SystemDiagram } from './Recommendation Diagrams/System Diagram';
 
 export const StyledTitle = styled(Typography)(({ theme }) => ({
   fontFamily: 'Nunito Sans, sans-serif',
@@ -241,6 +242,14 @@ export const mockExpandedContent = (title: string) => {
     );
   }
 
+  if (title === "System Diagram") {
+    return (
+      <Box sx={{ p: 0, height: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <SystemDiagram size="large" />
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ p: 0, height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <Box sx={{
@@ -260,4 +269,4 @@ export const mockExpandedContent = (title: string) => {
   );
 };
 
-export { EnergyProductionBreakdown, EnergyFlowDiagram, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement };
+export { EnergyProductionBreakdown, EnergyFlowDiagram, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram };
