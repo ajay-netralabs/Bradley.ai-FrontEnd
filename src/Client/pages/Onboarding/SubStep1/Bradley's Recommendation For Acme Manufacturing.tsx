@@ -229,13 +229,13 @@ const SubStep1: React.FC = () => {
             </TabPanel>
 
             <TabPanel value={tabValue} index={2}>
-              <Box sx={{ display: 'grid', gap: 2, gridTemplateRows: '1fr 1fr', height: '1325px' }}>
+              <Box sx={{ display: 'grid', gap: 2, gridTemplateRows: '1fr 1fr', height: '1290px' }}>
               <StyledTabPanelBox>
                 <StyledTabPanelTitle variant="h6">Project Schedule</StyledTabPanelTitle>
                 <StyledExpandButton onClick={() => handleExpandClick('project-schedule', 'Project Schedule')}>
                 <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                 </StyledExpandButton>
-                <Box sx={{ pt: 1.5, pb: 0, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box sx={{ pt: 1.5, pb: 0, px: "100%", pl: 1, pr: 0, width: 'calc(100% - 30px)', height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ProjectSchedule size="small" />
                 </Box>
               </StyledTabPanelBox>
@@ -244,7 +244,7 @@ const SubStep1: React.FC = () => {
                 <StyledExpandButton onClick={() => handleExpandClick('general-arrangement', 'General Arrangement')}>
                 <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                 </StyledExpandButton>
-                <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 35px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 40px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <GeneralArrangement size="small" />
                 </Box>
               </StyledTabPanelBox>
