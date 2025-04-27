@@ -12,6 +12,11 @@ import { EnergyFlowDiagram } from './Recommendation Diagrams/Energy Flow Diagram
 import { IndicativeFinanceDetails } from './Recommendation Diagrams/Indicative Interest Rate, Term of Financing & Internal Rate of Return';
 import { FinancialIncentives } from './Recommendation Diagrams/Financial Incentives';
 import { FinanceOptions } from './Recommendation Diagrams/Finance Options';
+import { Resources } from './Recommendation Diagrams/Resources';
+import { GeneralArrangement } from './Recommendation Diagrams/General Arrangement';
+import { SystemDiagram } from './Recommendation Diagrams/System Diagram';
+import { InvestmentSummary } from './Recommendation Diagrams/Investment Summary';
+import { ProjectSchedule } from './Recommendation Diagrams/Project Schedule';
 
 export const StyledTitle = styled(Typography)(({ theme }) => ({
   fontFamily: 'Nunito Sans, sans-serif',
@@ -109,14 +114,23 @@ export const ExpandableModal: React.FC<ExpandableModalProps> = ({ open, onClose,
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '80%',
-        maxWidth: title === "Indicative Interest Rate, Term of Financing & Internal Rate of Return" ? '500px' : title === "Financial Incentives" ? '600px' : '1000px',
+        maxWidth: title === "Indicative Interest Rate, Term of Financing & Internal Rate of Return" ? '500px'
+        : title === "Financial Incentives" ? '600px'
+        : title === "System Diagram" ? '900px'
+        : title === "Energy Production Breakdown" ? '850px'
+        : title === "Energy Flow Diagram" ? '800px'
+        : title === "Resources" ? '850px'
+        : title === "General Arrangement" ? '1000px'
+        : '1500px',
         bgcolor: 'background.paper',
         borderRadius: 2,
         boxShadow: 24,
         p: 4,
         pt: 2.5,
         maxHeight: '90vh',
-        overflow: 'auto'
+        overflow: 'auto',
+        scrollbarWidth: 'none', // Firefox
+        '&::-webkit-scrollbar': { display: 'none' }, // Chrome, Safari
       }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography id="expanded-modal-title" variant="h6" component="h2" sx={{
@@ -223,6 +237,46 @@ export const mockExpandedContent = (title: string) => {
     );
   }
 
+  if (title === "Resources") {
+    return (
+      <Box sx={{ p: 0, height: '350px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Resources size="large" />
+      </Box>
+    );
+  }
+
+  if (title === "General Arrangement") {
+    return (
+      <Box sx={{ p: 0, height: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <GeneralArrangement size="large" />
+      </Box>
+    );
+  }
+
+  if (title === "System Diagram") {
+    return (
+      <Box sx={{ p: 0, height: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <SystemDiagram size="large" />
+      </Box>
+    );
+  }
+
+  if (title === "Investment Summary") {
+    return (
+      <Box sx={{ p: 0, height: '1300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <InvestmentSummary size="large" />
+      </Box>
+    );
+  }
+
+  if (title === "Project Schedule") {
+    return (
+      <Box sx={{ p: 0, height: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <ProjectSchedule size="large" />
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ p: 0, height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <Box sx={{
@@ -242,4 +296,4 @@ export const mockExpandedContent = (title: string) => {
   );
 };
 
-export { EnergyProductionBreakdown, EnergyFlowDiagram, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions };
+export { EnergyProductionBreakdown, EnergyFlowDiagram, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule };

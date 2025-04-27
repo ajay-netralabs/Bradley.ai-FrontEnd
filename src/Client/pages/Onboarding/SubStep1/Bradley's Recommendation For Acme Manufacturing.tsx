@@ -11,7 +11,7 @@ import {
   // Modal,
   // Button
 } from '@mui/material';
-import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, StyledBenefitCard, StyledBenefitValue, StyledBenefitDescription, StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions } from '../../../../components/RecommendationUI';
+import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, StyledBenefitCard, StyledBenefitValue, StyledBenefitDescription, StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule } from '../../../../components/RecommendationUI';
 
 const SubStep1: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -122,7 +122,7 @@ const SubStep1: React.FC = () => {
             </Tabs>
 
             <TabPanel value={tabValue} index={0}>
-              <Box sx={{ display: 'grid', gap: 2, height: '1000px', gridTemplateRows: '1fr 1fr 1fr' }}>
+              <Box sx={{ display: 'grid', gap: 2, height: '1390px', gridTemplateRows: '1fr 1fr 1fr' }}>
                 <StyledTabPanelBox>
                   <StyledTabPanelTitle variant="h6">
                     System Diagram
@@ -130,6 +130,9 @@ const SubStep1: React.FC = () => {
                   <StyledExpandButton onClick={() => handleExpandClick('system-diagram', 'System Diagram')}>
                     <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                   </StyledExpandButton>
+                  <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <SystemDiagram size="small" />
+                  </Box>
                 </StyledTabPanelBox>
                 <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                   <StyledTabPanelBox>
@@ -167,7 +170,7 @@ const SubStep1: React.FC = () => {
             </TabPanel>
 
             <TabPanel value={tabValue} index={1}>
-              <Box sx={{ display: 'grid', gap: 2, height: '1340px', gridTemplateRows: '1fr 1fr 1fr 1fr' }}>
+              <Box sx={{ display: 'grid', gap: 2, height: '2000px', gridTemplateRows: '1fr 1fr 1fr 1fr' }}>
                 <StyledTabPanelBox>
                   <StyledTabPanelTitle variant="h6">
                     Investment Summary
@@ -175,6 +178,9 @@ const SubStep1: React.FC = () => {
                   <StyledExpandButton onClick={() => handleExpandClick('investment-summary', 'Investment Summary')}>
                     <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                   </StyledExpandButton>
+                  <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <InvestmentSummary size="small" />
+                  </Box>
                 </StyledTabPanelBox>
                 <Box sx={{ display: 'grid', gridTemplateColumns: '0.8fr 1.2fr', gap: 2 }}>
                     <StyledTabPanelBox>
@@ -223,12 +229,26 @@ const SubStep1: React.FC = () => {
             </TabPanel>
 
             <TabPanel value={tabValue} index={2}>
-              <StyledTabPanelBox sx={{ height: '400px' }}>
-                <StyledTabPanelTitle variant="h6">Project Schedule & General Arrangement</StyledTabPanelTitle>
-                <StyledExpandButton onClick={() => handleExpandClick('project-schedule', 'Project Schedule & General Arrangement')}>
-                  <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
+              <Box sx={{ display: 'grid', gap: 2, gridTemplateRows: '1fr 1fr', height: '1325px' }}>
+              <StyledTabPanelBox>
+                <StyledTabPanelTitle variant="h6">Project Schedule</StyledTabPanelTitle>
+                <StyledExpandButton onClick={() => handleExpandClick('project-schedule', 'Project Schedule')}>
+                <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                 </StyledExpandButton>
+                <Box sx={{ pt: 1.5, pb: 0, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ProjectSchedule size="small" />
+                </Box>
               </StyledTabPanelBox>
+              <StyledTabPanelBox>
+                <StyledTabPanelTitle variant="h6">General Arrangement</StyledTabPanelTitle>
+                <StyledExpandButton onClick={() => handleExpandClick('general-arrangement', 'General Arrangement')}>
+                <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
+                </StyledExpandButton>
+                <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 35px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <GeneralArrangement size="small" />
+                </Box>
+              </StyledTabPanelBox>
+              </Box>
             </TabPanel>
 
             <TabPanel value={tabValue} index={3}>
@@ -237,6 +257,13 @@ const SubStep1: React.FC = () => {
                 <StyledExpandButton onClick={() => handleExpandClick('resources', 'Resources')}>
                   <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                 </StyledExpandButton>
+                <Box sx={{ pt: 2, px: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Typography sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#777', fontFamily: 'Nunito Sans, sans-serif' }}>
+                  Bradley.ai uses the following AI methods to perfect the design and estimation for your DER project.
+                </Typography></Box>
+                <Box sx={{ px: 1, height: 'calc(100% - 40px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Resources size="small" />
+                </Box>
               </StyledTabPanelBox>
             </TabPanel>
           </Box>

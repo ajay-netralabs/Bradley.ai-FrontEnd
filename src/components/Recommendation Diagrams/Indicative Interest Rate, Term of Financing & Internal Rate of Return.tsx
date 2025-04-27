@@ -46,7 +46,7 @@ export const IndicativeFinanceDetails: React.FC<{ size: 'small' | 'large' }> = (
             </StyledTableCell>
             <StyledTableCell isLarge={isLarge} align="left">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <ValueTypography isLarge={isLarge}>6.25 %</ValueTypography>
+                <ValueTypography isLarge={isLarge}>6.25%</ValueTypography>
               </Box>
             </StyledTableCell>
           </TableRow>
@@ -55,7 +55,7 @@ export const IndicativeFinanceDetails: React.FC<{ size: 'small' | 'large' }> = (
               <LabelTypography isLarge={isLarge}>TERM OF LOAN</LabelTypography>
             </StyledTableCell>
             <StyledTableCell isLarge={isLarge} align="left">
-              <ValueTypography isLarge={isLarge}>20 Years</ValueTypography>
+              <ValueTypography isLarge={isLarge}>20-yrs</ValueTypography>
             </StyledTableCell>
           </TableRow>
           <TableRow>
@@ -70,7 +70,7 @@ export const IndicativeFinanceDetails: React.FC<{ size: 'small' | 'large' }> = (
             </StyledTableCell>
             <StyledTableCell isLarge={isLarge} align="left">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <ValueTypography isLarge={isLarge}>13.7 %</ValueTypography>
+                <ValueTypography isLarge={isLarge}>13.7%</ValueTypography>
               </Box>
             </StyledTableCell>
           </TableRow>
