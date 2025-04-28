@@ -6,7 +6,7 @@ export const Resources: React.FC<{ size: 'small' | 'large' }> = ({ size }) => {
     return (
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             <img
-                src="src\components\Recommendation Diagrams\resources.png"
+                src="resources.png"
                 alt="Resources"
                 width={imageWidth}
                 height={imageHeight}

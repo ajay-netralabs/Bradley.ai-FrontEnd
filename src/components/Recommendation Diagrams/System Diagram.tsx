@@ -13,7 +13,7 @@ export const SystemDiagram: React.FC<{ size: 'small' | 'large' }> = ({ size }) =
 						}}
 				>
 						<img
-					src="src\components\Recommendation Diagrams\systemdiagram.png"
+					src="systemdiagram.png"
 					alt="System Diagram"
 					width={imageWidth}
 					height={imageHeight}

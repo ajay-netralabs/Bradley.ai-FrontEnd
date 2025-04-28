@@ -6,7 +6,7 @@ export const GeneralArrangement: React.FC<{ size: 'small' | 'large' }> = ({ size
     return (
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             <img
-                src="src\components\Recommendation Diagrams\generalarrangement.png"
+                src="generalarrangement.png"
                 alt="General Arrangement"
                 width={imageWidth}
                 height={imageHeight}
