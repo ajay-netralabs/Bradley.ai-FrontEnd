@@ -5,7 +5,8 @@ export const steps = [
   { label: 'Site Assessment', subSteps: 3, furtherSubSteps: [1, 6, 6] },
   { label: 'Financial Info', subSteps: 2, furtherSubSteps: [2, 8, 3] }, 
   { label: 'Data Verification', subSteps: 1, furtherSubSteps: [1] },
-  { label: 'Onboarding', subSteps: 1, furtherSubSteps: [2] },
+  { label: 'Onboarding', subSteps: 1, furtherSubSteps: [1] },
+  { label: 'Recommendations', subSteps: 1, furtherSubSteps: [1] },
 ];
 
 export const TOTAL_STEPS = steps.length;

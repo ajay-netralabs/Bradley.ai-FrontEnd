@@ -11,7 +11,7 @@ import {
   // Modal,
   // Button
 } from '@mui/material';
-import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, StyledBenefitCard, StyledBenefitValue, StyledBenefitDescription, StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule } from '../../../../components/RecommendationUI';
+import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, StyledBenefitCard, StyledBenefitValue, StyledBenefitDescription, StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime } from '../../../../components/RecommendationUI';
 
 const SubStep1: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -51,7 +51,7 @@ const SubStep1: React.FC = () => {
         <h2>Bradley's Recommendation For Acme Manufacturing</h2>
       </StyledTitle>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: { xs: '20px', md: '160px' } }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: { xs: '20px', md: '80px' } }}>
         <StyledRecommendation>
           <b>Bradley.ai</b> recommends a hybrid system for Acme Manufacturing. This system combines solar panels, battery storage, and a natural gas generator to optimize energy costs, reduce emissions, and provide reliable backup power.
         </StyledRecommendation>
@@ -102,6 +102,7 @@ const SubStep1: React.FC = () => {
                 borderColor: 'divider',
                 '& .MuiTabs-flexContainer': {
                   justifyContent: 'center',
+                  // gap: 7.9,
                 },
                 '& .MuiTab-root': {
                   textTransform: 'none',
@@ -109,6 +110,7 @@ const SubStep1: React.FC = () => {
                   fontSize: '0.9rem',
                   minWidth: 120,
                   fontWeight: 'bold',
+                  // flexGrow: 1,
                   '&:focus': {
                     outline: 'none',
                   },
@@ -122,7 +124,7 @@ const SubStep1: React.FC = () => {
             </Tabs>
 
             <TabPanel value={tabValue} index={0}>
-              <Box sx={{ display: 'grid', gap: 2, height: '1390px', gridTemplateRows: '1fr 1fr 1fr' }}>
+              <Box sx={{ display: 'grid', gap: 2, height: '1550px', gridTemplateRows: '1fr 1fr 1fr' }}>
                 <StyledTabPanelBox>
                   <StyledTabPanelTitle variant="h6">
                     System Diagram
@@ -130,7 +132,7 @@ const SubStep1: React.FC = () => {
                   <StyledExpandButton onClick={() => handleExpandClick('system-diagram', 'System Diagram')}>
                     <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                   </StyledExpandButton>
-                  <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 35px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <SystemDiagram size="small" />
                   </Box>
                 </StyledTabPanelBox>
@@ -153,9 +155,9 @@ const SubStep1: React.FC = () => {
                     <StyledExpandButton onClick={() => handleExpandClick('energy-flow', 'Energy Flow Diagram')}>
                       <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                     </StyledExpandButton>
-                    <div style={{ width: '100%', height: '300px' }}>
+                    <Box sx={{ pt: 3, pb: 1, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <EnergyFlowDiagram />
-                    </div>
+                    </Box>
                   </StyledTabPanelBox>
                 </Box>
                 <StyledTabPanelBox>
@@ -170,7 +172,7 @@ const SubStep1: React.FC = () => {
             </TabPanel>
 
             <TabPanel value={tabValue} index={1}>
-              <Box sx={{ display: 'grid', gap: 2, height: '2000px', gridTemplateRows: '1fr 1fr 1fr 1fr' }}>
+              <Box sx={{ display: 'grid', gap: 2, height: '1860px', gridTemplateRows: '1fr 1fr 1fr 1fr' }}>
                 <StyledTabPanelBox>
                   <StyledTabPanelTitle variant="h6">
                     Investment Summary
@@ -178,19 +180,19 @@ const SubStep1: React.FC = () => {
                   <StyledExpandButton onClick={() => handleExpandClick('investment-summary', 'Investment Summary')}>
                     <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                   </StyledExpandButton>
-                  <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Box sx={{ pt: 1.5, pb: 3, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <InvestmentSummary size="small" />
                   </Box>
                 </StyledTabPanelBox>
-                <Box sx={{ display: 'grid', gridTemplateColumns: '0.8fr 1.2fr', gap: 2 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                     <StyledTabPanelBox>
                     <StyledTabPanelTitle variant="h6">
-                      Indicative Interest Rate,<br />Term of Financing &<br />Internal Rate of Return
+                      IIR, ToF & IRR
                     </StyledTabPanelTitle>
-                    <StyledExpandButton onClick={() => handleExpandClick('interest-rate', 'Indicative Interest Rate, Term of Financing & Internal Rate of Return')}>
+                    <StyledExpandButton onClick={() => handleExpandClick('interest-rate', 'IIR, ToF & IRR')}>
                       <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                     </StyledExpandButton>
-                    <Box sx={{ pt: 0, pb: 1, px: 1, height: 'calc(100% - 60px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Box sx={{ pt: 0, pb: 1, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <IndicativeFinanceDetails size="small" />
                     </Box>
                     </StyledTabPanelBox>
@@ -213,6 +215,9 @@ const SubStep1: React.FC = () => {
                     <StyledExpandButton onClick={() => handleExpandClick('energy-cost', 'Annual Energy Cost "as is" compared to DER overtime')}>
                       <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                     </StyledExpandButton>
+                    <Box sx={{ pt: 1.5, pb: 0, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <AnnualEnergyCostAsIsComparedToDEROvertime size="small" />
+                    </Box>
                   </StyledTabPanelBox>
                 <StyledTabPanelBox>
                   <StyledTabPanelTitle variant="h6">
@@ -229,7 +234,7 @@ const SubStep1: React.FC = () => {
             </TabPanel>
 
             <TabPanel value={tabValue} index={2}>
-              <Box sx={{ display: 'grid', gap: 2, gridTemplateRows: '1fr 1fr', height: '1290px' }}>
+              <Box sx={{ display: 'grid', gap: 2, gridTemplateRows: '1fr 1fr', height: '1390px' }}>
               <StyledTabPanelBox>
                 <StyledTabPanelTitle variant="h6">Project Schedule</StyledTabPanelTitle>
                 <StyledExpandButton onClick={() => handleExpandClick('project-schedule', 'Project Schedule')}>
@@ -252,7 +257,7 @@ const SubStep1: React.FC = () => {
             </TabPanel>
 
             <TabPanel value={tabValue} index={3}>
-              <StyledTabPanelBox sx={{ height: '400px' }}>
+              <StyledTabPanelBox sx={{ height: '460px' }}>
                 <StyledTabPanelTitle variant="h6">Resources</StyledTabPanelTitle>
                 <StyledExpandButton onClick={() => handleExpandClick('resources', 'Resources')}>
                   <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
@@ -261,7 +266,7 @@ const SubStep1: React.FC = () => {
                 <Typography sx={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#777', fontFamily: 'Nunito Sans, sans-serif' }}>
                   Bradley.ai uses the following AI methods to perfect the design and estimation for your DER project.
                 </Typography></Box>
-                <Box sx={{ px: 1, height: 'calc(100% - 40px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box sx={{ px: 1, height: 'calc(100% - 50px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Resources size="small" />
                 </Box>
               </StyledTabPanelBox>

@@ -18,6 +18,7 @@ import { MdOutlineWarehouse } from 'react-icons/md';
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 import { GrDocumentVerified } from 'react-icons/gr';
 import { MdDoneOutline } from 'react-icons/md';
+import { BiSolidReport } from "react-icons/bi";
 
 const steps = [
   { label: 'Organizational Profile', icon: GoOrganization },
@@ -27,6 +28,7 @@ const steps = [
   { label: 'Financial Info', icon: MdOutlineAccountBalanceWallet },
   { label: 'Data Verification', icon: GrDocumentVerified },
   { label: 'Onboarding', icon: MdDoneOutline },
+  { label: 'Recommendations', icon: BiSolidReport },
 ];
 
 interface SidebarProps {

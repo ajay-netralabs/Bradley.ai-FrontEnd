@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { EnergyProductionBreakdown } from './Recommendation Diagrams/Energy Production Breakdown';
 import { EnergyFlowDiagram } from './Recommendation Diagrams/Energy Flow Diagram';
-import { IndicativeFinanceDetails } from './Recommendation Diagrams/Indicative Interest Rate, Term of Financing & Internal Rate of Return';
+import { IndicativeFinanceDetails } from './Recommendation Diagrams/IIR, ToF & IRR';
 import { FinancialIncentives } from './Recommendation Diagrams/Financial Incentives';
 import { FinanceOptions } from './Recommendation Diagrams/Finance Options';
 import { Resources } from './Recommendation Diagrams/Resources';
@@ -17,6 +17,7 @@ import { GeneralArrangement } from './Recommendation Diagrams/General Arrangemen
 import { SystemDiagram } from './Recommendation Diagrams/System Diagram';
 import { InvestmentSummary } from './Recommendation Diagrams/Investment Summary';
 import { ProjectSchedule } from './Recommendation Diagrams/Project Schedule';
+import { AnnualEnergyCostAsIsComparedToDEROvertime } from './Recommendation Diagrams/Annual Energy Cost as is compared to DER overtime';
 
 export const StyledTitle = styled(Typography)(({ theme }) => ({
   fontFamily: 'Nunito Sans, sans-serif',
@@ -114,7 +115,7 @@ export const ExpandableModal: React.FC<ExpandableModalProps> = ({ open, onClose,
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '80%',
-        maxWidth: title === "Indicative Interest Rate, Term of Financing & Internal Rate of Return" ? '500px'
+        maxWidth: title === "IIR, ToF & IRR" ? '500px'
         : title === "Financial Incentives" ? '600px'
         : title === "System Diagram" ? '900px'
         : title === "Energy Production Breakdown" ? '850px'
@@ -213,9 +214,9 @@ export const mockExpandedContent = (title: string) => {
     );
   }
 
-  if (title === "Indicative Interest Rate, Term of Financing & Internal Rate of Return") {
+  if (title === "IIR, ToF & IRR") {
     return (
-      <Box sx={{ p: 0, height: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ p: 0, height: '226px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <IndicativeFinanceDetails size="large" />
       </Box>
     );
@@ -263,7 +264,7 @@ export const mockExpandedContent = (title: string) => {
 
   if (title === "Investment Summary") {
     return (
-      <Box sx={{ p: 0, height: '1300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ p: 0, height: '850px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <InvestmentSummary size="large" />
       </Box>
     );
@@ -273,6 +274,14 @@ export const mockExpandedContent = (title: string) => {
     return (
       <Box sx={{ p: 0, height: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <ProjectSchedule size="large" />
+      </Box>
+    );
+  }
+
+  if (title === 'Annual Energy Cost "as is" compared to DER overtime') {
+    return (
+      <Box sx={{ p: 0, height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <AnnualEnergyCostAsIsComparedToDEROvertime size="large" />
       </Box>
     );
   }
@@ -296,4 +305,4 @@ export const mockExpandedContent = (title: string) => {
   );
 };
 
-export { EnergyProductionBreakdown, EnergyFlowDiagram, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule };
+export { EnergyProductionBreakdown, EnergyFlowDiagram, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime };
