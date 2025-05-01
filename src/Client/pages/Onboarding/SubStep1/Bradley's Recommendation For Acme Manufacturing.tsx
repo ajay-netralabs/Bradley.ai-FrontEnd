@@ -11,7 +11,7 @@ import {
   // Modal,
   // Button
 } from '@mui/material';
-import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, StyledBenefitCard, StyledBenefitValue, StyledBenefitDescription, StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime } from '../../../../components/RecommendationUI';
+import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, StyledBenefitCard, StyledBenefitValue, StyledBenefitDescription, StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime, EnergySpecifications } from '../../../../components/RecommendationUI';
 
 const SubStep1: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -124,7 +124,7 @@ const SubStep1: React.FC = () => {
             </Tabs>
 
             <TabPanel value={tabValue} index={0}>
-              <Box sx={{ display: 'grid', gap: 2, height: '1550px', gridTemplateRows: '1fr 1fr 1fr' }}>
+              <Box sx={{ display: 'grid', gap: 2, height: '1700px', gridTemplateRows: '1fr 1fr 1fr' }}>
                 <StyledTabPanelBox>
                   <StyledTabPanelTitle variant="h6">
                     System Diagram
@@ -167,6 +167,9 @@ const SubStep1: React.FC = () => {
                   <StyledExpandButton onClick={() => handleExpandClick('energy-specs', 'Energy Specifications')}>
                     <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
                   </StyledExpandButton>
+                  <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <EnergySpecifications size="small" />
+                  </Box>
                 </StyledTabPanelBox>
               </Box>
             </TabPanel>

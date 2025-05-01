@@ -18,6 +18,7 @@ import { SystemDiagram } from './Recommendation Diagrams/System Diagram';
 import { InvestmentSummary } from './Recommendation Diagrams/Investment Summary';
 import { ProjectSchedule } from './Recommendation Diagrams/Project Schedule';
 import { AnnualEnergyCostAsIsComparedToDEROvertime } from './Recommendation Diagrams/Annual Energy Cost as is compared to DER overtime';
+import { EnergySpecifications } from './Recommendation Diagrams/Energy Specifications';
 
 export const StyledTitle = styled(Typography)(({ theme }) => ({
   fontFamily: 'Nunito Sans, sans-serif',
@@ -286,6 +287,14 @@ export const mockExpandedContent = (title: string) => {
     );
   }
 
+  if (title === "Energy Specifications") {
+    return (
+      <Box sx={{ p: 0, height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <EnergySpecifications size="large" />
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ p: 0, height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <Box sx={{
@@ -305,4 +314,4 @@ export const mockExpandedContent = (title: string) => {
   );
 };
 
-export { EnergyProductionBreakdown, EnergyFlowDiagram, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime };
+export { EnergyProductionBreakdown, EnergyFlowDiagram, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime, EnergySpecifications };
