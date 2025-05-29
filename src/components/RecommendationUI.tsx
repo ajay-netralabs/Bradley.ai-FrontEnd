@@ -5,7 +5,8 @@ import {
   Card,
   styled,
   Modal,
-  Button
+  Button,
+  CardContent
 } from '@mui/material';
 import { EnergyProductionBreakdown } from './Recommendation Diagrams/Energy Production Breakdown';
 import { EnergyFlowDiagram } from './Recommendation Diagrams/Energy Flow Diagram';
@@ -19,6 +20,7 @@ import { InvestmentSummary } from './Recommendation Diagrams/Investment Summary'
 import { ProjectSchedule } from './Recommendation Diagrams/Project Schedule';
 import { AnnualEnergyCostAsIsComparedToDEROvertime } from './Recommendation Diagrams/Annual Energy Cost as is compared to DER overtime';
 import { EnergySpecifications } from './Recommendation Diagrams/Energy Specifications';
+import { AiOutlineFall, AiOutlineRise } from "react-icons/ai";
 
 export const StyledTitle = styled(Typography)(({ theme }) => ({
   fontFamily: 'Nunito Sans, sans-serif',
@@ -43,15 +45,110 @@ export const StyledKeyBenefitsTitle = styled(Typography)(({ theme }) => ({
   textAlign: 'center',
 }));
 
+// Enhanced Benefit Card Components
 export const StyledBenefitCard = styled(Card)(({ theme }) => ({
   flex: 1,
   padding: theme.spacing(1),
+  position: 'relative',
+  overflow: 'hidden',
   textAlign: 'center',
   backgroundColor: '#f5f5f5',
   boxShadow: theme.shadows[0],
   borderRadius: theme.shape.borderRadius,
   paddingBottom: theme.spacing(0),
+  // border: '1px solid #e9ecef',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-0.25px)',
+    boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+  },
 }));
+
+const WatermarkIcon = styled('div')<{ type: 'financial' | 'environmental' | 'utility' }>(({ type }) => ({
+  position: 'absolute',
+  right: '-10px',
+  top: '50%',
+  transform: 'translateY(-50%) rotate(-15deg)',
+  fontSize: '4rem',
+  opacity: 0.15,
+  fontWeight: 'bold',
+  color: '#333',
+  zIndex: 1,
+  ...(type === 'financial' && {
+    fontSize: '6.5rem',
+    left: '-150px',
+  }),
+  ...(type === 'environmental' && {
+    fontSize: '6.5rem',
+    left: '-100px',
+  }),
+  ...(type === 'utility' && {
+    fontSize: '6.5rem',
+    left: '-135px',
+  }),
+}));
+
+const PercentageValue = styled(Typography)(({ theme }) => ({
+  fontFamily: 'Nunito Sans, sans-serif',
+  fontWeight: '900',
+  fontSize: '1.4rem',
+  color: '#2bad31',
+  marginBottom: theme.spacing(0.5),
+  position: 'relative',
+  zIndex: 2,
+}));
+
+const AbsoluteValue = styled(Typography)(({ theme }) => ({
+  fontFamily: 'Nunito Sans, sans-serif',
+  fontWeight: 'bold',
+  fontSize: '0.95rem',
+  color: '#333',
+  marginBottom: theme.spacing(0.5),
+  position: 'relative',
+  zIndex: 2,
+}));
+
+const BenefitDescription = styled(Typography)(({ theme }) => ({
+  fontFamily: 'Nunito Sans, sans-serif',
+  fontWeight: '600',
+  fontSize: '0.7rem',
+  color: theme.palette.grey[600],
+  position: 'relative',
+  zIndex: 2,
+  lineHeight: 1.3,
+}));
+
+interface BenefitData {
+  percentage?: string;
+  value: string;
+  description: string;
+  type: 'financial' | 'environmental' | 'utility';
+  watermark: string;
+}
+
+export const EnhancedBenefitCard: React.FC<{ benefit: BenefitData }> = ({ benefit }) => (
+  <StyledBenefitCard>
+    <WatermarkIcon type={benefit.type}>
+      {benefit.watermark}
+    </WatermarkIcon>
+    <CardContent sx={{ position: 'relative', zIndex: 2, py: 2.5 }}>
+      {benefit.percentage && (
+        <PercentageValue>
+          {benefit.percentage}
+          {(benefit.value.includes('Gain') || benefit.value.includes('Investment')) ? (
+            <AiOutlineRise style={{ fontSize: '1.8rem', color: '#2bad31', verticalAlign: 'middle' }} />
+          ) : (
+            <AiOutlineFall style={{ fontSize: '1.8rem', color: '#2bad31', verticalAlign: 'middle' }} />
+          )}
+        </PercentageValue>
+      )}
+      <AbsoluteValue style={{fontSize: '1.019rem'}}>{benefit.value}</AbsoluteValue>
+      <BenefitDescription>
+        {benefit.description}
+      </BenefitDescription>
+    </CardContent>
+  </StyledBenefitCard>
+);
 
 export const StyledBenefitValue = styled(Typography)(({ theme }) => ({
   fontFamily: 'Nunito Sans,sans-serif',
@@ -183,18 +280,66 @@ export interface ExpandablePanelInfo {
   title: string;
 }
 
-export const benefitDataTop = [
-  { value: '11,809 Metric Tons', description: 'Of reduced annual carbon dioxide equivalents<br />(80% CO2 reduction)' },
-  { value: '248 Thousand', description: 'Steam therms reduced<br />(35% reduction in steam use)' },
-  { value: '8.1 Million', description: 'gallons of water reduced<br />(22% reduction in water use)' },
-  { value: '4 Million', description: 'kWh of electricity reduced<br />(32% reduction in electric use)' },
+export const benefitDataTop: BenefitData[] = [
+  { 
+    percentage: '--%',
+    value: '$1.583M Reduction', 
+    description: 'in annual utility costs',
+    type: 'financial',
+    watermark: '$'
+  },
+  { 
+    percentage: '--%',
+    value: '$1.178M Gain', 
+    description: 'from utility rebates',
+    type: 'financial',
+    watermark: '$'
+  },
+  { 
+    percentage: '--%',
+    value: '$100K Gain', 
+    description: 'from XYZ Energy Administration grant',
+    type: 'financial',
+    watermark: '$'
+  },
+  { 
+    percentage: '--%',
+    value: '$13.287M Investment', 
+    description: 'in addressing deferred mechanical and electrical infrastructure',
+    type: 'financial',
+    watermark: '$'
+  },
 ];
 
-export const benefitDataBottom = [
-  { value: '$1.583 million', description: 'annual reduction in utility costs' },
-  { value: '$1.178 million', description: 'From Utility rebates' },
-  { value: '$100 thousand', description: 'From Maryland Energy Administration grant' },
-  { value: '$13.287 million', description: 'Invested in addressing deffered mechanical and electrical infrastructure' },
+export const benefitDataBottom: BenefitData[] = [
+  { 
+    percentage: '80%', 
+    value: '11,809 MT Reduction', 
+    description: 'in greenhouse gas emissions',
+    type: 'environmental',
+    watermark: '🌱'
+  },
+  { 
+    percentage: '35%', 
+    value: '248K Therms Reduction', 
+    description: 'in steam usage',
+    type: 'utility',
+    watermark: '♨️'
+  },
+  { 
+    percentage: '22%', 
+    value: '8.1M Gal Reduction', 
+    description: 'in water usage',
+    type: 'utility',
+    watermark: '💧'
+  },
+  { 
+    percentage: '32%', 
+    value: '4M kWh Reduction', 
+    description: 'in electricity usage',
+    type: 'utility',
+    watermark: '⚡'
+  },
 ];
 
 // Sample content for expanded panels
@@ -209,7 +354,7 @@ export const mockExpandedContent = (title: string) => {
   
   if (title === "Energy Production Breakdown") {
     return (
-      <Box sx={{ p: 0, height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ p: 0, height: '590px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <EnergyProductionBreakdown size="large" />
       </Box>
     );
@@ -241,7 +386,7 @@ export const mockExpandedContent = (title: string) => {
 
   if (title === "Resources") {
     return (
-      <Box sx={{ p: 0, height: '350px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ p: 0, height: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <Resources size="large" />
       </Box>
     );

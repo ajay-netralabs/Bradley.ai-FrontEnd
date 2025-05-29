@@ -3,7 +3,7 @@ import {
   Box,
   Typography,
   // Card,
-  CardContent,
+  // CardContent,
   Tabs,
   Tab,
   Paper,
@@ -11,7 +11,7 @@ import {
   // Modal,
   // Button
 } from '@mui/material';
-import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, StyledBenefitCard, StyledBenefitValue, StyledBenefitDescription, StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime, EnergySpecifications } from '../../../../components/RecommendationUI';
+import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, EnhancedBenefitCard, /* StyledBenefitValue, StyledBenefitDescription, */ StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime, EnergySpecifications } from '../../../../components/RecommendationUI';
 
 const SubStep1: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -53,7 +53,7 @@ const SubStep1: React.FC = () => {
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: { xs: '20px', md: '80px' } }}>
         <StyledRecommendation>
-          <b>Bradley.ai</b> recommends a hybrid system for Acme Manufacturing. This system combines solar panels, battery storage, and a natural gas generator to optimize energy costs, reduce emissions, and provide reliable backup power.
+          <b>Bradley.ai</b> recommends a hybrid system for Acme Manufacturing.<br /><br />This system combines solar panels, battery storage, and a natural gas generator to optimize energy costs, reduce emissions, and provide reliable backup power.
         </StyledRecommendation>
 
         <StyledKeyBenefitsTitle variant="h1">
@@ -62,22 +62,12 @@ const SubStep1: React.FC = () => {
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mt: 1 }}>
           {benefitDataTop.map((benefit, index) => (
-            <StyledBenefitCard key={index}>
-              <CardContent>
-                <StyledBenefitValue><span style={{ color: '#2bad31' }}>{benefit.value}</span></StyledBenefitValue>
-                <StyledBenefitDescription dangerouslySetInnerHTML={{ __html: benefit.description }} />
-              </CardContent>
-            </StyledBenefitCard>
+            <EnhancedBenefitCard key={index} benefit={benefit} />
           ))}
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mt: 1 }}>
           {benefitDataBottom.map((benefit, index) => (
-            <StyledBenefitCard key={index}>
-              <CardContent>
-                <StyledBenefitValue><span style={{ color: '#2bad31' }}>{benefit.value}</span></StyledBenefitValue>
-                <StyledBenefitDescription dangerouslySetInnerHTML={{ __html: benefit.description }} />
-              </CardContent>
-            </StyledBenefitCard>
+            <EnhancedBenefitCard key={index} benefit={benefit} />
           ))}
         </Box>
         <Paper elevation={0} sx={{
