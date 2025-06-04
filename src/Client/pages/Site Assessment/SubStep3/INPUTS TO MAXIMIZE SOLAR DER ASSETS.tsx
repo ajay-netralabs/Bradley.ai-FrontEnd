@@ -4,10 +4,37 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const SubStep3: React.FC = () => {
-  const [roofSections, setRoofSections] = useState<number[]>([0, 1, 2]);
+  const [roofSections, setRoofSections] = useState<string[]>(['', '', '']);
+  const [roofLoadCapacity, setRoofLoadCapacity] = useState<string>('');
+
+  const formatNumber = (value: string): string => {
+    const numericValue = value.replace(/[^0-9]/g, '');
+    if (numericValue === '') return '';
+    return Number(numericValue).toLocaleString('en-US', { maximumFractionDigits: 0 });
+  };
+
+  const handleRoofSectionChange = (index: number, value: string) => {
+    const newRoofSections = [...roofSections];
+    newRoofSections[index] = formatNumber(value);
+    setRoofSections(newRoofSections);
+  };
+
+  const handleRoofSectionBlur = (index: number) => {
+    const newRoofSections = [...roofSections];
+    newRoofSections[index] = formatNumber(newRoofSections[index]);
+    setRoofSections(newRoofSections);
+  };
+
+  const handleRoofLoadCapacityChange = (value: string) => {
+    setRoofLoadCapacity(formatNumber(value));
+  };
+
+  const handleRoofLoadCapacityBlur = () => {
+    setRoofLoadCapacity(formatNumber(roofLoadCapacity));
+  };
 
   const handleAddSection = () => {
-    setRoofSections([...roofSections, roofSections.length]);
+    setRoofSections([...roofSections, '']);
   };
 
   const handleRemoveSection = (index: number) => {
@@ -46,78 +73,12 @@ const SubStep3: React.FC = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: '160px' }}>
         <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', mb: 2.5, textAlign: 'center' }}><b>I am going to ask you for specific details to assist in the proper sizing of roof, ground or carport solar arrays. We start with the roof(s).</b></Typography>
         <Box
-  sx={{
-    display: 'flex',
-    alignItems: 'center',
-    gap: 1,
-  }}
->
-  <Typography
-    sx={{
-      fontFamily: 'Nunito Sans, sans-serif',
-      fontSize: '0.75rem',
-      minWidth: '200px',
-      flex: 0.3,
-    }}
-  >
-    <b>Total Roof Space:</b> (in Sq. Ft.)<br /> Click on the '⨁' icon for multiple roof sections.
-  </Typography>
-
-  <Box
-    sx={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 1,
-      flex: 0.7,
-      maxWidth: 'calc(100% - 200px)',
-    }}
-  >
-    {roofSections.map((_, index) => (
-      <TextField
-        key={index}
-        variant="outlined"
-        size="small"
-        type="number"
-        placeholder={`Sec. ${index + 1} Area`}
-        sx={{
-          flex: 1,
-          fontFamily: 'Nunito Sans, sans-serif',
-          fontSize: '0.7rem',
-          '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-          '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
-          '& .MuiInputBase-input::placeholder': {
-            fontFamily: 'Nunito Sans, sans-serif',
-            fontSize: '0.7rem',
-          }
-        }}
-      />
-    ))}
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
-      <IconButton
-        onClick={handleAddSection}
-        color="primary"
-        sx={{ p: 0, '&:focus': {
-      outline: 'none',
-    } }}
-      >
-        <AddCircleOutlineIcon fontSize="small" />
-      </IconButton>
-      <IconButton
-        onClick={() => handleRemoveSection(roofSections.length - 1)}
-        sx={{ p: 0, '&:focus': {
-      outline: 'none',
-    } }}
-        disabled={roofSections.length === 1}
-      >
-        <DeleteIcon fontSize="small" />
-      </IconButton>
-    </Box>
-  </Box>
-</Box>
-
-
-
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
           <Typography
             sx={{
               fontFamily: 'Nunito Sans, sans-serif',
@@ -126,20 +87,125 @@ const SubStep3: React.FC = () => {
               flex: 0.3,
             }}
           >
-            <b>Roof Load Rating Capacity:</b> (in Lbs / Sq. in) (Optional)
+            <b>Total Roof Space:</b> (in Sq. Ft.)<br /> Click on the '⨁' icon for multiple roof sections.
           </Typography>
-          <TextField
-            variant="outlined"
-            size="small"
-            type="number"
+
+          <Box
             sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
               flex: 0.7,
-              fontFamily: 'Nunito Sans, sans-serif',
-              fontSize: '0.7rem',
-              '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
+              maxWidth: 'calc(100% - 200px)',
             }}
-          />
+          >
+            {roofSections.map((value, index) => (
+              <TextField
+                key={index}
+                variant="outlined"
+                size="small"
+                type="text"
+                value={value}
+                onChange={(e) => handleRoofSectionChange(index, e.target.value)}
+                onBlur={() => handleRoofSectionBlur(index)}
+                placeholder={`Sec. ${index + 1} Area`}
+                sx={{
+                  flex: 1,
+                  fontFamily: 'Nunito Sans, sans-serif',
+                  fontSize: '0.7rem',
+                  '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+                  '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
+                  '& .MuiInputBase-input::placeholder': {
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    fontSize: '0.7rem',
+                  }
+                }}
+              />
+            ))}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
+              <IconButton
+                onClick={handleAddSection}
+                color="primary"
+                sx={{
+                  p: 0, '&:focus': {
+                    outline: 'none',
+                  }
+                }}
+              >
+                <AddCircleOutlineIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                onClick={() => handleRemoveSection(roofSections.length - 1)}
+                sx={{
+                  p: 0, '&:focus': {
+                    outline: 'none',
+                  }
+                }}
+                disabled={roofSections.length === 1}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Box>
+        </Box>
+
+
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography
+              sx={{
+                fontFamily: 'Nunito Sans, sans-serif',
+                fontSize: '0.75rem',
+                minWidth: '200px',
+                flex: 0.3,
+              }}
+            >
+              <b>Existing Roof Load Rating Capacity:</b> (in Lbs / Sq. in) (Optional)
+            </Typography>
+            <TextField
+              variant="outlined"
+              size="small"
+              type="text"
+              value={roofLoadCapacity}
+              onChange={(e) => handleRoofLoadCapacityChange(e.target.value)}
+              onBlur={handleRoofLoadCapacityBlur}
+              placeholder='Roof Load Capacity'
+              sx={{
+                flex: 0.7,
+                fontFamily: 'Nunito Sans, sans-serif',
+                fontSize: '0.7rem',
+                '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+                '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
+              }}
+            />
+          </Box>
+          <Typography
+            sx={{
+              fontFamily: 'Nunito Sans, sans-serif',
+              fontSize: '0.68rem',
+              fontStyle: 'italic',
+              textAlign: 'right',
+              mt: 0.5,
+              width: '100%',
+              pr: '0px',
+            }}
+          >
+            <b>*</b>A solar array with typical racking, inverters and ancillary equipment average 3-5 pounds per square foot<br />of dead load.
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: 'Nunito Sans, sans-serif',
+              fontSize: '0.68rem',
+              fontStyle: 'italic',
+              textAlign: 'right',
+              mt: 0.5,
+              width: '100%',
+              pr: '0px',
+            }}
+          >
+            <b>**</b>IF you do not know your roof load capacity I will still provide 90% conceptual design of an excellent roof<br />mount solar array system for you. I will note in the report that during the final design phase the dead load<br />must be calculated by a Professional Engineer.
+          </Typography>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -169,10 +235,10 @@ const SubStep3: React.FC = () => {
               Select Classification
             </MenuItem>
             <MenuItem value="Class 3" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              Class 3
+              Class 3 (loads must be restored automatically by the emergency power system within a set time<br />(typically 10 seconds), but carry a lower reliability requirement than Class 4 “life‐safety” loads)
             </MenuItem>
             <MenuItem value="Class 4" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              Class 4
+              Class 4 (highest priority load - requires increased reliability, with automatic transfer, redundancy,<br />and routine testing)
             </MenuItem>
           </Select>
         </Box>

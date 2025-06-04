@@ -5,6 +5,32 @@ const SubStep3: React.FC = () => {
 
   const [signature, setSignature] = useState<string>('');
 
+  const [day, setDay] = useState<string>('');
+  const [month, setMonth] = useState<string>('');
+
+  const handleDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      const numValue = parseInt(value, 10);
+      if (value === '' || (numValue >= 1 && numValue <= 31)) {
+        setDay(value);
+      }
+    }
+  };
+
+  const handleMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const formattedValue = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+
+    if (value === '' || monthNames.some(name => name.startsWith(formattedValue))) {
+       setMonth(value);
+    }
+  };
+
   const handleClearSignature = () => {
     setSignature('');
   };
@@ -17,6 +43,9 @@ const SubStep3: React.FC = () => {
       <Typography variant="h6" sx={{ mb: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'center' }}>
         <h2>LETTER OF AUTHORIZATION FOR ELECTRIC DATA</h2>
       </Typography>
+      {/* <Typography variant="h6" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', fontWeight: 'bold', textAlign: 'center' }}>
+        <h2>XYZ UTILITY Co.</h2>
+      </Typography> */}
       
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
       <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
@@ -30,6 +59,9 @@ const SubStep3: React.FC = () => {
     variant="standard"
     type="text"
     placeholder="(DAY)"
+    value={day}
+    onChange={handleDayChange}
+    inputProps={{ maxLength: 2 }}
     sx={{
       width: '50px',
       fontFamily: 'Nunito Sans, sans-serif',
@@ -43,6 +75,8 @@ const SubStep3: React.FC = () => {
     variant="standard"
     type="text"
     placeholder="(MONTH)"
+    value={month}
+    onChange={handleMonthChange}
     sx={{
       width: '80px',
       fontFamily: 'Nunito Sans, sans-serif',

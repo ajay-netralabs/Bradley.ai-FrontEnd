@@ -4,7 +4,8 @@ import { Box, TextField, Typography, Select, MenuItem } from '@mui/material';
 const SubStep3: React.FC = () => {
   const [roofPenetration, setRoofPenetration] = useState('');
   const [totalParkingSpots, setTotalParkingSpots] = useState('');
-  const [parkingGarageType, setParkingGarageType] = useState('');
+  const [parkingGarageWidth, setParkingGarageWidth] = useState('');
+  const [parkingGarageLength, setParkingGarageLength] = useState('');
   const [switchgearFloor, setSwitchgearFloor] = useState('');
   const [topFloorHeight, setTopFloorHeight] = useState('');
 
@@ -16,8 +17,12 @@ const SubStep3: React.FC = () => {
     setTotalParkingSpots(event.target.value);
   };
 
-  const handleParkingGarageTypeChange = (event: { target: { value: any } }) => {
-    setParkingGarageType(event.target.value);
+  const handleParkingGarageWidthChange = (event: { target: { value: any } }) => {
+    setParkingGarageWidth(event.target.value);
+  };
+
+  const handleParkingGarageLengthChange = (event: { target: { value: any } }) => {
+    setParkingGarageLength(event.target.value);
   };
 
   const handleSwitchgearFloorChange = (event: { target: { value: any } }) => {
@@ -69,7 +74,7 @@ const SubStep3: React.FC = () => {
               flex: 0.7,
             }}
           >
-            <b>Would You Allow Roof Penetration Anchoring Methods For Solar Panel Installation?</b>
+            <b>Would You Allow Roof Penetration Anchoring Methods on an Existing Carport Structure For Solar Panel Installation?</b>
           </Typography>
           <Select
             size="small"
@@ -142,37 +147,46 @@ const SubStep3: React.FC = () => {
             <b>Parking Garage:</b> (Optional)<br />
             (<i>Provide the single floor dimensions of the parking garage. I need to know how many feet wide and long the garage is, I will design a system to cover the parking spaces and travel lanes.</i>)
           </Typography>
-          <Select
+          <TextField
+            variant="outlined"
             size="small"
-            value={parkingGarageType}
-            onChange={handleParkingGarageTypeChange}
-            displayEmpty
+            type="number"
+            placeholder="Width (ft)"
+            value={parkingGarageWidth}
+            onChange={handleParkingGarageWidthChange}
             sx={{
-              flex: 0.3,
+              flex: 0.142,
               marginLeft: 'auto',
               fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.7rem',
-              height: '40px',
-              '& .MuiInputBase-root': { padding: '0 6px' },
-              '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' },
+              '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
+              '& .MuiInputBase-input::placeholder': {
+                fontFamily: 'Nunito Sans, sans-serif',
+                fontSize: '0.7rem',
+              },
             }}
-          >
-            <MenuItem value="" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              Select Type
-            </MenuItem>
-            <MenuItem value="flat" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              Flat
-            </MenuItem>
-            <MenuItem value="sloped" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              Sloped
-            </MenuItem>
-            <MenuItem value="hilly" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              Hilly
-            </MenuItem>
-            <MenuItem value="partially covered" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
-              Partially Covered
-            </MenuItem>
-          </Select>
+          />
+          <TextField
+            variant="outlined"
+            size="small"
+            type="number"
+            placeholder="Length (ft)"
+            value={parkingGarageLength}
+            onChange={handleParkingGarageLengthChange}
+            sx={{
+              flex: 0.142,
+              marginLeft: 'auto',
+              fontFamily: 'Nunito Sans, sans-serif',
+              fontSize: '0.7rem',
+              '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
+              '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' },
+              '& .MuiInputBase-input::placeholder': {
+                fontFamily: 'Nunito Sans, sans-serif',
+                fontSize: '0.7rem',
+              },
+            }}
+          />
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

@@ -15,24 +15,24 @@ const SubStep2: React.FC = () => {
 
   const dayAbbreviations: { [key: string]: string } = { Monday: "Mon", Tuesday: "Tue", Wednesday: "Wed", Thursday: "Thu", Friday: "Fri", Saturday: "Sat", Sunday: "Sun" };
   
-  const getContinuousDaysRange = (days: string[]): string => {
-    if (days.length < 2) return "";
+  // const getContinuousDaysRange = (days: string[]): string => {
+  //   if (days.length < 2) return "";
   
-    const sortedDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    const selectedIndexes = days.map(day => sortedDays.indexOf(day)).sort((a, b) => a - b);
+  //   const sortedDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  //   const selectedIndexes = days.map(day => sortedDays.indexOf(day)).sort((a, b) => a - b);
   
-    let isContinuous = true;
-    for (let i = 1; i < selectedIndexes.length; i++) {
-      if (selectedIndexes[i] !== selectedIndexes[i - 1] + 1) {
-        isContinuous = false;
-        break;
-      }
-    }
+  //   let isContinuous = true;
+  //   for (let i = 1; i < selectedIndexes.length; i++) {
+  //     if (selectedIndexes[i] !== selectedIndexes[i - 1] + 1) {
+  //       isContinuous = false;
+  //       break;
+  //     }
+  //   }
   
-    return isContinuous
-      ? `(${dayAbbreviations[sortedDays[selectedIndexes[0]]]} - ${dayAbbreviations[sortedDays[selectedIndexes[selectedIndexes.length - 1]]]})`
-      : "";
-  };  
+  //   return isContinuous
+  //     ? `(${dayAbbreviations[sortedDays[selectedIndexes[0]]]} - ${dayAbbreviations[sortedDays[selectedIndexes[selectedIndexes.length - 1]]]})`
+  //     : "";
+  // };  
 
 
   return (
@@ -58,6 +58,20 @@ const SubStep2: React.FC = () => {
               value={facilityUsage}
               onChange={handleFacilityUsageChange}
               multiple
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 5 * 37,
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',  
+                  },
+                  sx: {
+                    '&::-webkit-scrollbar': {
+                      display: 'none',
+                    },
+                  },
+                },
+              }}
               sx={{
                 flex: 0.448,
                 fontFamily: "Nunito Sans, sans-serif",
@@ -69,12 +83,38 @@ const SubStep2: React.FC = () => {
               renderValue={(selected) => (selected as string[]).join(", ")}
             >
               <MenuItem disabled value="Option 0" sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" }}>
-                Select
+              Select
               </MenuItem>
-              {["School", "Office", "Admin", "Storage", "Manufacturing", "Data Center", "Others"].map((option, index) => (
-                <MenuItem key={index} value={option} sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" }}>
-                  {option}
-                </MenuItem>
+              {[
+                "Admin",
+                "Cold storage",
+                "Commercial office building (Highrise)",
+                "Commercial office building (Low-rise)",
+                "Commercial office building (single story)",
+                "Data center",
+                "Elder care facility",
+                "Food storage",
+                "Grocery chain",
+                "Health Care",
+                "Hospital",
+                "Hospitality (hotel)",
+                "Hospitality (long term stay)",
+                "Industrial facility",
+                "K-12",
+                "Manufacturing",
+                "Manufacturing facility",
+                "Military Base",
+                "Office",
+                "Others",
+                "School",
+                "Stadium",
+                "Storage",
+                "Storage facility",
+                "University"
+              ].map((option, index) => (
+              <MenuItem key={index} value={option} sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" }}>
+                {option}
+              </MenuItem>
               ))}
             </Select>
           </Box>
@@ -135,7 +175,7 @@ const SubStep2: React.FC = () => {
           {daysOfOperation.length > 0 && (
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, justifyContent: "center"}}>
               <Typography sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", flex: 0.3 }}>
-                <b>Hours of Operation:</b> {getContinuousDaysRange(daysOfOperation) || `(${daysOfOperation.map(day => dayAbbreviations[day]).join(", ")})`}
+                <b>Enter the time of each day that the building begins conditioning for occupancy and when the buildings conditioning stops (or when it setsback):</b>{/*  {getContinuousDaysRange(daysOfOperation) || `(${daysOfOperation.map(day => dayAbbreviations[day]).join(", ")})`} */}
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'nowrap', justifyContent: 'center', flex: 0.448}}>
                 {daysOfOperation.sort((a, b) => {

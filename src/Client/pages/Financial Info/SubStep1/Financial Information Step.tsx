@@ -9,7 +9,7 @@ const SubStep1: React.FC = () => {
     // Simulating a fetch call for the username
     const fetchUsername = () => {
       setTimeout(() => {
-        setUsername('User Name'); // Replace with real data fetch logic
+        setUsername('Brad'); // Replace with real data fetch logic
       }, 1000); // Simulate a delay for fetching
     };
     fetchUsername();

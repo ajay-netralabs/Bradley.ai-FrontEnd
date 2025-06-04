@@ -137,13 +137,22 @@ const SubStep2: React.FC = () => {
                   }}
                 >
                   <MenuItem
-                    value="Boiler"
+                    value="Boiler (Hot Water)"
                     sx={{
                       fontFamily: 'Nunito Sans, sans-serif',
                       fontSize: '0.7rem',
                     }}
                   >
-                    Boiler
+                    Boiler (Hot Water)
+                  </MenuItem>
+                  <MenuItem
+                    value="Boiler (Steam)"
+                    sx={{
+                      fontFamily: 'Nunito Sans, sans-serif',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Boiler (Steam)
                   </MenuItem>
                   <MenuItem
                     value="Cogeneration Unit"
@@ -155,10 +164,15 @@ const SubStep2: React.FC = () => {
                     Cogeneration Unit
                   </MenuItem>
                 </TextField>
-
                 <TextField
                   size="small"
-                  label="Capacity"
+                  label={
+                    source.type === 'Boiler (Hot Water)'
+                      ? 'Capacity (in KGal)'
+                      : source.type === 'Boiler (Steam)'
+                      ? 'Capacity (in MLbs)'
+                      : 'Capacity (in MWh annually)'
+                  }
                   type="number"
                   fullWidth
                   sx={{
@@ -171,7 +185,13 @@ const SubStep2: React.FC = () => {
                       fontSize: '0.8rem',
                     },
                   }}
-                  placeholder="in Mlbs per hour"
+                  placeholder={
+                    source.type === 'Boiler (Hot Water)'
+                      ? 'in KGal'
+                      : source.type === 'Boiler (Steam)'
+                      ? 'in MLbs'
+                      : 'Enter Capacity'
+                  }
                   value={source.capacity}
                   onChange={(e) =>
                     setWasteHeatSources(
@@ -400,7 +420,11 @@ const SubStep2: React.FC = () => {
 
                 <TextField
                   size="small"
-                  label="Utilization"
+                  label={
+                    source.type === 'Cogeneration Unit'
+                      ? 'Utilization of Waste Heat'
+                      : 'Utilization'
+                  }
                   select
                   fullWidth
                   sx={{

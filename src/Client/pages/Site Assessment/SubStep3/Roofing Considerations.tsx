@@ -137,7 +137,7 @@ const SubStep3: React.FC = () => {
 
             <Box sx={{ mt: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
               <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 1 }}>
-                Depending on your insurance carrier, they may or may not have FIRM requirements for solar material equipment (panels, wiring, racking, etc.) to ensure insurance coverage. While providing this information is optional, I can ensure my design meets the insurance companies stated solar array requirements. Without the information I will use best practices to generate the solar DER component.
+                Depending on your insurance carrier, they may or may not have FIRM requirements for solar material equipment (panels, wiring, racking, etc.) to ensure insurance coverage. While providing this information is optional, <b>IF PROVIDED</b> I can ensure my design includes equipment and mounting methods that meets the insurance companies stated solar array requirements. Without the information I will use best practices to generate the solar DER component. All specifications are included in the report.
               </Typography>
             </Box>
 

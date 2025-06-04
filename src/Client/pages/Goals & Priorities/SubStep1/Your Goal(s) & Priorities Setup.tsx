@@ -9,7 +9,7 @@ const SubStep1: React.FC = () => {
     // Simulate fetching the username (replace this with Redux or API call later)
     const fetchUsername = () => {
       setTimeout(() => {
-        setUsername('User Name'); // Mock username, replace with dynamic fetch later
+        setUsername('Brad'); // Mock username, replace with dynamic fetch later
       }, 1000); // Simulate network delay
     };
     fetchUsername();

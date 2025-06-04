@@ -9,7 +9,7 @@ const SubStep1: React.FC = () => {
     // Simulate an asynchronous username fetch
     const fetchUsername = () => {
       setTimeout(() => {
-        setUsername('User Name'); // Placeholder for dynamic data fetch
+        setUsername('Brad'); // Placeholder for dynamic data fetch
       }, 1000); // Simulating network delay
     };
     fetchUsername();
