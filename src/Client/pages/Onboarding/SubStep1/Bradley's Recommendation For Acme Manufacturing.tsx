@@ -114,7 +114,7 @@ const SubStep1: React.FC = () => {
             </Tabs>
 
             <TabPanel value={tabValue} index={0}>
-              <Box sx={{ display: 'grid', gap: 2, height: '1700px', gridTemplateRows: '1fr 1fr 1fr' }}>
+              <Box sx={{ display: 'grid', gap: 2, height: '1550px', gridTemplateRows: '1fr 1fr 1fr' }}>
                 <StyledTabPanelBox>
                   <StyledTabPanelTitle variant="h6">
                     System Diagram
