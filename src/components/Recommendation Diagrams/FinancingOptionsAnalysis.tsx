@@ -12,9 +12,8 @@ import {
   Divider,
   ListItemIcon,
 } from '@mui/material';
-import { CheckCircleOutline, WorkspacePremium } from '@mui/icons-material';
+import { CheckCircleOutline, WorkspacePremium, TrendingUp } from '@mui/icons-material';
 
-// --- DATA ---
 const projectMetrics = {
   incentives: 875000,
   netCost: 2415000,
@@ -27,7 +26,7 @@ const financeOptions = [
     rate: 6.25,
     term: 20,
     annualPayment: 215432,
-    irr: 14.1, // Using the IRR from your key benefits section
+    irr: 14.1,
     isRecommended: true,
     rationale: 'Offers the highest Internal Rate of Return, maximizing the long-term value of the investment.',
   },
@@ -61,7 +60,6 @@ const formatCurrency = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
-// --- MAIN COMPONENT ---
 export const FinancingOptionsAnalysis: React.FC<{ size: 'small' | 'large' }> = ({ size }) => {
   const isLarge = size === 'large';
   const [selectedLenderId, setSelectedLenderId] = useState(
@@ -72,39 +70,109 @@ export const FinancingOptionsAnalysis: React.FC<{ size: 'small' | 'large' }> = (
   if (!selectedOption) return null;
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', border: '1px solid', borderColor: 'divider' }}>
-      {/* Header with Key Project Metrics */}
-      <Box sx={{ p: isLarge ? 3 : 2, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
-        <Grid container spacing={2} justifyContent="space-around">
-          <Grid item>
-            <Typography variant="caption" color="text.secondary">Available Incentives</Typography>
-            <Typography variant={isLarge ? 'h6' : 'subtitle1'} sx={{ fontWeight: 'bold' }}>
-              {formatCurrency(projectMetrics.incentives)}
-            </Typography>
+    <Paper
+      elevation={3}
+      sx={{
+        width: '100%',
+        overflow: 'hidden',
+        borderRadius: 2,
+        background: '#fff',
+      }}
+    >
+      <Box sx={{ p: isLarge ? 3 : 2, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+        <Grid container spacing={isLarge ? 3 : 2}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{
+              p: 2,
+              borderRadius: 2,
+              textAlign: 'center',
+              background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
+              border: '1px solid',
+              borderColor: 'grey.200'
+            }}>
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, mb: 0.5 }}>
+                Available Incentives
+              </Typography>
+              <Typography variant={isLarge ? 'h6' : 'subtitle1'} sx={{
+                fontWeight: 'bold',
+                color: 'success.dark',
+              }}>
+                {formatCurrency(projectMetrics.incentives)}
+              </Typography>
+            </Box>
           </Grid>
-          <Grid item>
-            <Typography variant="caption" color="text.secondary">Net Project Cost (Loan)</Typography>
-            <Typography variant={isLarge ? 'h6' : 'subtitle1'} sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-              {formatCurrency(projectMetrics.netCost)}
-            </Typography>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{
+              p: 2,
+              borderRadius: 2,
+              textAlign: 'center',
+              background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
+              border: '1px solid',
+              borderColor: 'grey.200'
+            }}>
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, mb: 0.5 }}>
+                Net Project Cost (Loan)
+              </Typography>
+              <Typography variant={isLarge ? 'h6' : 'subtitle1'} sx={{
+                fontWeight: 'bold',
+                color: 'primary.dark',
+              }}>
+                {formatCurrency(projectMetrics.netCost)}
+              </Typography>
+            </Box>
           </Grid>
         </Grid>
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
-        {/* Left Column: Lender List */}
-        <Box sx={{ width: { xs: '100%', md: '300px' }, borderRight: { xs: 'none', md: '1px solid' }, borderColor: 'divider' }}>
+        <Box sx={{
+          width: { xs: '100%', md: '300px' },
+          borderRight: { xs: 'none', md: '1px solid' },
+          borderColor: 'grey.100',
+          background: 'rgba(248, 250, 252, 0.5)'
+        }}>
           <List disablePadding>
             {financeOptions.map((option, index) => (
-              <ListItem key={option.id} disablePadding sx={{ borderBottom: index < financeOptions.length -1 ? '1px solid' : 'none', borderColor: 'divider' }}>
+              <ListItem
+                key={option.id}
+                disablePadding
+                sx={{
+                  borderBottom: index < financeOptions.length - 1 ? '1px solid' : 'none',
+                  borderColor: 'grey.100'
+                }}
+              >
                 <ListItemButton
                   selected={option.id === selectedLenderId}
                   onClick={() => setSelectedLenderId(option.id)}
-                  sx={{ py: 2, px: 2.5 }}
+                  sx={{
+                    py: 2,
+                    px: 2.5,
+                    borderRadius: 2,
+                    mx: 1,
+                    my: 0.5,
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                      backgroundColor: 'rgba(25, 118, 210, 0.04)',
+                      transform: 'translateX(4px)',
+                      boxShadow: '0 4px 12px rgba(25, 118, 210, 0.15)',
+                    },
+                    '&.Mui-selected': {
+                      backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                      borderLeft: '4px solid',
+                      borderLeftColor: 'primary.main',
+                      '&:hover': {
+                        backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                      }
+                    }
+                  }}
                 >
                   <ListItemText
                     primary={option.lender}
-                    primaryTypographyProps={{ fontWeight: 'bold', fontSize: isLarge ? '1rem' : '0.9rem' }}
+                    primaryTypographyProps={{
+                      fontWeight: option.id === selectedLenderId ? 'bold' : 600,
+                      fontSize: isLarge ? '1rem' : '0.9rem',
+                      color: option.id === selectedLenderId ? 'primary.main' : 'text.primary'
+                    }}
                   />
                   {option.isRecommended && (
                     <Chip
@@ -113,6 +181,13 @@ export const FinancingOptionsAnalysis: React.FC<{ size: 'small' | 'large' }> = (
                       color="success"
                       size="small"
                       variant="outlined"
+                      sx={{
+                        borderRadius: 2,
+                        fontWeight: 600,
+                        '& .MuiChip-icon': {
+                          color: 'success.main'
+                        }
+                      }}
                     />
                   )}
                 </ListItemButton>
@@ -121,63 +196,206 @@ export const FinancingOptionsAnalysis: React.FC<{ size: 'small' | 'large' }> = (
           </List>
         </Box>
 
-        {/* Right Column: Details */}
         <Box sx={{ p: isLarge ? 3 : 2.5, flex: 1 }}>
-          <Typography variant={isLarge ? 'h5' : 'h6'} sx={{ fontWeight: 'bold', mb: 3 }}>
-            {selectedOption.lender} Financing Details
-          </Typography>
-          
-          {/* Key Metrics Grid */}
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            mb: 3,
+            p: 2,
+            borderRadius: 2,
+            background: 'linear-gradient(135deg, rgba(25, 118, 210, 0.05) 0%, rgba(25, 118, 210, 0.02) 100%)',
+            border: '1px solid',
+            borderColor: 'rgba(25, 118, 210, 0.1)'
+          }}>
+            <TrendingUp sx={{ color: 'primary.main', mr: 1.5, fontSize: '1.5rem' }} />
+            <Typography variant={isLarge ? 'h5' : 'h6'} sx={{
+              fontWeight: 'bold',
+              color: 'primary.main'
+            }}>
+              {selectedOption.lender} Financing Details
+            </Typography>
+          </Box>
+
           <Grid container spacing={isLarge ? 3 : 2} sx={{ mb: 3 }}>
             <Grid item xs={6} md={3}>
-              <Typography variant="body2" color="text.secondary">Project IRR</Typography>
-              <Typography variant={isLarge ? 'h5' : 'h6'} sx={{ fontWeight: 900, color: 'success.main' }}>
-                {selectedOption.irr}%
-              </Typography>
+              <Box sx={{
+                p: 2,
+                borderRadius: 2,
+                background: 'linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(46, 125, 50, 0.02) 100%)',
+                border: '1px solid',
+                borderColor: 'rgba(46, 125, 50, 0.1)',
+                textAlign: 'center',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(46, 125, 50, 0.15)',
+                }
+              }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+                  Project IRR
+                </Typography>
+								<Typography
+									variant={isLarge ? 'h5' : 'h6'}
+									sx={{
+										fontWeight: 'bold',
+										color: selectedOption.isRecommended ? 'success.main' : 'text.primary',
+										mt: 0.5
+									}}
+								>
+									{selectedOption.irr}%
+								</Typography>
+              </Box>
             </Grid>
             <Grid item xs={6} md={3}>
-              <Typography variant="body2" color="text.secondary">Interest Rate</Typography>
-              <Typography variant={isLarge ? 'h5' : 'h6'} sx={{ fontWeight: 'bold' }}>
-                {selectedOption.rate}%
-              </Typography>
+              <Box sx={{
+                p: 2,
+                borderRadius: 2,
+                background: 'rgba(248, 250, 252, 0.8)',
+                border: '1px solid',
+                borderColor: 'grey.200',
+                textAlign: 'center',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                }
+              }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+                  Interest Rate
+                </Typography>
+								<Typography
+									variant={isLarge ? 'h5' : 'h6'}
+									sx={{
+									fontWeight: 'bold',
+									mt: 0.5,
+									color:
+										selectedOption.rate === Math.min(...financeOptions.map(opt => opt.rate))
+										? 'success.main'
+										: 'text.primary'
+									}}
+								>
+                  {selectedOption.rate}%
+                </Typography>
+              </Box>
             </Grid>
             <Grid item xs={6} md={3}>
-              <Typography variant="body2" color="text.secondary">Loan Term</Typography>
-              <Typography variant={isLarge ? 'h5' : 'h6'} sx={{ fontWeight: 'bold' }}>
-                {selectedOption.term} yrs
-              </Typography>
+              <Box sx={{
+                p: 2,
+                borderRadius: 2,
+                background: 'rgba(248, 250, 252, 0.8)',
+                border: '1px solid',
+                borderColor: 'grey.200',
+                textAlign: 'center',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                }
+              }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+                  Loan Term
+                </Typography>
+								<Typography
+									variant={isLarge ? 'h5' : 'h6'}
+									sx={{
+									fontWeight: 'bold',
+									mt: 0.5,
+									color:
+										selectedOption.term === Math.max(...financeOptions.map(opt => opt.term))
+										? 'success.main'
+										: 'text.primary'
+									}}
+								>
+                  {selectedOption.term} yrs
+                </Typography>
+              </Box>
             </Grid>
             <Grid item xs={6} md={3}>
-              <Typography variant="body2" color="text.secondary">Annual Payment</Typography>
-              <Typography variant={isLarge ? 'h5' : 'h6'} sx={{ fontWeight: 'bold' }}>
-                {formatCurrency(selectedOption.annualPayment)}
-              </Typography>
+              <Box sx={{
+                p: 2,
+                borderRadius: 2,
+                background: 'rgba(248, 250, 252, 0.8)',
+                border: '1px solid',
+                borderColor: 'grey.200',
+                textAlign: 'center',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                }
+              }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+                  Payment
+                </Typography>
+								<Typography
+									variant={isLarge ? 'h5' : 'h6'}
+									sx={{
+									fontWeight: 'bold',
+									mt: 0.5,
+									color:
+										selectedOption.annualPayment === Math.min(...financeOptions.map(opt => opt.annualPayment))
+										? 'success.main'
+										: 'text.primary'
+									}}
+								>
+                  {formatCurrency(selectedOption.annualPayment)}
+                </Typography>
+              </Box>
             </Grid>
           </Grid>
-          
-          <Divider sx={{ mb: 3 }} />
 
-          {/* Rationale Section */}
-          <Typography variant={isLarge ? 'subtitle1' : 'body1'} sx={{ fontWeight: 'bold', mb: 1 }}>
-            Recommendation Rationale
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-            <ListItemIcon sx={{ minWidth: 32, mt: 0.5 }}>
-              <CheckCircleOutline color="action" fontSize="small" />
-            </ListItemIcon>
-            <Typography variant="body2" color="text.secondary">
-              {selectedOption.rationale}
+          <Divider sx={{
+            mb: 3,
+            background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.12) 50%, transparent 100%)'
+          }} />
+
+          <Box sx={{
+            p: 2.5,
+            borderRadius: 2,
+            background: 'linear-gradient(135deg, rgba(25, 118, 210, 0.02) 0%, rgba(25, 118, 210, 0.01) 100%)',
+            border: '1px solid',
+            borderColor: 'rgba(25, 118, 210, 0.08)',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              background: 'linear-gradient(135deg, rgba(25, 118, 210, 0.04) 0%, rgba(25, 118, 210, 0.02) 100%)',
+              borderColor: 'rgba(25, 118, 210, 0.15)',
+            }
+          }}>
+            <Typography variant={isLarge ? 'subtitle1' : 'body1'} sx={{
+              fontWeight: 'bold',
+              mb: 1.5,
+              color: 'primary.main'
+            }}>
+              Recommendation Rationale
             </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+              <ListItemIcon sx={{ minWidth: 32, mt: 0.5 }}>
+                <CheckCircleOutline color="primary" fontSize="small" />
+              </ListItemIcon>
+              <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                {selectedOption.rationale}
+              </Typography>
+            </Box>
           </Box>
         </Box>
       </Box>
 
-      {/* Footer Disclaimer */}
-       <Box sx={{ p: 1.5, borderTop: '1px solid', borderColor: 'divider', bgcolor: 'grey.50' }}>
-          <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic', textAlign: 'center', display: 'block' }}>
-            Summaries of indicative offers from 3rd party lenders are shown above. Finance offers are from qualified lenders and not part of 8x Energy.
-          </Typography>
-       </Box>
+      <Box sx={{
+        p: 1.5,
+        borderTop: '1px solid',
+        borderColor: 'grey.100',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+        borderRadius: '0 0 12px 12px'
+      }}>
+        <Typography variant="caption" color="text.secondary" sx={{
+          fontStyle: 'italic',
+          textAlign: 'center',
+          display: 'block',
+          fontWeight: 500
+        }}>
+          <b>*</b>Summaries of indicative offers from 3rd party lenders are shown above. Finance offers are from qualified lenders and not part of 8x Energy.
+        </Typography>
+      </Box>
     </Paper>
   );
 };

@@ -356,7 +356,7 @@ export const mockExpandedContent = (title: string) => {
 
   if (title === "Financing Options Analysis") {
     return (
-      <Box sx={{ p: 0, height: '450px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ p: 0, height: '580px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <FinancingOptionsAnalysis size="large" />
       </Box>
     );
