@@ -21,6 +21,7 @@ import { ProjectSchedule } from './Recommendation Diagrams/Project Schedule';
 import { AnnualEnergyCostAsIsComparedToDEROvertime } from './Recommendation Diagrams/Annual Energy Cost as is compared to DER overtime';
 import { EnergySpecifications } from './Recommendation Diagrams/Energy Specifications';
 import { AiOutlineFall, AiOutlineRise } from "react-icons/ai";
+import { FinancingOptionsAnalysis } from './Recommendation Diagrams/FinancingOptionsAnalysis';
 
 export const StyledTitle = styled(Typography)(({ theme }) => ({
   fontFamily: 'Nunito Sans, sans-serif',
@@ -213,8 +214,9 @@ export const ExpandableModal: React.FC<ExpandableModalProps> = ({ open, onClose,
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '80%',
-        maxWidth: title === "IIR, ToF & IRR" ? '500px'
-        : title === "Financial Incentives" ? '600px'
+        maxWidth: title === "Financing Options Analysis" ? '1100px'
+        // : title === "IIR, ToF & IRR" ? '500px'
+        // : title === "Financial Incentives" ? '600px'
         : title === "System Diagram" ? '900px'
         : title === "Energy Production Breakdown" ? '850px'
         : title === "Energy Flow Diagram" ? '800px'
@@ -351,6 +353,14 @@ export const mockExpandedContent = (title: string) => {
       </Box>
     );
   }
+
+  if (title === "Financing Options Analysis") {
+    return (
+      <Box sx={{ p: 0, height: '450px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <FinancingOptionsAnalysis size="large" />
+      </Box>
+    );
+  }
   
   if (title === "Energy Production Breakdown") {
     return (
@@ -459,4 +469,4 @@ export const mockExpandedContent = (title: string) => {
   );
 };
 
-export { EnergyProductionBreakdown, EnergyFlowDiagram, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime, EnergySpecifications };
+export { EnergyProductionBreakdown, EnergyFlowDiagram, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime, EnergySpecifications, FinancingOptionsAnalysis };

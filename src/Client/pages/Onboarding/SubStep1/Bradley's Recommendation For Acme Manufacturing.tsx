@@ -11,7 +11,7 @@ import {
   // Modal,
   // Button
 } from '@mui/material';
-import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, EnhancedBenefitCard, /* StyledBenefitValue, StyledBenefitDescription, */ StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime, EnergySpecifications } from '../../../../components/RecommendationUI';
+import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, EnhancedBenefitCard, /* StyledBenefitValue, StyledBenefitDescription, */ StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, /* IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, */ Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime, EnergySpecifications, FinancingOptionsAnalysis } from '../../../../components/RecommendationUI';
 
 const SubStep1: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -165,7 +165,7 @@ const SubStep1: React.FC = () => {
             </TabPanel>
 
             <TabPanel value={tabValue} index={1}>
-              <Box sx={{ display: 'grid', gap: 2, height: '1910px', gridTemplateRows: '1fr 1fr 1fr 1fr' }}>
+              <Box sx={{ display: 'grid', gap: 2, height: '1680px', gridTemplateRows: '1fr 1fr 1fr' }}>
                 <StyledTabPanelBox>
                   <StyledTabPanelTitle variant="h6">
                     Investment Summary
@@ -188,7 +188,18 @@ const SubStep1: React.FC = () => {
                       <AnnualEnergyCostAsIsComparedToDEROvertime size="small" />
                     </Box>
                   </StyledTabPanelBox>
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                  <StyledTabPanelBox>
+                    <StyledTabPanelTitle variant="h6">
+                      Financing Options Analysis
+                    </StyledTabPanelTitle>
+                    <StyledExpandButton onClick={() => handleExpandClick('financing-analysis', 'Financing Options Analysis')}>
+                      <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>⛶</Typography>
+                    </StyledExpandButton>
+                    <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <FinancingOptionsAnalysis size="small" />
+                    </Box>
+                  </StyledTabPanelBox>
+                {/* <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                     <StyledTabPanelBox>
                     <StyledTabPanelTitle variant="h6">
                       IIR, ToF & IRR
@@ -211,8 +222,8 @@ const SubStep1: React.FC = () => {
                     <FinancialIncentives size="small" />
                   </Box>
                 </StyledTabPanelBox>
-                </Box>
-                <StyledTabPanelBox>
+                </Box> */}
+                {/* <StyledTabPanelBox>
                   <StyledTabPanelTitle variant="h6">
                     Finance Options
                   </StyledTabPanelTitle>
@@ -222,7 +233,7 @@ const SubStep1: React.FC = () => {
                   <Box sx={{ pt: 1.5, pb: 1, px: 1, height: 'calc(100% - 30px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <FinanceOptions size="small" />
                   </Box>
-                </StyledTabPanelBox>
+                </StyledTabPanelBox> */}
               </Box>
             </TabPanel>
 
