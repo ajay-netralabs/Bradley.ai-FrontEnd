@@ -14,10 +14,10 @@ import {
 } from '@mui/material';
 import { CheckCircleOutline, WorkspacePremium, TrendingUp } from '@mui/icons-material';
 
-const projectMetrics = {
-  incentives: 875000,
-  netCost: 2415000,
-};
+// const projectMetrics = {
+//   incentives: 875000,
+//   netCost: 2415000,
+// };
 
 const financeOptions = [
   {
