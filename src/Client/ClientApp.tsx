@@ -20,6 +20,7 @@ import { ThermalEnergyNeedsIIIProvider } from '../Context/Energy Profile/SubStep
 import { ThermalEnergyNeedsIVProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
 import { BoilerCogenerationProvider } from '../Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
 import { LOAProvider } from '../Context/Energy Profile/SubStep3/Letter Of Authorization Context';
+import { LOAStatusProvider } from '../Context/Energy Profile/SubStep3/LOA - Status Context';
 import { PrioritizationIProvider } from '../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
 import { PrioritizationIIProvider } from '../Context/Goals & Priorities/SubStep2/Prioritization - II Context';
 import { FinancialsIProvider } from '../Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
@@ -72,6 +73,7 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   <ThermalEnergyNeedsIVProvider>
   <BoilerCogenerationProvider>
   <LOAProvider>
+  <LOAStatusProvider>
   <PrioritizationIProvider>
   <PrioritizationIIProvider>
   <FinancialsIProvider>
@@ -127,6 +129,7 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   </FinancialsIProvider>
   </PrioritizationIIProvider>
   </PrioritizationIProvider>
+  </LOAStatusProvider>
   </LOAProvider>
   </BoilerCogenerationProvider>
   </ThermalEnergyNeedsIVProvider>

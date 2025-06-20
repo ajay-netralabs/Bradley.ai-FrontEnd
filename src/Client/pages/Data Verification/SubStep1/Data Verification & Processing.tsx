@@ -26,7 +26,7 @@ import { useThermalEnergyNeedsIII } from '../../../../Context/Energy Profile/Sub
 import { useThermalEnergyNeedsIV } from '../../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
 import { useBoilerCogeneration } from '../../../../Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
 
-import { useLOA } from '../../../../Context/Energy Profile/SubStep3/Letter Of Authorization Context';
+import { useLOAStatus } from '../../../../Context/Energy Profile/SubStep3/LOA - Status Context';
 
 interface SummarySectionProps {
   icon: React.ReactElement;
@@ -172,7 +172,7 @@ const SubStep1: React.FC = () => {
   const { thermalNeedsIVState } = useThermalEnergyNeedsIV();
   const { boilerCogenerationState } = useBoilerCogeneration();
 
-  const { loaState } = useLOA();
+  const { loaStatusState } = useLOAStatus();
   
   const orgData = [
     { label: 'Company Name', value: organizationDetails.organizationName },
@@ -189,7 +189,7 @@ const SubStep1: React.FC = () => {
     (parseFloat(String(annualEnergySpend.other).replace(/[^0-9.]/g, '')) || 0);
 
   const energySources = new Set<string>();
-  energySources.add("Grid Electricity");
+  // energySources.add("Grid Electricity");
 
   if(thermalNeedsIState.showSteam) energySources.add("Steam");
   if(thermalNeedsIIState.showHotWaterHVAC) energySources.add("Hot Water (HVAC)");
@@ -211,7 +211,7 @@ const SubStep1: React.FC = () => {
   const energyData = [
     { label: 'Total Annual Spend', value: `$${totalAnnualSpend.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`},
     { label: 'Energy Sources', value: [...energySources].join(', ') },
-    { label: 'LOA Status', value: loaState.agreed ? 'Authorized' : 'Pending Authorization' },
+    { label: 'LOA Status', value: loaStatusState.status },
   ];
 
   const topPriority = prioritizationIState.selectedRanks[1] !== 'Select one' 
