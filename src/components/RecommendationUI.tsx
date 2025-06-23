@@ -136,11 +136,11 @@ export const EnhancedBenefitCard: React.FC<{ benefit: BenefitData }> = ({ benefi
       {benefit.percentage && (
         <PercentageValue>
           {benefit.percentage}
-          {(benefit.value.includes('Gain') || benefit.value.includes('Investment') || benefit.value.includes('Return') || benefit.value.includes('Gen')) ? (
+          {/* {(benefit.value.includes('Gain') || benefit.value.includes('Investment') || benefit.value.includes('Return') || benefit.value.includes('Gen')) ? (
             <AiOutlineRise style={{ fontSize: '1.8rem', color: '#2bad31', verticalAlign: 'middle' }} />
           ) : (
             <AiOutlineFall style={{ fontSize: '1.8rem', color: '#2bad31', verticalAlign: 'middle' }} />
-          )}
+          )} */}
         </PercentageValue>
       )}
       <AbsoluteValue style={{fontSize: '1.019rem'}}>{benefit.value}</AbsoluteValue>
@@ -284,22 +284,22 @@ export interface ExpandablePanelInfo {
 
 export const benefitDataTop: BenefitData[] = [
   {
-    percentage: '38%',
-    value: '$1.58M OpEx Reduction',
+    percentage: '$1.58M',
+    value: 'OpEx Reduction',
     description: 'Annual savings on utility costs (electricity, demand, fuel, etc.) as a direct result of the hybrid solution.',
     type: 'financial',
     watermark: '$'
   },
   {
     percentage: '$3.29M',
-    value: '$3.29M Gross System Investment',
+    value: 'Gross System Investment',
     description: 'Total up-front capital cost (gross EPC, design, commissioning, etc.).',
     type: 'financial',
     watermark: '$'
   },
   {
-    percentage: '43%',
-    value: '$875K Incentive Gain',
+    percentage: '$875K',
+    value: 'Incentive Gain',
     description: 'Sum of grants, rebates, or direct state/federal awards involved in the transaction.',
     type: 'financial',
     watermark: '$'
@@ -315,29 +315,29 @@ export const benefitDataTop: BenefitData[] = [
 
 export const benefitDataBottom: BenefitData[] = [
   {
-    percentage: '80%',
-    value: '10,820 MT GHG Reduction / Yr',
+    percentage: '10,820 MT',
+    value: 'GHG Reduction / Yr',
     description: 'Annualized reduction in greenhouse gas emissions (CO₂ equivalent), typically 70–85% for these projects.',
     type: 'environmental',
     watermark: '🍃'
   },
   {
-    percentage: '22%',
-    value: '7.9M Gal Annual Water Use Reduction',
+    percentage: '7.9M Gal',
+    value: 'Annual Water Use Reduction',
     description: 'Reduced cooling tower or process water use by replacing legacy fuel/process systems.',
     type: 'utility',
     watermark: '💧'
   },
   {
-    percentage: '35%',
-    value: '224K Therms Gas Use Reduction',
+    percentage: '224K Therms',
+    value: 'Gas Use Reduction',
     description: 'Displaced natural gas or steam use from efficiency, electrification, or CHP.',
     type: 'utility',
     watermark: '♨️'
   },
   {
-    percentage: '32%',
-    value: '3.7M kWh Onsite Renewable Gen',
+    percentage: '3.7M kWh',
+    value: 'Onsite Renewable Gen',
     description: 'Annual onsite renewable (solar, etc.) produced, often 20–40% of the site’s annual load.',
     type: 'utility',
     watermark: '⚡'
