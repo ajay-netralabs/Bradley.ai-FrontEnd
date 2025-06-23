@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppBar, IconButton, Toolbar, Typography, Menu, MenuItem, Tooltip } from '@mui/material';
+import { AppBar, IconButton, Toolbar, /* Typography, */ Menu, MenuItem, Tooltip, Box } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 // import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -27,12 +27,15 @@ const Navbar: React.FC = () => {
   return (
     <AppBar position="fixed" sx={{ bgcolor: 'white', color: 'black', zIndex: 1000, boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)' }}>
       <Toolbar>
-        <Typography variant="h4" component="div" sx={{ flexGrow: 1, fontFamily: 'Roboto Condensed, sans-serif', display: 'inline-flex', alignItems: 'center' }}>
+        {/* <Typography variant="h4" component="div" sx={{ flexGrow: 1, fontFamily: 'Roboto Condensed, sans-serif', display: 'inline-flex', alignItems: 'center' }}>
           Bradley.ai
           <Typography variant="h6" component="span" sx={{ ml: 0.5, position: 'relative', top: '-3px' }}>
             <sup>®</sup>
           </Typography>
-        </Typography>
+        </Typography> */}
+        <Box sx={{ flexGrow: 1, display: 'inline-flex', alignItems: 'center' }}>
+          <img src="public\bradley_dynamic_horizontal.svg" alt="Logo" style={{ height: '64px', marginRight: '4px', marginLeft: '-6px' }} />
+        </Box>
 
         
         <IconButton color="inherit" sx={{'&:focus': {

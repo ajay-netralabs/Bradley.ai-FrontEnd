@@ -284,21 +284,21 @@ export interface ExpandablePanelInfo {
 
 export const benefitDataTop: BenefitData[] = [
   {
-    percentage: '--%',
+    percentage: '38%',
     value: '$1.58M OpEx Reduction',
     description: 'Annual savings on utility costs (electricity, demand, fuel, etc.) as a direct result of the hybrid solution.',
     type: 'financial',
     watermark: '$'
   },
   {
-    percentage: '--%',
+    percentage: '$3.29M',
     value: '$3.29M Gross System Investment',
     description: 'Total up-front capital cost (gross EPC, design, commissioning, etc.).',
     type: 'financial',
     watermark: '$'
   },
   {
-    percentage: '--%',
+    percentage: '43%',
     value: '$875K Incentive Gain',
     description: 'Sum of grants, rebates, or direct state/federal awards involved in the transaction.',
     type: 'financial',

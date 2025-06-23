@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, Grid, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { IoIosLogIn } from 'react-icons/io';
 import { useAppContext } from '../Context/AppContext';
@@ -28,7 +28,7 @@ const Login: React.FC = () => {
         position: 'top-center',
         autoClose: 1000,
         hideProgressBar: true,
-        style: { fontSize: '14px', padding: '8px 16px' }, // Smaller and subtle toast
+        style: { fontSize: '14px', padding: '8px 16px', fontFamily: '"Nunito Sans", sans-serif' },
       });
     }
   };
@@ -42,6 +42,7 @@ const Login: React.FC = () => {
         height: '100vh',
         width: '100vw',
         backgroundColor: 'white',
+        fontFamily: '"Nunito Sans", sans-serif',
       }}
     >
       <ToastContainer />
@@ -55,60 +56,78 @@ const Login: React.FC = () => {
           borderRadius: 2,
           overflow: 'hidden',
           backgroundColor: 'white',
+          fontFamily: '"Nunito Sans", sans-serif',
         }}
       >
-        {/* Left Panel */}
         <Box
           sx={{
             width: '40%',
             backgroundColor: '#0e0c22',
             color: 'white',
-            margin: '10px',
+            padding: 3,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
+            fontFamily: '"Nunito Sans", sans-serif',
           }}
         >
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            sx={{
-              fontFamily: '"Nunito Sans", sans-serif',
-              padding: 4,
-            }}
-          >
-            Bradley.ai
-          </Typography>
-          <Typography
-            variant="body1"
-            mt={2}
-            sx={{
-              fontFamily: '"Nunito Sans", sans-serif',
-              padding: 4,
-            }}
-          >
-            <b>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</b>
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              fontFamily: '"Nunito Sans", sans-serif',
-              padding: 4,
-            }}
-          >
-            <b>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</b>
-          </Typography>
-          <img
-            src="/bg.webp"
-            alt="Welcome"
-            style={{
-              width: '100%',
-              fontFamily: '"Nunito Sans", sans-serif',
-            }}
-          />
+          <Box>
+            <Box sx={{ mb: 1 }}>
+              <img
+                src="/bradley_dynamic_horizontal.svg"
+                alt="Logo"
+                style={{ height: '70px', marginLeft: '30px', scale: '1.3' }}
+              />
+            </Box>
+
+            <Typography variant="h6" sx={{ fontWeight: 400, lineHeight: 1.5, fontFamily: '"Nunito Sans", sans-serif' }}>
+              Transform weeks of DER analysis into{' '}
+              <span style={{ color: '#FF6B00', fontWeight: 700 }}>
+                minutes of AI-powered insights
+              </span>
+            </Typography>
+
+            <Typography mt={2} sx={{ color: '#ccc', fontSize: '0.9rem', lineHeight: 1.6, fontFamily: '"Nunito Sans", sans-serif' }}>
+              Join forward-thinking energy professionals who are revolutionizing how distributed energy resources are analyzed, optimized, and deployed.
+            </Typography>
+
+            <Grid container spacing={1} mt={3}>
+              {[
+                { value: '87%', label: 'Time Saved\non Analysis' },
+                { value: '$1.58M', label: 'Avg. OpEx\nReduction' },
+                { value: '224K', label: 'Therms Gas\nReduced' },
+                { value: '14.1%', label: 'Internal Rate\nof Return' },
+              ].map((item, index) => (
+                <Grid item xs={6} key={index}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      padding: 1.5,
+                      backgroundColor: '#1d1a34',
+                      color: 'white',
+                      borderRadius: 2,
+                      textAlign: 'center',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        backgroundColor: '#262344',
+                        boxShadow: '0 0 8px rgba(255, 255, 255, 0.05)',
+                      },
+                      fontFamily: '"Nunito Sans", sans-serif',
+                    }}
+                  >
+                    <Typography variant="h6" fontWeight="bold" color="#FF6B00" sx={{ fontFamily: '"Nunito Sans", sans-serif' }}>
+                      {item.value}
+                    </Typography>
+                    <Typography variant="caption" sx={{ whiteSpace: 'pre-line', color: '#ccc', fontFamily: '"Nunito Sans", sans-serif' }}>
+                      {item.label}
+                    </Typography>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
         </Box>
 
-        {/* Right Panel */}
         <Box
           sx={{
             width: '60%',
@@ -128,16 +147,15 @@ const Login: React.FC = () => {
             pb={0}
             pt={5}
             sx={{
-              fontFamily: '"Nunito Sans", sans-serif',
               width: '90%',
+              fontFamily: '"Nunito Sans", sans-serif',
             }}
           >
-            <h3>Sign in to Bradley.ai</h3>
+            <h3 style={{ fontFamily: '"Nunito Sans", sans-serif' }}>Sign in to Bradley.ai</h3>
           </Typography>
 
-          {/* Email Input */}
           <Box sx={{ width: '90%', marginBottom: 2 }}>
-            <label htmlFor="email" style={{ fontSize: '16px', color: '#333' }}>
+            <label htmlFor="email" style={{ fontSize: '16px', color: '#333', fontFamily: '"Nunito Sans", sans-serif' }}>
               <b>Email</b>
             </label>
             <input
@@ -162,10 +180,9 @@ const Login: React.FC = () => {
             />
           </Box>
 
-          {/* Password Input */}
           <Box sx={{ width: '90%', marginBottom: 2 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <label htmlFor="password" style={{ fontSize: '16px', color: '#333' }}>
+              <label htmlFor="password" style={{ fontSize: '16px', color: '#333', fontFamily: '"Nunito Sans", sans-serif' }}>
                 <b>Password</b>
               </label>
               <span
@@ -174,6 +191,7 @@ const Login: React.FC = () => {
                   textDecoration: 'underline',
                   color: 'black',
                   cursor: 'pointer',
+                  fontFamily: '"Nunito Sans", sans-serif',
                 }}
               >
                 <b>Forgot?</b>
@@ -201,28 +219,11 @@ const Login: React.FC = () => {
             />
           </Box>
 
-          {/* Login Button */}
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: '#0e0c22',
-              color: 'white',
-              borderRadius: 5,
-              marginTop: 3,
-              paddingX: 3.5,
-              '&:hover': {
-                backgroundColor: '#1c1b2e',
-              },
-              width: 'auto',
-              fontFamily: '"Nunito Sans", sans-serif',
-            }}
-            onClick={handleLogin}
-          >
+          <Button variant="contained" sx={{ backgroundColor: '#0e0c22', color: 'white', borderRadius: 2, marginTop: 3, paddingX: 3.5, '&:hover': { backgroundColor: '#1c1b2e' }, width: '90%', height: '45px', fontFamily: '"Nunito Sans", sans-serif' }} onClick={handleLogin}>
             <IoIosLogIn size={20} style={{ marginRight: 8 }} />
             LOG IN
           </Button>
 
-          {/* Sign Up Link */}
           <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', width: '100%' }}>
             <Typography
               variant="body2"
@@ -236,7 +237,7 @@ const Login: React.FC = () => {
               Don’t have an account? {' '}
               <span
                 onClick={() => navigate('/signup')}
-                style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                style={{ textDecoration: 'underline', cursor: 'pointer', fontFamily: '"Nunito Sans", sans-serif' }}
               >
                 <b>Sign Up</b>
               </span>

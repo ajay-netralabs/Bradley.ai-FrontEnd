@@ -3,11 +3,11 @@ import { Box, Typography, Collapse, Paper, Checkbox, FormControlLabel, Chip } fr
 import { IconButton } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import BusinessIcon from '@mui/icons-material/Business';
-import BoltIcon from '@mui/icons-material/Bolt';
-import FlagIcon from '@mui/icons-material/Flag';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import { GoOrganization } from 'react-icons/go';
+import { MdOutlineEnergySavingsLeaf } from 'react-icons/md';
+import { LuGoal } from 'react-icons/lu';
+import { MdOutlineWarehouse } from 'react-icons/md';
+import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 import { IoEnterOutline } from "react-icons/io5";
 
 import { useAppContext } from '../../../../Context/AppContext';
@@ -38,14 +38,14 @@ interface SummarySectionProps {
   onEdit: () => void;
 }
 
-const SummarySection: React.FC<SummarySectionProps> = ({ 
-  icon, 
-  title, 
+const SummarySection: React.FC<SummarySectionProps> = ({
+  icon,
+  title,
   data,
-  completionStatus, 
-  isExpanded, 
-  onExpand, 
-  onEdit 
+  completionStatus,
+  isExpanded,
+  onExpand,
+  onEdit
 }) => {
   const getStatusColor = () => {
     switch (completionStatus) {
@@ -67,30 +67,30 @@ const SummarySection: React.FC<SummarySectionProps> = ({
 
   return (
     <Paper elevation={2} sx={{ borderRadius: '12px', overflow: 'hidden' }}>
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          p: '12px 16px', 
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          p: '12px 16px',
           cursor: 'pointer',
           backgroundColor: '#f8f9fa',
           borderBottom: isExpanded ? '1px solid #e0e0e0' : 'none',
           '&:hover': {
             backgroundColor: '#f0f2f5',
           }
-        }} 
+        }}
         onClick={onExpand}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-          {React.cloneElement(icon, { sx: { color: 'primary.main', mr: 1.5 }})}
+          {React.cloneElement(icon, { style: { color: '#1976d2', marginRight: '12px', fontSize: '1.2rem' }})}
           <Typography sx={{ fontWeight: 'bold', fontSize: '1rem', fontFamily: 'Nunito Sans, sans-serif' }}>
             {title}
           </Typography>
-          <Chip 
+          <Chip
             label={getStatusLabel()}
             size="small"
-            sx={{ 
-              ml: 2, 
+            sx={{
+              ml: 2,
               backgroundColor: getStatusColor(),
               color: 'white',
               fontSize: '0.7rem',
@@ -99,22 +99,22 @@ const SummarySection: React.FC<SummarySectionProps> = ({
           />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton 
-            size="small" 
-            onClick={(e) => { e.stopPropagation(); onEdit(); }} 
-            sx={{ 
+          <IconButton
+            size="small"
+            onClick={(e) => { e.stopPropagation(); onEdit(); }}
+            sx={{
               '&:focus': { outline: 'none' },
               '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' }
             }}
           >
             <IoEnterOutline />
           </IconButton>
-          <IconButton 
-            size="small" 
-            onClick={(e) => { e.stopPropagation(); onExpand(); }} 
-            sx={{ 
-              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', 
-              transition: 'transform 0.2s', 
+          <IconButton
+            size="small"
+            onClick={(e) => { e.stopPropagation(); onExpand(); }}
+            sx={{
+              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s',
               '&:focus': { outline: 'none' },
               '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' }
             }}
@@ -129,7 +129,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({
             <Box key={index} sx={{ display: 'flex', py: 0.5, lineHeight: 1.7 }}>
               <Typography sx={{
                 fontWeight: 'bold',
-                color: '#555',    
+                color: '#555',
                 fontSize: '0.8rem',
                 fontFamily: 'Nunito Sans, sans-serif',
                 minWidth: '160px',
@@ -140,7 +140,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({
               </Typography>
               <Typography sx={{
                 fontSize: '0.8rem',
-                color: '#555',    
+                color: '#555',
                 fontFamily: 'Nunito Sans, sans-serif',
               }}>
                 {item.value || 'Not Provided'}
@@ -173,14 +173,14 @@ const SubStep1: React.FC = () => {
   const { boilerCogenerationState } = useBoilerCogeneration();
 
   const { loaStatusState } = useLOAStatus();
-  
+
   const orgData = [
     { label: 'Company Name', value: organizationDetails.organizationName },
     { label: 'Industry', value: organizationDetails.industry },
     { label: 'Contact Email', value: organizationDetails.userEmail },
   ];
 
-  const totalAnnualSpend = 
+  const totalAnnualSpend =
     (parseFloat(String(annualEnergySpend.electricity).replace(/[^0-9.]/g, '')) || 0) +
     (parseFloat(String(annualEnergySpend.naturalGas).replace(/[^0-9.]/g, '')) || 0) +
     (parseFloat(String(annualEnergySpend.water).replace(/[^0-9.]/g, '')) || 0) +
@@ -195,45 +195,45 @@ const SubStep1: React.FC = () => {
   if(thermalNeedsIIState.showHotWaterHVAC) energySources.add("Hot Water (HVAC)");
   if(thermalNeedsIIState.showHotWaterBoilers) energySources.add("Hot Water (Domestic)");
   if(thermalNeedsIIIState.showChilledWater) energySources.add("Chilled Water");
-  
+
   if(thermalNeedsIVState.showWasteHeat && thermalNeedsIVState.wasteHeatSources.length > 0){
-      thermalNeedsIVState.wasteHeatSources.forEach(source => {
-          if (source.type) energySources.add(`Waste Heat (${source.type})`);
-      });
+    thermalNeedsIVState.wasteHeatSources.forEach(source => {
+      if (source.type) energySources.add(`Waste Heat (${source.type})`);
+    });
   }
-  
+
   if(boilerCogenerationState.sources.length > 0 && boilerCogenerationState.sources[0].type){
-      boilerCogenerationState.sources.forEach(source => {
-          if (source.type) energySources.add(source.type);
-      });
+    boilerCogenerationState.sources.forEach(source => {
+      if (source.type) energySources.add(source.type);
+    });
   }
 
   const energyData = [
-    { label: 'Total Annual Spend', value: `$${totalAnnualSpend.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`},
+    { label: 'Total Annual Spend', value: `$${totalAnnualSpend.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` },
     { label: 'Energy Sources', value: [...energySources].join(', ') },
     { label: 'LOA Status', value: loaStatusState.status },
   ];
 
-  const topPriority = prioritizationIState.selectedRanks[1] !== 'Select one' 
-    ? prioritizationIState.selectedRanks[1] 
+  const topPriority = prioritizationIState.selectedRanks[1] !== 'Select one'
+    ? prioritizationIState.selectedRanks[1]
     : 'Not Set';
-  
+
   const goalsData = [
     { label: 'Top Priority', value: topPriority },
     { label: 'Desired IRR', value: `${financialsIState.acceptableIRR}%` },
     { label: 'Preferred Payback', value: budgetGoalsState.simplePayback !== 'default' ? budgetGoalsState.simplePayback.replace('<', 'Less than ').replace('>', 'More than ') + ' Years' : 'Not Set' },
   ];
-  
+
   const totalRoofSpace = solarAssetsState.roofSections.map(v => parseFloat(String(v).replace(/,/g, '')) || 0).reduce((a, b) => a + b, 0);
 
   const siteData = [
-    { label: 'Facility Size', value: `${parseInt(siteCharacteristicsIState.overallFacilitySize || '0').toLocaleString()} sq. ft`},
-    { label: 'Total Roof Space', value: `${totalRoofSpace.toLocaleString()} sq. ft`},
-    { label: 'Open Breaker Space', value: siteCharacteristicsIState.isBreakerSpaceAvailable ? 'Yes' : 'No'},
+    { label: 'Facility Size', value: `${parseInt(siteCharacteristicsIState.overallFacilitySize || '0').toLocaleString()} sq. ft` },
+    { label: 'Total Roof Space', value: `${totalRoofSpace.toLocaleString()} sq. ft` },
+    { label: 'Open Breaker Space', value: siteCharacteristicsIState.isBreakerSpaceAvailable ? 'Yes' : 'No' },
   ];
-  
+
   const financialData = [
-    { label: 'Ownership Preference', value: ownershipPreference.preference ? (ownershipPreference.preference.charAt(0).toUpperCase() + ownershipPreference.preference.slice(1)).replace('-', ' ') : 'Not Set'},
+    { label: 'Ownership Preference', value: ownershipPreference.preference ? (ownershipPreference.preference.charAt(0).toUpperCase() + ownershipPreference.preference.slice(1)).replace('-', ' ') : 'Not Set' },
     { label: 'Budget Available', value: budgetGoalsState.availableFunds === 'yes' ? 'Yes' : 'No' },
   ];
 
@@ -242,26 +242,26 @@ const SubStep1: React.FC = () => {
       item.value === 'Not Provided' || item.value === 'Not Set' || item.value === 'Pending' || item.value === 'Pending Authorization'
     ).length;
     const totalFields = data.length;
-    
+
     if (notProvidedCount === 0) return 'complete';
     if (notProvidedCount === totalFields) return 'empty';
     return 'partial';
   };
-  
+
   const sections = [
-    { title: "Organizational Profile", icon: <BusinessIcon />, data: orgData, completionStatus: getCompletionStatus(orgData), onEdit: () => { setCurrentStep(0); setCurrentSubStep(1); } },
-    { title: "Energy Profile", icon: <BoltIcon />, data: energyData, completionStatus: getCompletionStatus(energyData), onEdit: () => { setCurrentStep(1); setCurrentSubStep(1); } },
-    { title: "Goals & Priorities", icon: <FlagIcon />, data: goalsData, completionStatus: getCompletionStatus(goalsData), onEdit: () => { setCurrentStep(2); setCurrentSubStep(1); } },
-    { title: "Site Assessment", icon: <AssessmentIcon />, data: siteData, completionStatus: getCompletionStatus(siteData), onEdit: () => { setCurrentStep(3); setCurrentSubStep(1); } },
-    { title: "Financial Info", icon: <MonetizationOnIcon />, data: financialData, completionStatus: getCompletionStatus(financialData), onEdit: () => { setCurrentStep(4); setCurrentSubStep(0); } },
+    { title: "Organizational Profile", icon: <GoOrganization />, data: orgData, completionStatus: getCompletionStatus(orgData), onEdit: () => { setCurrentStep(0); setCurrentSubStep(1); } },
+    { title: "Energy Profile", icon: <MdOutlineEnergySavingsLeaf />, data: energyData, completionStatus: getCompletionStatus(energyData), onEdit: () => { setCurrentStep(1); setCurrentSubStep(1); } },
+    { title: "Goals & Priorities", icon: <LuGoal />, data: goalsData, completionStatus: getCompletionStatus(goalsData), onEdit: () => { setCurrentStep(2); setCurrentSubStep(1); } },
+    { title: "Site Assessment", icon: <MdOutlineWarehouse />, data: siteData, completionStatus: getCompletionStatus(siteData), onEdit: () => { setCurrentStep(3); setCurrentSubStep(1); } },
+    { title: "Financial Info", icon: <MdOutlineAccountBalanceWallet />, data: financialData, completionStatus: getCompletionStatus(financialData), onEdit: () => { setCurrentStep(4); setCurrentSubStep(0); } },
   ];
 
   const handleExpandClick = (index: number) => {
-    setExpanded(prev => 
+    setExpanded(prev =>
       prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
     );
   };
-  
+
   return (
     <Box sx={{ fontFamily: 'Nunito Sans, sans-serif', p: 1, pr: 4, pl: 1, pt: 1 }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200..1000&display=swap');`}</style>
@@ -295,7 +295,6 @@ const SubStep1: React.FC = () => {
             data={section.data}
             title={section.title}
             icon={section.icon}
-            // summary={section.summary}
             completionStatus={section.completionStatus}
             isExpanded={expanded.includes(index)}
             onExpand={() => handleExpandClick(index)}
