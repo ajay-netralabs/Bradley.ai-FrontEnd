@@ -83,7 +83,7 @@ const Login: React.FC = () => {
             <Typography variant="h6" sx={{ fontWeight: 400, lineHeight: 1.5, fontFamily: '"Nunito Sans", sans-serif' }}>
               Transform weeks of DER analysis into{' '}
               <span style={{ color: '#FF6B00', fontWeight: 700 }}>
-                minutes of AI-powered insights
+                minutes of<br />AI-powered insights
               </span>
             </Typography>
 
