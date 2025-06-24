@@ -20,7 +20,7 @@ import { InvestmentSummary } from './Recommendation Diagrams/Investment Summary'
 import { ProjectSchedule } from './Recommendation Diagrams/Project Schedule';
 import { AnnualEnergyCostAsIsComparedToDEROvertime } from './Recommendation Diagrams/Annual Energy Cost as is compared to DER overtime';
 import { EnergySpecifications } from './Recommendation Diagrams/Energy Specifications';
-// import { AiOutlineFall, AiOutlineRise } from "react-icons/ai";
+// import { AiOutlineFall, AiOutlineRise } from "react-icons/ai"; 
 import { FinancingOptionsAnalysis } from './Recommendation Diagrams/FinancingOptionsAnalysis';
 
 export const StyledTitle = styled(Typography)(({ theme }) => ({

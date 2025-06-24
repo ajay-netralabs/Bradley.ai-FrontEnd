@@ -7,6 +7,19 @@ const SubStep2: React.FC = () => {
   const { facilityUsage, facilityDetails, daysOfOperation, operatingHours } = facilityUsageState;
 
   const dayAbbreviations: { [key: string]: string } = { Monday: "Mon", Tuesday: "Tue", Wednesday: "Wed", Thursday: "Thu", Friday: "Fri", Saturday: "Sat", Sunday: "Sun" };
+  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  const handleTimeRangeChange = (day: string, value: string) => {
+    const digits = value.replace(/[^0-9]/g, '');
+    let formatted = '';
+    
+    if (digits.length > 0) formatted += digits.substring(0, 2);
+    if (digits.length >= 2) formatted += ':' + digits.substring(2, 4);
+    if (digits.length >= 4) formatted += ' - ' + digits.substring(4, 6);
+    if (digits.length >= 6) formatted += ':' + digits.substring(6, 8);
+    
+    updateOperatingHour(day, formatted.substring(0, 15));
+  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -34,7 +47,7 @@ const SubStep2: React.FC = () => {
             >
               <MenuItem disabled value="Option 0" sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" }}>Select</MenuItem>
               {["Admin", "Cold storage", "Commercial office building (Highrise)", "Commercial office building (Low-rise)", "Commercial office building (single story)", "Data center", "Elder care facility", "Food storage", "Grocery chain", "Health Care", "Hospital", "Hospitality (hotel)", "Hospitality (long term stay)", "Industrial facility", "K-12", "Manufacturing", "Manufacturing facility", "Military Base", "Office", "Others", "School", "Stadium", "Storage", "Storage facility", "University"].map((option, index) => (
-              <MenuItem key={index} value={option} sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" }}>{option}</MenuItem>
+                <MenuItem key={index} value={option} sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" }}>{option}</MenuItem>
               ))}
             </Select>
           </Box>
@@ -59,7 +72,7 @@ const SubStep2: React.FC = () => {
               renderValue={(selected) => (selected as string[]).join(", ")}
             >
               <MenuItem disabled value="Option 0" sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" }}>Select the days on which the building is occupied.</MenuItem>
-              {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day, index) => (
+              {daysOfWeek.map((day, index) => (
                 <MenuItem key={index} value={day} sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" }}>{day}</MenuItem>
               ))}
             </Select>
@@ -68,26 +81,24 @@ const SubStep2: React.FC = () => {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, justifyContent: "center" }}>
               <Typography sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", flex: 0.3 }}><b>Enter the time of each day that the building begins conditioning for occupancy and when the buildings conditioning stops (or when it setsback):</b></Typography>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'nowrap', justifyContent: 'center', flex: 0.448 }}>
-                {daysOfOperation.sort((a, b) => {
-                  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-                  return daysOfWeek.indexOf(a) - daysOfWeek.indexOf(b);
-                }).map((day) => (
+                {daysOfOperation.sort((a, b) => daysOfWeek.indexOf(a) - daysOfWeek.indexOf(b)).map((day) => (
                   <TextField
                     key={day}
                     variant="outlined"
                     size="small"
-                    type="number"
-                    placeholder={dayAbbreviations[day]}
+                    type="text"
+                    placeholder={`${dayAbbreviations[day]} (HH:MM-HH:MM)`}
                     value={operatingHours[day] || ''}
-                    inputProps={{ min: 0, max: 24 }}
-                    onChange={(e) => {
-                      let value = parseInt(e.target.value, 10);
-                      if (isNaN(value)) { updateOperatingHour(day, ''); return; }
-                      if (value < 0) value = 0;
-                      if (value > 24) value = 24;
-                      updateOperatingHour(day, value.toString());
+                    onChange={(e) => handleTimeRangeChange(day, e.target.value)}
+                    sx={{
+                      fontFamily: "Nunito Sans, sans-serif",
+                      fontSize: "0.7rem",
+                      "& .MuiInputBase-root": { height: "40px", padding: "0 6px" },
+                      "& input": { padding: 0, fontFamily: "Nunito Sans, sans-serif", fontSize: "0.8rem", textAlign: 'center' },
+                      "& .MuiInputBase-input::placeholder": { fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" },
+                      flex: `1 1 ${100 / daysOfOperation.length}%`,
+                      minWidth: '120px'
                     }}
-                    sx={{ flex: `calc(${1 / daysOfOperation.length})`, fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem", "& .MuiInputBase-root": { height: "40px", padding: "0 6px" }, "& input": { padding: 0, fontFamily: "Nunito Sans, sans-serif", fontSize: "0.8rem" }, "& .MuiInputBase-input::placeholder": { fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem" } }}
                   />
                 ))}
               </Box>

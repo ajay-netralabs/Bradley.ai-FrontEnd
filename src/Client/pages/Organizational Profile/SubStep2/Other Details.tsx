@@ -49,6 +49,15 @@ const SubStep2: React.FC = () => {
     }
   };
 
+  const handleFormattedNumericChange = (
+    section: 'ownerEntityDetails',
+    field: keyof typeof ownerEntityDetails, 
+    value: string
+) => {
+    const cleanedValue = value.replace(/[^0-9]/g, '');
+    updateNestedField(section, field, cleanedValue);
+};
+
   const commonInputStyle = {
     flex: 1,
     fontSize: '0.7rem',
@@ -85,14 +94,14 @@ const SubStep2: React.FC = () => {
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '123px', pr: '123px' }}>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', mt: 1 }}>
-            <Typography variant="subtitle2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Box sx={{ flex: 1 }}>
+            <Typography variant="subtitle2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Box sx={{ flex: 1, minWidth: '200px' }}>
                 <b><h3>Property Ownership</h3></b>
               </Box>
-              <Box sx={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ flex: 1, display: 'flex', justifyContent: 'space-around', alignItems: 'center', minWidth: '350px' }}>
                 <RadioGroup
-                  sx={{ fontSize: '0.7rem', gap: '123px' }}
-                  row
+                  sx={{ fontSize: '0.7rem', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}
+                  // row
                   onChange={handlePropertyOwnershipChange}
                   value={propertyOwnership}
                 >
@@ -273,10 +282,10 @@ const SubStep2: React.FC = () => {
                   fullWidth
                   variant="outlined"
                   name="squareFootage"
-                  type='number'
+                  type='text'
                   placeholder='Enter square footage'
-                  value={ownerEntityDetails.squareFootage}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'squareFootage', e.target.value)}
+                  value={Number(ownerEntityDetails.squareFootage).toLocaleString()}
+                  onChange={(e) => handleFormattedNumericChange('ownerEntityDetails', 'squareFootage', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -760,12 +769,12 @@ const SubStep2: React.FC = () => {
             </Box>
           )}
 
-          <Typography variant="subtitle2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Box sx={{ flex: 1 }}>
+          <Typography variant="subtitle2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Box sx={{ flex: 1, minWidth: '200px' }}>
               <b><h3>Long - Term Site Occupancy</h3></b>
             </Box>
-            <Box sx={{ flex: 1, display: 'flex', justifyContent: 'space-between' }}>
-              <RadioGroup sx={{ fontSize: '0.7rem', gap: '119px' }} row onChange={handleLongTermOccupancyChange} value={longTermOccupancy}>
+            <Box sx={{ flex: 1, display: 'flex', justifyContent: 'space-around', alignItems: 'center', minWidth: '350px' }}>
+              <RadioGroup sx={{ fontSize: '0.7rem', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }} row onChange={handleLongTermOccupancyChange} value={longTermOccupancy}>
                 <FormControlLabel
                   value="15-20 years plan"
                   control={<Radio sx={{ padding: '2px' }} />}

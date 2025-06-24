@@ -5,23 +5,21 @@ interface FacilityUsageState {
   facilityUsage: string[];
   facilityDetails: string;
   daysOfOperation: string[];
-  operatingHours: { [key: string]: string }; // Object to store hours for each selected day
+  operatingHours: { [key: string]: string };
 }
 
 interface FacilityUsageContextType {
   facilityUsageState: FacilityUsageState;
   updateMultiSelect: (field: 'facilityUsage' | 'daysOfOperation', value: string[]) => void;
   updateField: (field: 'facilityDetails', value: string) => void;
-  updateOperatingHour: (day: string, hours: string) => void;
+  updateOperatingHour: (day: string, timeRange: string) => void;
 }
 
 const FacilityUsageContext = createContext<FacilityUsageContextType | undefined>(undefined);
 
 export const useFacilityUsage = () => {
   const context = useContext(FacilityUsageContext);
-  if (!context) {
-    throw new Error('useFacilityUsage must be used within a FacilityUsageProvider');
-  }
+  if (!context) { throw new Error('useFacilityUsage must be used within a FacilityUsageProvider'); }
   return context;
 };
 
@@ -50,12 +48,12 @@ export const FacilityUsageProvider: React.FC<{ children: ReactNode }> = ({ child
     setFacilityUsageState(prevState => ({ ...prevState, [field]: value }));
   };
 
-  const updateOperatingHour = (day: string, hours: string) => {
+  const updateOperatingHour = (day: string, timeRange: string) => {
     setFacilityUsageState(prevState => ({
       ...prevState,
       operatingHours: {
         ...prevState.operatingHours,
-        [day]: hours,
+        [day]: timeRange,
       }
     }));
   };

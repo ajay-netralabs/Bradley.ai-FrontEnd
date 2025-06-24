@@ -10,9 +10,27 @@ const SubStep3: React.FC = () => {
     updateField(field, event.target.value);
   };
   
-  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof typeof roofingConsiderationsState) => {
-    updateField(field, event.target.value);
-  };
+  const handleTextChange = (
+  event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, 
+  field: keyof Omit<typeof roofingConsiderationsState, 'roofWarrantyTerm'>
+) => {
+  updateField(field, event.target.value);
+};
+
+  const handleRoofWarrantyTermChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const value = event.target.value;
+  const numericValue = value.replace(/[^0-9]/g, '');
+
+  if (numericValue === '') {
+    updateField('roofWarrantyTerm', '');
+    return;
+  }
+  
+  const num = parseInt(numericValue, 10);
+  if (!isNaN(num) && num >= 1 && num <= 99) {
+    updateField('roofWarrantyTerm', value);
+  }
+};
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -52,9 +70,9 @@ const SubStep3: React.FC = () => {
                 variant="outlined"
                 size="small"
                 type="text"
-                placeholder="1 Year, 20 Years, etc..."
+                placeholder="1 - 99 Years"
                 value={roofWarrantyTerm}
-                onChange={(e) => handleTextChange(e, 'roofWarrantyTerm')}
+                onChange={handleRoofWarrantyTermChange}
                 sx={{ flex: 0.5, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }}
               />
             </Box>

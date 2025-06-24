@@ -1,6 +1,7 @@
-import React/* , { useState } */ from 'react';
-import { Box, TextField, Typography, FormControlLabel, Checkbox, Tooltip, Select, MenuItem, /* OutlinedInput, */ FormControl, SelectChangeEvent } from '@mui/material';
+import React/* , { useState } */, {useRef} from 'react';
+import { Box, TextField, Typography, FormControlLabel, Checkbox, Tooltip, Select, MenuItem, /* OutlinedInput, */ FormControl, SelectChangeEvent, InputAdornment, IconButton } from '@mui/material';
 import { useFacilityOperation } from '../../../../Context/Organizational Profile/SubStep2/Facility Operation Description Context';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 // interface DescriptionState {
 //   twoPipeSystem: string;
@@ -131,6 +132,11 @@ const SubStep2: React.FC = () => {
     '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }
   };
 
+  const opStartTimeRef = useRef<HTMLInputElement>(null);
+  const opSetBackTimeRef = useRef<HTMLInputElement>(null);
+  const typicalStartTimeRef = useRef<HTMLInputElement>(null);
+  const typicalSetBackTimeRef = useRef<HTMLInputElement>(null);
+
   return (
     <Box sx={{
       display: 'flex',
@@ -249,6 +255,16 @@ const SubStep2: React.FC = () => {
               name="startUpTime"
               value={operationalHours.startUpTime}
               onChange={(e) => handleHoursChange(e, 'operationalHours')}
+              inputRef={opStartTimeRef}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => opStartTimeRef.current?.showPicker()} edge="end" sx={{ mr: -1 }}>
+                      <AccessTimeIcon fontSize='small' />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
               size="small"
               sx={{
                 flex: 0.177,
@@ -267,6 +283,16 @@ const SubStep2: React.FC = () => {
               name="setBackTime"
               value={operationalHours.setBackTime}
               onChange={(e) => handleHoursChange(e, 'operationalHours')}
+              inputRef={opSetBackTimeRef}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => opSetBackTimeRef.current?.showPicker()} edge="end" sx={{ mr: -1 }}>
+                      <AccessTimeIcon fontSize='small' />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
               size="small"
               sx={{
                 flex: 0.177,
@@ -290,6 +316,16 @@ const SubStep2: React.FC = () => {
               name="startUpTime"
               value={typicalHours.startUpTime}
               onChange={(e) => handleHoursChange(e, 'typicalHours')}
+              inputRef={typicalStartTimeRef}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => typicalStartTimeRef.current?.showPicker()} edge="end" sx={{ mr: -1 }}>
+                      <AccessTimeIcon fontSize='small' />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
               size="small"
               sx={{
                 flex: 0.177,
@@ -308,6 +344,16 @@ const SubStep2: React.FC = () => {
               name="setBackTime"
               value={typicalHours.setBackTime}
               onChange={(e) => handleHoursChange(e, 'typicalHours')}
+              inputRef={typicalSetBackTimeRef}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => typicalSetBackTimeRef.current?.showPicker()} edge="end" sx={{ mr: -1 }}>
+                      <AccessTimeIcon fontSize='small' />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
               size="small"
               sx={{
                 flex: 0.177,

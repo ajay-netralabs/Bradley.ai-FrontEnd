@@ -8,6 +8,24 @@ const SubStep2: React.FC = () => {
   const { boilerCogenerationState, addSource, removeSource, updateSourceField } = useBoilerCogeneration();
   const { sources } = boilerCogenerationState;
 
+  // Helper to format the number string for display
+  const formatNumber = (value: string) => {
+    if (!value) return "";
+    const cleaned = value.replace(/,/g, "");
+    if (isNaN(parseFloat(cleaned))) return value; // Return original if not a number
+    return parseFloat(cleaned).toLocaleString('en-US');
+  };
+
+  // Helper to handle input, removing formatting before updating state
+  const handleChange = (
+    index: number, 
+    field: keyof typeof sources[0], 
+    value: string
+  ) => {
+    const cleanedValue = value.replace(/[^0-9.]/g, ''); // Allow digits and a single dot
+    updateSourceField(index, field, cleanedValue);
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
       <style>
@@ -27,7 +45,7 @@ const SubStep2: React.FC = () => {
                   <MenuItem value="Boiler (Steam)" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Boiler (Steam)</MenuItem>
                   <MenuItem value="Cogeneration Unit" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Cogeneration Unit</MenuItem>
                 </TextField>
-                <TextField size="small" label={ source.type === 'Boiler (Hot Water)' ? 'Capacity (in KGal)' : source.type === 'Boiler (Steam)' ? 'Capacity (in MLbs)' : 'Capacity (in MWh annually)' } type="number" fullWidth value={source.capacity} onChange={(e) => updateSourceField(index, 'capacity', e.target.value)} placeholder={ source.type === 'Boiler (Hot Water)' ? 'in KGal' : source.type === 'Boiler (Steam)' ? 'in MLbs' : 'Enter Capacity' } sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
+                <TextField size="small" label={ source.type === 'Boiler (Hot Water)' ? 'Capacity (in KGal)' : source.type === 'Boiler (Steam)' ? 'Capacity (in MLbs)' : 'Capacity (in MWh annually)' } type="text" fullWidth value={formatNumber(source.capacity)} onChange={(e) => handleChange(index, 'capacity', e.target.value)} placeholder={ source.type === 'Boiler (Hot Water)' ? 'in KGal' : source.type === 'Boiler (Steam)' ? 'in MLbs' : 'Enter Capacity' } sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
                 <TextField size="small" label="Fuel Source" select fullWidth value={source.fuelSource} onChange={(e) => updateSourceField(index, 'fuelSource', e.target.value)} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }}>
                   <MenuItem value="Natural Gas" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Natural Gas</MenuItem>
                   <MenuItem value="Oil" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Oil</MenuItem>
@@ -37,9 +55,9 @@ const SubStep2: React.FC = () => {
                 </TextField>
               </Box>
               <Box sx={{ display: 'flex', width: '100%', gap: 2, flexWrap: 'wrap' }}>
-                <TextField size="small" label="Efficiency" type="number" fullWidth value={source.efficiency} onChange={(e) => updateSourceField(index, 'efficiency', e.target.value)} placeholder="In Percentage" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
-                <TextField size="small" label="Age" type="number" fullWidth value={source.age} onChange={(e) => updateSourceField(index, 'age', e.target.value)} placeholder="In Years" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
-                <TextField size="small" label="Operating Pressure" type="number" fullWidth value={source.operatingPressure} onChange={(e) => updateSourceField(index, 'operatingPressure', e.target.value)} placeholder="In Psi" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
+                <TextField size="small" label="Efficiency" type="text" fullWidth value={formatNumber(source.efficiency)} onChange={(e) => handleChange(index, 'efficiency', e.target.value)} placeholder="In Percentage" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
+                <TextField size="small" label="Age" type="text" fullWidth value={formatNumber(source.age)} onChange={(e) => handleChange(index, 'age', e.target.value)} placeholder="In Years" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
+                <TextField size="small" label="Operating Pressure" type="text" fullWidth value={formatNumber(source.operatingPressure)} onChange={(e) => handleChange(index, 'operatingPressure', e.target.value)} placeholder="In Psi" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
               </Box>
               <Box sx={{ display: 'flex', width: '100%', gap: 2, flexWrap: 'wrap' }}>
                 <TextField size="small" label="History" type="text" fullWidth value={source.history} onChange={(e) => updateSourceField(index, 'history', e.target.value)} placeholder="Maintenance History (Optional)" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
@@ -50,7 +68,7 @@ const SubStep2: React.FC = () => {
                   <MenuItem value="None" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>None</MenuItem>
                   <MenuItem value="Other" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Other</MenuItem>
                 </TextField>
-                <TextField size="small" label={ source.type === 'Cogeneration Unit' ? 'Volume (in MLbs)' : 'Volume' } type="number" fullWidth value={source.volume} onChange={(e) => updateSourceField(index, 'volume', e.target.value)} placeholder={ source.type === 'Cogeneration Unit' ? 'in MLbs' : 'Annual Waste Heat Vol. in MMBTu' } sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
+                <TextField size="small" label={ source.type === 'Cogeneration Unit' ? 'Volume (in MLbs)' : 'Volume' } type="text" fullWidth value={formatNumber(source.volume)} onChange={(e) => handleChange(index, 'volume', e.target.value)} placeholder={ source.type === 'Cogeneration Unit' ? 'in MLbs' : 'Annual Waste Heat Vol. in MMBTu' } sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', height: '40px', width: '32%', '& .MuiInputBase-root': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} InputLabelProps={{ style: { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
               </Box>
               {source.type === 'Cogeneration Unit' && (
                 <Box sx={{ display: 'flex', width: '100%', gap: 2, flexWrap: 'wrap' }}>
