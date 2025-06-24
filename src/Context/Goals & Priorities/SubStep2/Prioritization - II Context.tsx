@@ -7,10 +7,11 @@ interface Target {
   date: string;
 }
 
-interface PrioritizationIIState {
+export interface PrioritizationIIState {
   resiliencyIncrease: number;
   scope2Reduction: number;
   costReduction: number;
+  renewableGeneration: number; 
   blackStartCapability: string;
   islandModeCapability: string;
   gridIndependentDuration: string;
@@ -41,6 +42,7 @@ const defaultState: PrioritizationIIState = {
   resiliencyIncrease: 50,
   scope2Reduction: 50,
   costReduction: 50,
+  renewableGeneration: 50,
   blackStartCapability: '',
   islandModeCapability: '',
   gridIndependentDuration: '',
@@ -54,7 +56,7 @@ const defaultState: PrioritizationIIState = {
 export const PrioritizationIIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [prioritizationIIState, setPrioritizationIIState] = useState<PrioritizationIIState>(() => {
     const savedState = Cookies.get('prioritizationIIState');
-    return savedState ? JSON.parse(savedState) : defaultState;
+    return savedState ? { ...defaultState, ...JSON.parse(savedState) } : defaultState;
   });
 
   useEffect(() => {

@@ -85,7 +85,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
     });
   };
 
-  const CustomStepIcon = ({ icon: IconComponent, active, completed, visited }: any) => (
+  const CustomStepIcon = ({ icon: IconComponent, active, completed, visited, isCurrent }: any) => (
     <div
       style={{
         display: 'flex',
@@ -94,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
         width: 30,
         height: 30,
         borderRadius: '50%',
-        backgroundColor: completed || active || visited ? '#036ca1' : '#808080',
+        backgroundColor: completed || active || visited ? (isCurrent ? '#036ca1' : '#0584b7') : '#808080',
         color: '#fff',
       }}
     >
@@ -126,11 +126,18 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
         {steps.map((step, index) => {
           const IconComponent = step.icon;
           const isVisited = visitedSteps[index].some(visited => visited);
+          const isCurrent = currentStep === index;
           return (
             <Step key={step.label} completed={completedSteps[index]}>
               <StepLabel
                 StepIconComponent={(props) => (
-                  <CustomStepIcon icon={IconComponent} active={props.active} completed={props.completed} visited={isVisited} />
+                  <CustomStepIcon 
+                    icon={IconComponent} 
+                    active={props.active} 
+                    completed={props.completed} 
+                    visited={isVisited} 
+                    isCurrent={isCurrent}
+                  />
                 )}
               >
                 {isVisited ? (
@@ -144,7 +151,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
                         '&.Mui-selected': {
                           backgroundColor: 'transparent',
                         },
-                        color: '#036ca1',
+                        color: isCurrent ? '#036ca1' : '#0584b7',
                         '&:hover': {
                           borderRadius: '8px',
                         },
@@ -152,7 +159,12 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
                     >
                       <ListItemText
                         primary={
-                          <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', fontWeight: index === currentStep ? 'bold' : 'normal' }}>
+                          <Typography sx={{ 
+                            fontSize: '0.75rem', 
+                            fontFamily: 'Nunito Sans, sans-serif', 
+                            fontWeight: index === currentStep ? 'bold' : 'normal',
+                            color: isCurrent ? '#036ca1' : '#0584b7'
+                          }}>
                             {index === currentStep ? `${step.label}*` : step.label}
                           </Typography>
                         }

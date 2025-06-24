@@ -95,7 +95,7 @@ const SubStep2: React.FC = () => {
                   </Box>
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Hot Water Usage Type in Kilo-Gallons (kGal):</b> (Optional)</Typography>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Hot Water Usage Type in Thousand-Gallons (kGal):</b> (Optional)</Typography>
                     <Tooltip title="Enter amount in kGal" placement='top-end' arrow>
                       <TextField name="hotWaterUsageTypeAmount" variant="outlined" placeholder='Enter amount in kGal' size="small" type="text" value={formatNumberWithCommas(hotWaterUsageTypeAmount)} onChange={handleNumberChange} sx={{ flex: 0.25, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
                     </Tooltip>
@@ -150,6 +150,12 @@ const SubStep2: React.FC = () => {
                 </Tooltip>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>How many BHP boilers do you have?</b></Typography>
+                <Tooltip title="Enter the number of BHP boilers" placement='top-end' arrow>
+                  <TextField name="bhpBoilerCount" variant="outlined" placeholder='Enter number of BHP boilers' size="small" type="text" value={formatNumberWithCommas(bhpBoilerCount)} onChange={handleNumberChange} sx={{ flex: 0.75, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
+                </Tooltip>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Are your boilers condensing or non-condensing or electric?</b></Typography>
                 <Tooltip title="Select boiler type" placement='top-end' arrow>
                   <Select name="boilerType" size="small" variant="outlined" value={boilerType} onChange={handleSelectChange} sx={{ flex: 0.75, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
@@ -174,12 +180,6 @@ const SubStep2: React.FC = () => {
                 <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>How many hot water boilers do you have?</b></Typography>
                 <Tooltip title="Enter the total number of hot water boilers" placement='top-end' arrow>
                   <TextField name="boilerCount" variant="outlined" placeholder='Enter number of hot water boilers' size="small" type="text" value={formatNumberWithCommas(boilerCount)} onChange={handleNumberChange} sx={{ flex: 0.75, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
-                </Tooltip>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>How many BHP boilers do you have?</b></Typography>
-                <Tooltip title="Enter the number of BHP boilers" placement='top-end' arrow>
-                  <TextField name="bhpBoilerCount" variant="outlined" placeholder='Enter number of BHP boilers' size="small" type="text" value={formatNumberWithCommas(bhpBoilerCount)} onChange={handleNumberChange} sx={{ flex: 0.75, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
                 </Tooltip>
               </Box>
             </Box>
