@@ -11,7 +11,7 @@ export const brandMapping = {
 };
 export const controlsBrands = ['ABB', 'Eaton', 'Emerson', 'GE', 'Honeywell', 'Mitsubishi Electric', 'Phoenix Contact', 'Rockwell Automation', 'Schneider Electric', 'Schweitzer Engineering Laboratories', 'Siemens', 'Yaskawa', 'Yokogawa'];
 export const switchgearBrands = ['ABB', 'Baypower', 'Eaton', 'GE', 'Mitsubishi Electric', 'North American Switchgear', 'Phoenix Electric', 'Schneider Electric', 'Siemens', 'Switchgear Power Systems', 'Whatoop'];
-export const standardsOptions = ['IEEE 1547', 'IEEE 1547.2-2023', 'NFPA 70', 'DFAR 252', 'UL 1741', 'IEEE 2800'];
+export const standardsOptions = ['All (Default)', 'IEEE 1547', 'IEEE 1547.2-2023', 'NFPA 70', 'DFAR 252', 'UL 1741', 'IEEE 2800'];
 export const primeMoverOptions = [
     { name: "Reciprocating (Piston) Engines", sizeRange: "50 kW – 5 MW" }, { name: "Gas Turbines (Aero-Derivative)", sizeRange: "1 MW – 50 MW" }, { name: "Simple Cycle Gas Turbines", sizeRange: "Varies" }, { name: "Linear Generators", sizeRange: "250 kW – 5 MW" }, { name: "Microreactors (Very Small SMRs)", sizeRange: "1 – 20 MW" }, { name: "Small nuclear (Light-Water SMRs - LWR-SMRs)", sizeRange: "60 – 470 MW" }, { name: "Microturbines", sizeRange: "25 kW – 500 kW" }, { name: "Micro-Engines / Stirling Engines", sizeRange: "1 kW – 50 kW" }, { name: "Fuel Cells", sizeRange: "100 kW – 10 MW" }, { name: "Steam Turbines (Gas-Fired Boiler)", sizeRange: "500 kW – 50 MW" }, { name: "Other", sizeRange: "" }
 ];
@@ -51,7 +51,7 @@ const defaultState: EquipmentPreferencesState = {
   controlsBrandOther: '',
   switchgearBrand: 'default',
   switchgearBrandOther: '',
-  standard: 'default',
+  standard: 'All (Default)',
   standardOther: '',
 };
 

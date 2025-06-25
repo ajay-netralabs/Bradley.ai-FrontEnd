@@ -5,8 +5,11 @@ interface OtherSiteCharacteristicsState {
   uniqueFeatures: string;
   topography: string;
   primaryVoltageService: string;
+  primaryVoltageServiceCustomValue?: string;
   primaryVoltageFacility: string;
+  primaryVoltageFacilityCustomValue?: string;
   secondaryVoltageService: string;
+  secondaryVoltageServiceCustomValue?: string;
 }
 
 interface OtherSiteCharacteristicsContextType {
@@ -27,9 +30,12 @@ export const useOtherSiteCharacteristics = () => {
 const defaultState: OtherSiteCharacteristicsState = {
   uniqueFeatures: '',
   topography: 'Option 1',
-  primaryVoltageService: 'Option 1',
-  primaryVoltageFacility: 'Option 1',
+  primaryVoltageService: 'Option 0',
+  primaryVoltageServiceCustomValue: '',
+  primaryVoltageFacility: 'Option 0',
+  primaryVoltageFacilityCustomValue: '',
   secondaryVoltageService: 'Option 0',
+  secondaryVoltageServiceCustomValue: '',
 };
 
 export const OtherSiteCharacteristicsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

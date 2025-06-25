@@ -81,22 +81,19 @@ const Login: React.FC = () => {
             </Box>
 
             <Typography variant="h6" sx={{ fontWeight: 400, lineHeight: 1.5, fontFamily: '"Nunito Sans", sans-serif' }}>
-              Transform weeks of DER analysis into{' '}
+              Transform months of DER analysis into{' '}
               <span style={{ color: '#FF6B00', fontWeight: 700 }}>
-                minutes of<br />AI-powered insights
+                minutes of AI<br />Agentic powered insights.
               </span>
-            </Typography>
-
-            <Typography mt={2} sx={{ color: '#ccc', fontSize: '0.9rem', lineHeight: 1.6, fontFamily: '"Nunito Sans", sans-serif' }}>
-              Join forward-thinking energy professionals who are revolutionizing how distributed energy resources are analyzed, optimized, and deployed.
             </Typography>
 
             <Grid container spacing={1} mt={3}>
               {[
-                { value: '87%', label: 'Time Saved\non Analysis' },
-                { value: '$1.58M', label: 'Avg. OpEx\nReduction' },
-                { value: '224K', label: 'Therms Gas\nReduced' },
-                { value: '14.1%', label: 'Internal Rate\nof Return' },
+                { value: '4.5 months', label: 'Avg. time saved to attain 30% design' },
+                { value: '93%', label: 'Avg. cost savings to attain 30% conceptual design' },
+                { value: '18%', label: 'Avg. emission reductions from implementing DER' },
+                { value: '14.1%', label: 'Avg. IRR from implementing DER' },
+                { value: '38%', label: 'Avg. annual cost savings from implementing DER' },
               ].map((item, index) => (
                 <Grid item xs={6} key={index}>
                   <Paper
@@ -108,6 +105,11 @@ const Login: React.FC = () => {
                       borderRadius: 2,
                       textAlign: 'center',
                       transition: 'all 0.3s ease',
+                      height: '80px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
                       '&:hover': {
                         backgroundColor: '#262344',
                         boxShadow: '0 0 8px rgba(255, 255, 255, 0.05)',
@@ -115,10 +117,32 @@ const Login: React.FC = () => {
                       fontFamily: '"Nunito Sans", sans-serif',
                     }}
                   >
-                    <Typography variant="h6" fontWeight="bold" color="#FF6B00" sx={{ fontFamily: '"Nunito Sans", sans-serif' }}>
+                    <Typography 
+                      variant="h6" 
+                      fontWeight="bold" 
+                      color="#FF6B00" 
+                      sx={{ 
+                        fontFamily: '"Nunito Sans", sans-serif',
+                        fontSize: '1.1rem',
+                        marginBottom: '4px'
+                      }}
+                    >
                       {item.value}
                     </Typography>
-                    <Typography variant="caption" sx={{ whiteSpace: 'pre-line', color: '#ccc', fontFamily: '"Nunito Sans", sans-serif' }}>
+                    <Typography 
+                      variant="caption" 
+                      sx={{ 
+                        color: '#ccc', 
+                        fontFamily: '"Nunito Sans", sans-serif',
+                        fontSize: '0.7rem',
+                        lineHeight: 1.2,
+                        textAlign: 'center',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}
+                    >
                       {item.label}
                     </Typography>
                   </Paper>
@@ -234,7 +258,7 @@ const Login: React.FC = () => {
                 fontSize: '0.8rem',
               }}
             >
-              Don’t have an account? {' '}
+              Don't have an account? {' '}
               <span
                 onClick={() => navigate('/signup')}
                 style={{ textDecoration: 'underline', cursor: 'pointer', fontFamily: '"Nunito Sans", sans-serif' }}

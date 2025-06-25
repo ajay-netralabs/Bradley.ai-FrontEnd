@@ -58,10 +58,21 @@ const SubStep3: React.FC = () => {
         {sections.map(({ label, state, field, options, disabled, otherField, otherValue }, index) => (
           <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 0.3 }}><b>{label}</b></Typography>
-            <Select size="small" value={state} onChange={(e: SelectChangeEvent) => updateField(field as keyof typeof equipmentPreferencesState, e.target.value)} disabled={disabled} MenuProps={menuProps} sx={{ flex: state === 'Other' ? 0.35 : 0.7, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px' }}>
-              <MenuItem value="default" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select</MenuItem>
+            <Select
+              size="small"
+              value={state}
+              onChange={(e: SelectChangeEvent) => updateField(field as keyof typeof equipmentPreferencesState, e.target.value)}
+              disabled={disabled}
+              MenuProps={menuProps}
+              sx={{ flex: state === 'Other' ? 0.35 : 0.7, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px' }}
+            >
+              {field !== 'standard' && (
+                <MenuItem value="default" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select</MenuItem>
+              )}
               {options.map((option) => (
-                <MenuItem key={option} value={option} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>{option}</MenuItem>
+                <MenuItem key={option} value={option} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>
+                  {option}
+                </MenuItem>
               ))}
               {label !== 'Preferred Prime Mover Brand:' && <MenuItem value="Other" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Other</MenuItem>}
             </Select>
