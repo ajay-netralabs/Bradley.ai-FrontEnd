@@ -13,14 +13,14 @@ import { FacilityOperationProvider } from '../Context/Organizational Profile/Sub
 import { FacilityAddressProvider } from '../Context/Organizational Profile/SubStep2/Facility Address Context';
 import { OtherDetailsProvider } from '../Context/Organizational Profile/SubStep2/Other Details Context';
 import { ElectricBillUploadProvider } from '../Context/Energy Profile/SubStep2/Electric Bill Upload Context';
+import { LOAProvider } from '../Context/Energy Profile/SubStep2/Letter Of Authorization Context';
+import { LOAStatusProvider } from '../Context/Energy Profile/SubStep2/LOA - Status Context';
 import { NaturalGasBillUploadProvider } from '../Context/Energy Profile/SubStep2/Natural Gas Bill Upload Context';
 import { ThermalEnergyNeedsIProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
 import { ThermalEnergyNeedsIIProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - II Context';
 import { ThermalEnergyNeedsIIIProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
 import { ThermalEnergyNeedsIVProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
 import { BoilerCogenerationProvider } from '../Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
-import { LOAProvider } from '../Context/Energy Profile/SubStep3/Letter Of Authorization Context';
-import { LOAStatusProvider } from '../Context/Energy Profile/SubStep3/LOA - Status Context';
 import { PrioritizationIProvider } from '../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
 import { PrioritizationIIProvider } from '../Context/Goals & Priorities/SubStep2/Prioritization - II Context';
 import { FinancialsIProvider } from '../Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
@@ -34,6 +34,7 @@ import { FacilityUsageProvider } from '../Context/Site Assessment/SubStep2/Facil
 import { MEPDrawingsProvider } from '../Context/Site Assessment/SubStep2/Upload Existing Drawings Context';
 import { SolarAssetsProvider } from '../Context/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS Context';
 import { RoofingConsiderationsProvider } from '../Context/Site Assessment/SubStep3/Roofing Considerations Context';
+import { RoofMountSolarProvider } from '../Context/Site Assessment/SubStep3/Roof - Mounted Solar (Optional) Context';
 import { GroundMountSolarProvider } from '../Context/Site Assessment/SubStep3/Ground - Mounted Solar (Optional) Context';
 import { CarportSolarProvider } from '../Context/Site Assessment/SubStep3/Carport - Mounted Solar (Optional) Context';
 import { ExistingAssetsProvider } from '../Context/Site Assessment/SubStep3/Existing Solar & Wind Resource (Optional) Context';
@@ -66,14 +67,14 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   <FacilityAddressProvider>
   <OtherDetailsProvider>
   <ElectricBillUploadProvider>
+  <LOAProvider>
+  <LOAStatusProvider>
   <NaturalGasBillUploadProvider>
   <ThermalEnergyNeedsIProvider>
   <ThermalEnergyNeedsIIProvider>
   <ThermalEnergyNeedsIIIProvider>
   <ThermalEnergyNeedsIVProvider>
   <BoilerCogenerationProvider>
-  <LOAProvider>
-  <LOAStatusProvider>
   <PrioritizationIProvider>
   <PrioritizationIIProvider>
   <FinancialsIProvider>
@@ -87,6 +88,7 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   <MEPDrawingsProvider>
   <SolarAssetsProvider>
   <RoofingConsiderationsProvider>
+  <RoofMountSolarProvider>
   <GroundMountSolarProvider>
   <CarportSolarProvider>
   <ExistingAssetsProvider>
@@ -116,6 +118,7 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   </ExistingAssetsProvider>
   </CarportSolarProvider>
   </GroundMountSolarProvider>
+  </RoofMountSolarProvider>
   </RoofingConsiderationsProvider>
   </SolarAssetsProvider>
   </MEPDrawingsProvider>
@@ -129,14 +132,14 @@ const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   </FinancialsIProvider>
   </PrioritizationIIProvider>
   </PrioritizationIProvider>
-  </LOAStatusProvider>
-  </LOAProvider>
   </BoilerCogenerationProvider>
   </ThermalEnergyNeedsIVProvider>
   </ThermalEnergyNeedsIIIProvider>
   </ThermalEnergyNeedsIIProvider>
   </ThermalEnergyNeedsIProvider>
   </NaturalGasBillUploadProvider>
+  </LOAStatusProvider>
+  </LOAProvider>
   </ElectricBillUploadProvider>
   </OtherDetailsProvider>
   </FacilityAddressProvider>
@@ -314,7 +317,7 @@ const AppContent: React.FC = () => {
                         <Tooltip title="Save progress and log out" placement='bottom' arrow><Button variant="outlined" onClick={handleSaveAndContinueLater} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Save and Continue Later</Button></Tooltip>
                       )}
                       <Button variant="contained" color="primary" onClick={handleNext} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', boxShadow: 'none', '&:focus': { outline: 'none' } }}>
-                        {currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2 ? (<Tooltip title="Generate customized DER report" placement='bottom' arrow><span>Generate Report</span></Tooltip>) : currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? (<Tooltip title="Download DER report" placement='bottom' arrow><span>Download Report</span></Tooltip>) : currentStep === 1 && currentSubStep === 2 && currentFurtherSubStep === 0 ? (<Tooltip title="Submit LOA" placement='bottom' arrow><span>Authorize & Send Request</span></Tooltip>) : currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0 ? (<Tooltip title="Submit your profile" placement='bottom' arrow><span>Submit</span></Tooltip>) : (<Tooltip title="Navigate to next step" placement='bottom' arrow><span>Next</span></Tooltip>)}
+                        {currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2 ? (<Tooltip title="Generate customized DER report" placement='bottom' arrow><span>Generate Report</span></Tooltip>) : currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? (<Tooltip title="Download DER report" placement='bottom' arrow><span>Download Report</span></Tooltip>) : currentStep === 1 && currentSubStep === 1 && currentFurtherSubStep === 2 ? (<Tooltip title="Submit LOA" placement='bottom' arrow><span>Authorize & Send Request</span></Tooltip>) : currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0 ? (<Tooltip title="Submit your profile" placement='bottom' arrow><span>Submit</span></Tooltip>) : (<Tooltip title="Navigate to next step" placement='bottom' arrow><span>Next</span></Tooltip>)}
                       </Button>
                     </>
                   )}

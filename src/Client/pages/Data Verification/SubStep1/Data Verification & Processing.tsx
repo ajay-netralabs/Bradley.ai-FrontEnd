@@ -26,7 +26,7 @@ import { useThermalEnergyNeedsIII } from '../../../../Context/Energy Profile/Sub
 import { useThermalEnergyNeedsIV } from '../../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
 import { useBoilerCogeneration } from '../../../../Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
 
-import { useLOAStatus } from '../../../../Context/Energy Profile/SubStep3/LOA - Status Context';
+import { useLOAStatus } from '../../../../Context/Energy Profile/SubStep2/LOA - Status Context';
 
 interface SummarySectionProps {
   icon: React.ReactElement;

@@ -28,18 +28,21 @@ const stepSubStepMapping: StepSubStepMapping = {
     },
     1: {
       0: lazy(() => import('./pages/Energy Profile/SubStep2/Electric Bill Upload')),
-      1: lazy(() => import('./pages/Energy Profile/SubStep2/Natural Gas Bill Upload')),
-      2: lazy(() => import('./pages/Energy Profile/SubStep2/Thermal Energy Needs - I')),
-      3: lazy(() => import('./pages/Energy Profile/SubStep2/Thermal Energy Needs - II')),
-      4: lazy(() => import('./pages/Energy Profile/SubStep2/Thermal Energy Needs - III')),
-      5: lazy(() => import('./pages/Energy Profile/SubStep2/Thermal Energy Needs - IV')),
-      6: lazy(() => import('./pages/Energy Profile/SubStep2/Existing Boiler Cogeneration')),
-      7: lazy(() => import("./pages/Energy Profile/SubStep2/Don't Have Interval Electric Load Data")),
+      1: lazy(() => import("./pages/Energy Profile/SubStep2/Don't Have Interval Electric Load Data")),
+      2: lazy(() => import('./pages/Energy Profile/SubStep2/Letter Of Authorization')),
+      3: lazy(() => import('./pages/Energy Profile/SubStep2/LOA - Status')),
+      4: lazy(() => import('./pages/Energy Profile/SubStep2/Natural Gas Bill Upload')),
+      5: lazy(() => import('./pages/Energy Profile/SubStep2/Thermal Energy Needs - I')),
+      6: lazy(() => import('./pages/Energy Profile/SubStep2/Thermal Energy Needs - II')),
+      7: lazy(() => import('./pages/Energy Profile/SubStep2/Thermal Energy Needs - III')),
+      8: lazy(() => import('./pages/Energy Profile/SubStep2/Thermal Energy Needs - IV')),
+      9: lazy(() => import('./pages/Energy Profile/SubStep2/Existing Boiler Cogeneration')),
+      // 10: lazy(() => import("./pages/Energy Profile/SubStep2/Don't Have Interval Electric Load Data")),
     },
-    2: {
-      0: lazy(() => import('./pages/Energy Profile/SubStep3/Letter Of Authorization')),
-      1: lazy(() => import('./pages/Energy Profile/SubStep3/LOA - Status')),
-    },
+    // 2: {
+    //   0: lazy(() => import('./pages/Energy Profile/SubStep3/Letter Of Authorization')),
+    //   1: lazy(() => import('./pages/Energy Profile/SubStep3/LOA - Status')),
+    // },
   },
   2: {
     0: {
@@ -69,10 +72,11 @@ const stepSubStepMapping: StepSubStepMapping = {
     2: {
       0: lazy(() => import('./pages/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS')),
       1: lazy(() => import('./pages/Site Assessment/SubStep3/Roofing Considerations')),
-      2: lazy(() => import('./pages/Site Assessment/SubStep3/Ground - Mounted Solar (Optional)')),
-      3: lazy(() => import('./pages/Site Assessment/SubStep3/Carport - Mounted Solar (Optional)')),
-      4: lazy(() => import('./pages/Site Assessment/SubStep3/Existing Solar & Wind Resource (Optional)')),
-      5: lazy(() => import('./pages/Site Assessment/SubStep3/Equipment Preferences (Optional)')),
+      2: lazy(() => import('./pages/Site Assessment/SubStep3/Roof - Mounted Solar (Optional)')),
+      3: lazy(() => import('./pages/Site Assessment/SubStep3/Ground - Mounted Solar (Optional)')),
+      4: lazy(() => import('./pages/Site Assessment/SubStep3/Carport - Mounted Solar (Optional)')),
+      5: lazy(() => import('./pages/Site Assessment/SubStep3/Existing Solar & Wind Resource (Optional)')),
+      6: lazy(() => import('./pages/Site Assessment/SubStep3/Equipment Preferences (Optional)')),
     },
   },
   4: {

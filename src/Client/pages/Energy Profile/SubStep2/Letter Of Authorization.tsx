@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Checkbox, TextField, Typography } from '@mui/material';
-import { useLOA } from '../../../../Context/Energy Profile/SubStep3/Letter Of Authorization Context';
+import { useLOA } from '../../../../Context/Energy Profile/SubStep2/Letter Of Authorization Context';
 import { useOrganizationDetails } from '../../../../Context/Organizational Profile/SubStep2/Organization Details Context';
 import { useFacilityAddress } from '../../../../Context/Organizational Profile/SubStep2/Facility Address Context';
 
