@@ -3,8 +3,8 @@ import { Box, Button, LinearProgress, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 // App and Stepper contexts
-import { useAppContext } from '../Context/AppContext';
-import { steps, TOTAL_STEPS } from '../components/steps';
+import { AppProvider, useAppContext } from '../Context/AppContext';
+import { steps } from '../components/steps';
 
 // All the new form-specific context providers
 import { OrganizationDetailsProvider } from '../Context/Organizational Profile/SubStep2/Organization Details Context';
@@ -61,91 +61,93 @@ import ChatBot from '../components/ChatBot';
 
 // Component to hold all providers for cleanliness
 const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <OrganizationDetailsProvider>
-  <AnnualEnergySpendProvider>
-  <FacilityOperationProvider>
-  <FacilityAddressProvider>
-  <OtherDetailsProvider>
-  <ElectricBillUploadProvider>
-  <LOAProvider>
-  <LOAStatusProvider>
-  <NaturalGasBillUploadProvider>
-  <ThermalEnergyNeedsIProvider>
-  <ThermalEnergyNeedsIIProvider>
-  <ThermalEnergyNeedsIIIProvider>
-  <ThermalEnergyNeedsIVProvider>
-  <BoilerCogenerationProvider>
-  <PrioritizationIProvider>
-  <PrioritizationIIProvider>
-  <FinancialsIProvider>
-  <FinancialsIIProvider>
-  <OwnershipPreferenceProvider>
-  {/* <SiteLocationProvider> */}
-  <SiteCharacteristicsIProvider>
-  <SiteCharacteristicsIIProvider>
-  <OtherSiteCharacteristicsProvider>
-  <FacilityUsageProvider>
-  <MEPDrawingsProvider>
-  <SolarAssetsProvider>
-  <RoofingConsiderationsProvider>
-  <RoofMountSolarProvider>
-  <GroundMountSolarProvider>
-  <CarportSolarProvider>
-  <ExistingAssetsProvider>
-  <EquipmentPreferencesProvider>
-  <PPAPreferencesProvider>
-  <AdditionalPPAPreferencesProvider>
-  <FinancialPreferencesProvider>
-  <ExistingContractsIProvider>
-  <ExistingPPAContractsIIProvider>
-  <ExistingPPAContractsIIIProvider>
-  <ExistingContractsIVProvider>
-  <OtherEnergyCommitmentsProvider>
-  <BudgetGoalsProvider>
-  <FinancingPreferencesProvider>
-    {children}
-  </FinancingPreferencesProvider>
-  </BudgetGoalsProvider>
-  </OtherEnergyCommitmentsProvider>
-  </ExistingContractsIVProvider>
-  </ExistingPPAContractsIIIProvider>
-  </ExistingPPAContractsIIProvider>
-  </ExistingContractsIProvider>
-  </FinancialPreferencesProvider>
-  </AdditionalPPAPreferencesProvider>
-  </PPAPreferencesProvider>
-  </EquipmentPreferencesProvider>
-  </ExistingAssetsProvider>
-  </CarportSolarProvider>
-  </GroundMountSolarProvider>
-  </RoofMountSolarProvider>
-  </RoofingConsiderationsProvider>
-  </SolarAssetsProvider>
-  </MEPDrawingsProvider>
-  </FacilityUsageProvider>
-  </OtherSiteCharacteristicsProvider>
-  </SiteCharacteristicsIIProvider>
-  </SiteCharacteristicsIProvider>
-  {/* </SiteLocationProvider> */}
-  </OwnershipPreferenceProvider>
-  </FinancialsIIProvider>
-  </FinancialsIProvider>
-  </PrioritizationIIProvider>
-  </PrioritizationIProvider>
-  </BoilerCogenerationProvider>
-  </ThermalEnergyNeedsIVProvider>
-  </ThermalEnergyNeedsIIIProvider>
-  </ThermalEnergyNeedsIIProvider>
-  </ThermalEnergyNeedsIProvider>
-  </NaturalGasBillUploadProvider>
-  </LOAStatusProvider>
-  </LOAProvider>
-  </ElectricBillUploadProvider>
-  </OtherDetailsProvider>
-  </FacilityAddressProvider>
-  </FacilityOperationProvider>
-  </AnnualEnergySpendProvider>
-  </OrganizationDetailsProvider>
+  <AppProvider steps={steps} appPrefix="client">
+    <OrganizationDetailsProvider>
+      <AnnualEnergySpendProvider>
+        <FacilityOperationProvider>
+          <FacilityAddressProvider>
+            <OtherDetailsProvider>
+              <ElectricBillUploadProvider>
+                <LOAProvider>
+                  <LOAStatusProvider>
+                    <NaturalGasBillUploadProvider>
+                      <ThermalEnergyNeedsIProvider>
+                        <ThermalEnergyNeedsIIProvider>
+                          <ThermalEnergyNeedsIIIProvider>
+                            <ThermalEnergyNeedsIVProvider>
+                              <BoilerCogenerationProvider>
+                                <PrioritizationIProvider>
+                                  <PrioritizationIIProvider>
+                                    <FinancialsIProvider>
+                                      <FinancialsIIProvider>
+                                        <OwnershipPreferenceProvider>
+                                          {/* <SiteLocationProvider> */}
+                                          <SiteCharacteristicsIProvider>
+                                            <SiteCharacteristicsIIProvider>
+                                              <OtherSiteCharacteristicsProvider>
+                                                <FacilityUsageProvider>
+                                                  <MEPDrawingsProvider>
+                                                    <SolarAssetsProvider>
+                                                      <RoofingConsiderationsProvider>
+                                                        <RoofMountSolarProvider>
+                                                          <GroundMountSolarProvider>
+                                                            <CarportSolarProvider>
+                                                              <ExistingAssetsProvider>
+                                                                <EquipmentPreferencesProvider>
+                                                                  <PPAPreferencesProvider>
+                                                                    <AdditionalPPAPreferencesProvider>
+                                                                      <FinancialPreferencesProvider>
+                                                                        <ExistingContractsIProvider>
+                                                                          <ExistingPPAContractsIIProvider>
+                                                                            <ExistingPPAContractsIIIProvider>
+                                                                              <ExistingContractsIVProvider>
+                                                                                <OtherEnergyCommitmentsProvider>
+                                                                                  <BudgetGoalsProvider>
+                                                                                    <FinancingPreferencesProvider>
+                                                                                      {children}
+                                                                                    </FinancingPreferencesProvider>
+                                                                                  </BudgetGoalsProvider>
+                                                                                </OtherEnergyCommitmentsProvider>
+                                                                              </ExistingContractsIVProvider>
+                                                                            </ExistingPPAContractsIIIProvider>
+                                                                          </ExistingPPAContractsIIProvider>
+                                                                        </ExistingContractsIProvider>
+                                                                      </FinancialPreferencesProvider>
+                                                                    </AdditionalPPAPreferencesProvider>
+                                                                  </PPAPreferencesProvider>
+                                                                </EquipmentPreferencesProvider>
+                                                              </ExistingAssetsProvider>
+                                                            </CarportSolarProvider>
+                                                          </GroundMountSolarProvider>
+                                                        </RoofMountSolarProvider>
+                                                      </RoofingConsiderationsProvider>
+                                                    </SolarAssetsProvider>
+                                                  </MEPDrawingsProvider>
+                                                </FacilityUsageProvider>
+                                              </OtherSiteCharacteristicsProvider>
+                                            </SiteCharacteristicsIIProvider>
+                                          </SiteCharacteristicsIProvider>
+                                          {/* </SiteLocationProvider> */}
+                                        </OwnershipPreferenceProvider>
+                                      </FinancialsIIProvider>
+                                    </FinancialsIProvider>
+                                  </PrioritizationIIProvider>
+                                </PrioritizationIProvider>
+                              </BoilerCogenerationProvider>
+                            </ThermalEnergyNeedsIVProvider>
+                          </ThermalEnergyNeedsIIIProvider>
+                        </ThermalEnergyNeedsIIProvider>
+                      </ThermalEnergyNeedsIProvider>
+                    </NaturalGasBillUploadProvider>
+                  </LOAStatusProvider>
+                </LOAProvider>
+              </ElectricBillUploadProvider>
+            </OtherDetailsProvider>
+          </FacilityAddressProvider>
+        </FacilityOperationProvider>
+      </AnnualEnergySpendProvider>
+    </OrganizationDetailsProvider>
+  </AppProvider>
 );
 
 
@@ -157,7 +159,7 @@ const AppContent: React.FC = () => {
     currentFurtherSubStep, setCurrentFurtherSubStep,
     visitedSteps, setVisitedSteps,
     completedSubSteps, setCompletedSubSteps,
-    setUser,
+    logout,
   } = useAppContext();
 
   const { ownershipPreference, setOwnershipPreference } = useOwnershipPreference();
@@ -200,7 +202,7 @@ const AppContent: React.FC = () => {
   const handleNext = () => {
     const isLastFurtherSubStep = currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1;
     const isLastSubStep = currentSubStep === steps[currentStep].subSteps - 1;
-    const isLastStep = currentStep === TOTAL_STEPS - 1;
+    const isLastStep = currentStep === steps.length - 1;
 
     if (currentStep === 1 && currentSubStep === 1 && currentFurtherSubStep === 0) {
         markCompleted(1, 1);
@@ -306,7 +308,7 @@ const AppContent: React.FC = () => {
   };
 
   const handleSaveAndContinueLater = () => {
-    setUser(null);
+    logout();
     navigate('/login');
   };
 
@@ -324,7 +326,7 @@ const AppContent: React.FC = () => {
               <LinearProgress variant="determinate" value={calculateProgress()} sx={{ width: 'calc(100% + 16px)', height: '3.5px', margin: '0px -16px', mt: '30px', mb: '10px', backgroundColor: '#e0e0e0', '& .MuiLinearProgress-bar': { backgroundColor: '#036cc1' } }} />
               <StepContent step={currentStep} subStep={currentSubStep} furtherSubStep={currentFurtherSubStep} />
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3, mr: 5.2, ml: 1, mb: 1 }}>
-                {!(currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
+                {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
                   <Tooltip title="Navigate to previous step" placement='bottom' arrow>
                     <Button variant="outlined" onClick={handleBack} disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 0} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Back</Button>
                   </Tooltip>
@@ -342,11 +344,11 @@ const AppContent: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      {!(currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
+                      {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
                         <Tooltip title="Save progress and log out" placement='bottom' arrow><Button variant="outlined" onClick={handleSaveAndContinueLater} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Save and Continue Later</Button></Tooltip>
                       )}
                       <Button variant="contained" color="primary" onClick={handleNext} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', boxShadow: 'none', '&:focus': { outline: 'none' } }}>
-                        {currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2 ? (<Tooltip title="Generate customized DER report" placement='bottom' arrow><span>Generate Report</span></Tooltip>) : currentStep === TOTAL_STEPS - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? (<Tooltip title="Download DER report" placement='bottom' arrow><span>Download Report</span></Tooltip>) : currentStep === 1 && currentSubStep === 1 && currentFurtherSubStep === 2 ? (<Tooltip title="Submit LOA" placement='bottom' arrow><span>Authorize & Send Request</span></Tooltip>) : currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0 ? (<Tooltip title="Submit your profile" placement='bottom' arrow><span>Submit</span></Tooltip>) : (<Tooltip title="Navigate to next step" placement='bottom' arrow><span>Next</span></Tooltip>)}
+                        {currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2 ? (<Tooltip title="Generate customized DER report" placement='bottom' arrow><span>Generate Report</span></Tooltip>) : currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? (<Tooltip title="Download DER report" placement='bottom' arrow><span>Download Report</span></Tooltip>) : currentStep === 1 && currentSubStep === 1 && currentFurtherSubStep === 2 ? (<Tooltip title="Submit LOA" placement='bottom' arrow><span>Authorize & Send Request</span></Tooltip>) : currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0 ? (<Tooltip title="Submit your profile" placement='bottom' arrow><span>Submit</span></Tooltip>) : (<Tooltip title="Navigate to next step" placement='bottom' arrow><span>Next</span></Tooltip>)}
                       </Button>
                     </>
                   )}

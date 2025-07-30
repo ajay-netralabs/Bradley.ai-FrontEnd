@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { steps, TOTAL_STEPS } from '../components/steps';
+
 
 interface User {
-  role: 'client' | 'analyst';
+  role: 'client' | 'analyst' | 'demo';
   email: string;
 }
 
@@ -28,6 +28,7 @@ interface AppContextProps {
 const defaultCredentials = {
   client: { email: 'client@gmail.com', password: 'client@gmail.com' },
   analyst: { email: 'analyst@gmail.com', password: 'analyst@gmail.com' },
+  demo: { email: '', password: '' }, // Demo user has no credentials
 };
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -40,55 +41,63 @@ export const useAppContext = () => {
   return context;
 };
 
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentStep, setCurrentStep] = useState(() => Number(Cookies.get('currentStep') || 0));
-  const [currentSubStep, setCurrentSubStep] = useState(() => Number(Cookies.get('currentSubStep') || 0));
-  const [currentFurtherSubStep, setCurrentFurtherSubStep] = useState(() => Number(Cookies.get('currentFurtherSubStep') || 0));
+interface AppProviderProps {
+  children: React.ReactNode;
+  steps: { label: string; subSteps: number; furtherSubSteps: number[] }[];
+  appPrefix: string;
+}
+
+export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPrefix }) => {
+  const [currentStep, setCurrentStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentStep`) || 0));
+  const [currentSubStep, setCurrentSubStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentSubStep`) || 0));
+  const [currentFurtherSubStep, setCurrentFurtherSubStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentFurtherSubStep`) || 0));
 
   const [visitedSteps, setVisitedSteps] = useState(() => {
-    const savedVisitedSteps = Cookies.get('visitedSteps');
+    const savedVisitedSteps = Cookies.get(`${appPrefix}_visitedSteps`);
     return savedVisitedSteps
       ? JSON.parse(savedVisitedSteps)
-      : Array.from({ length: TOTAL_STEPS }, (_, i) =>
+      : Array.from({ length: steps.length }, (_, i) =>
           Array.from({ length: steps[i].subSteps }, (_, j) => i === 0 && j === 0)
         );
   });
 
   const [completedSubSteps, setCompletedSubSteps] = useState(() => {
-    const savedCompletedSubSteps = Cookies.get('completedSubSteps');
+    const savedCompletedSubSteps = Cookies.get(`${appPrefix}_completedSubSteps`);
     return savedCompletedSubSteps
       ? JSON.parse(savedCompletedSubSteps)
-      : Array.from({ length: TOTAL_STEPS }, (_, i) =>
+      : Array.from({ length: steps.length }, (_, i) =>
           Array.from({ length: steps[i].subSteps }, () => false)
         );
   });
 
   const [user, setUser] = useState<User | null>(() => {
-    const savedUser = Cookies.get('user');
+    const savedUser = Cookies.get(`${appPrefix}_user`);
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
   useEffect(() => {
-    Cookies.set('currentStep', currentStep.toString());
-    Cookies.set('currentSubStep', currentSubStep.toString());
-    Cookies.set('currentFurtherSubStep', currentFurtherSubStep.toString());
-    Cookies.set('visitedSteps', JSON.stringify(visitedSteps));
-    Cookies.set('completedSubSteps', JSON.stringify(completedSubSteps));
+    Cookies.set(`${appPrefix}_currentStep`, currentStep.toString());
+    Cookies.set(`${appPrefix}_currentSubStep`, currentSubStep.toString());
+    Cookies.set(`${appPrefix}_currentFurtherSubStep`, currentFurtherSubStep.toString());
+    Cookies.set(`${appPrefix}_visitedSteps`, JSON.stringify(visitedSteps));
+    Cookies.set(`${appPrefix}_completedSubSteps`, JSON.stringify(completedSubSteps));
     if (user) {
-      Cookies.set('user', JSON.stringify(user));
+      Cookies.set(`${appPrefix}_user`, JSON.stringify(user));
     } else {
-      Cookies.remove('user');
+      Cookies.remove(`${appPrefix}_user`);
     }
-  }, [currentStep, currentSubStep, currentFurtherSubStep, visitedSteps, completedSubSteps, user]);
+  }, [currentStep, currentSubStep, currentFurtherSubStep, visitedSteps, completedSubSteps, user, appPrefix]);
 
   const login = (user: User) => {
     setUser(user);
-    Cookies.set('user', JSON.stringify(user));
+    Cookies.set(`${appPrefix}_user`, JSON.stringify(user));
   };
 
   const logout = () => {
     setUser(null);
-    Cookies.remove('user');
+    Cookies.remove(`${appPrefix}_user`);
+    Cookies.remove('global_user');
+    window.location.href = '/login';
   };
 
   return (

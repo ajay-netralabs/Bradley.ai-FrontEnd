@@ -72,9 +72,21 @@ const Navbar: React.FC = () => {
                                   outline: 'none',
                                 },}, }}
         >
-          <MenuItem onClick={handleLogout} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.700rem' }}>
+            <MenuItem
+            onClick={() => {
+              try {
+              const user = JSON.parse(localStorage.getItem('user') || '{}');
+              console.log('Logging out user:', user);
+              handleLogout();
+              console.log('Logout function called and executed successfully.');
+              } catch (error) {
+              console.error('Error during logout:', error);
+              }
+            }}
+            sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.700rem' }}
+            >
             Logout
-          </MenuItem>
+            </MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

@@ -394,8 +394,8 @@ export const EnergySpecifications: React.FC<EnergySpecificationsProps> = ({ size
   };
 
   const getGridItemProps = (index: number, totalCount: number) => {
-    let xs = 12;
-    let sm = (totalCount === 1) ? 12 : 6;
+    const xs = 12;
+    const sm = (totalCount === 1) ? 12 : 6;
     let md;
     const itemsPerRowMd = 3;
 

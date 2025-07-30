@@ -7,12 +7,12 @@ const SubStep2: React.FC = () => {
   const { hasThirdPartyContract, supplierName, contractEndDate, terminationFee, electricityTakeAmount } = existingContractsIState;
 
   const handleTerminationFeeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let input = e.target.value.replace(/[^0-9.]/g, '');
+    const input = e.target.value.replace(/[^0-9.]/g, '');
     const parts = input.split('.');
     if (parts.length > 2) return;
     if (parts[1]?.length > 2) parts[1] = parts[1].substring(0, 2);
     
-    let [whole, decimal] = parts;
+    const [whole, decimal] = parts;
     let formatted = Number(whole).toLocaleString();
     if (decimal !== undefined) {
       formatted += `.${decimal}`;

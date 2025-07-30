@@ -25,7 +25,7 @@ const SubStep2: React.FC = () => {
   };
   
   const handleEscalatorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value;
+    const value = event.target.value;
     if (/^([1-9](\.\d{0,2})?)?$/.test(value) || value === '') {
       updateField('escalator', value);
     }

@@ -4,21 +4,23 @@ import Login from './Auth/Login';
 import Signup from './Auth/Signup';
 import ClientApp from './Client/ClientApp';
 import AnalystApp from './Analyst/AnalystApp';
+import DemoApp from './Demo/DemoApp';
 import { useAppContext } from './Context/AppContext';
 
 const App: React.FC = () => {
-  const { user } = useAppContext();
+  const appContext = useAppContext();
 
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/client" element={user && user.role === 'client' ? <ClientApp /> : <Navigate to="/login" />} />
-        <Route path="/analyst" element={user && user.role === 'analyst' ? <AnalystApp /> : <Navigate to="/login" />} />
+        <Route path="/client" element={appContext.user && appContext.user.role === 'client' ? <ClientApp /> : <Navigate to="/login" />} />
+        <Route path="/analyst" element={appContext.user && appContext.user.role === 'analyst' ? <AnalystApp /> : <Navigate to="/login" />} />
+        <Route path="/demo" element={appContext.user && appContext.user.role === 'demo' ? <DemoApp /> : <Navigate to="/login" />} />
         <Route
           path="/"
-          element={user ? (user.role === 'analyst' ? <Navigate to="/analyst" /> : <Navigate to="/client" />) : <Navigate to="/login" />}
+          element={appContext.user ? (appContext.user.role === 'analyst' ? <Navigate to="/analyst" /> : <Navigate to="/client" />) : <Navigate to="/login" />}
         />
       </Routes>
     </Router>

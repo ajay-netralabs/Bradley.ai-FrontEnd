@@ -6,8 +6,8 @@ import { AppProvider } from './Context/AppContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AppProvider>
+    <AppProvider steps={[]} appPrefix="global">
         <App />
-    </AppProvider>
+      </AppProvider>
   </StrictMode>,
 )

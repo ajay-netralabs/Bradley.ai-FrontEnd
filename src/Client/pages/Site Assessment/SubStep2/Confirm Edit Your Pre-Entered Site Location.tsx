@@ -1,130 +1,269 @@
-import React, { useRef, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Tooltip } from '@mui/material';
+
+import React, { useRef } from 'react';
+import { Box, Typography, TextField, Button, Tooltip, IconButton, Paper } from '@mui/material';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { FaMapMarkerAlt } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaTrash } from 'react-icons/fa';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { useFacilityAddress } from '../../../../Context/Organizational Profile/SubStep2/Facility Address Context';
 
-const createCustomIcon = (IconComponent: React.ElementType) => {
-  const iconMarkup = renderToStaticMarkup(<IconComponent style={{ fontSize: '30px', color: '#e74c3c' }} />);
-  return L.divIcon({ html: iconMarkup, className: 'custom-icon', iconSize: [30, 30], iconAnchor: [15, 30] });
+const createCustomIcon = (IconComponent: React.ElementType, color: string = '#e74c3c') => {
+  const iconMarkup = renderToStaticMarkup(
+    <IconComponent style={{ fontSize: '30px', color }} />
+  );
+  return L.divIcon({
+    html: iconMarkup,
+    className: 'custom-icon',
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+  });
 };
 
-const MapMarker = ({ position, onPositionChange }: { position: L.LatLng | null; onPositionChange: (pos: L.LatLng) => void; }) => {
+const MapMarkers = ({ 
+  addresses, 
+  onAddLocation, 
+  selectedAddressId 
+}: { 
+  addresses: any[];
+  onAddLocation: (pos: L.LatLng) => void;
+  selectedAddressId: string | null;
+}) => {
   const customIcon = createCustomIcon(FaMapMarkerAlt);
-  const map = useMapEvents({
-    click(e) { onPositionChange(e.latlng); },
-    locationfound(e) {
-        map.flyTo(e.latlng, map.getZoom());
-    }
+  const selectedIcon = createCustomIcon(FaMapMarkerAlt, '#2196f3');
+
+  useMapEvents({
+    click(e) {
+      onAddLocation(e.latlng);
+    },
   });
 
-  useEffect(() => {
-    if (!position) {
-        map.locate();
-    }
-  }, [map]);
-
-  return position ? <Marker position={position} icon={customIcon} /> : null;
+  return (
+    <>
+      {addresses.map((address) => (
+        <Marker 
+          key={address.id} 
+          position={address.position} 
+          icon={address.id === selectedAddressId ? selectedIcon : customIcon}
+        />
+      ))}
+    </>
+  );
 };
 
 const SubStep2 = () => {
-  const { facilityAddress, updateFacilityAddress, updateAddressField } = useFacilityAddress();
-  const { position, address } = facilityAddress;
+  const { 
+    facilityAddress, 
+    addAddress, 
+    updateAddressField, 
+    deleteAddress, 
+    setSelectedAddress,
+    getAddressById 
+  } = useFacilityAddress();
   
-  const mapRef = useRef<L.Map>(null);
+  const { addresses, selectedAddressId } = facilityAddress;
+  const mapRef = useRef<L.Map | null>(null);
 
-  useEffect(() => {
-    if(position && mapRef.current) {
-        mapRef.current.flyTo([position.lat, position.lng], mapRef.current.getZoom());
-    }
-  }, [position]);
+  const handleAddLocation = (position: L.LatLng) => {
+    const newAddressId = addAddress({
+      streetAddress: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      position
+    });
+    
+    handleFetchAddress(newAddressId, position);
+  };
 
-  const handleSavePinnedLocation = () => {
-    if (position) {
-      const { lat, lng } = position;
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
-        .then(response => response.json())
-        .then(data => {
-          updateFacilityAddress({
-            address: {
-              streetAddress: data.address.road || '',
-              city: data.address.city || data.address.town || '',
-              state: data.address.state || '',
-              zipCode: data.address.postcode || '',
-              otherAddress: address.otherAddress,
-            }
-          });
-        })
-        .catch(error => console.error('Error fetching address:', error));
+  const handleFetchAddress = (addressId: string, position: L.LatLng) => {
+    const { lat, lng } = position;
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+      .then(response => response.json())
+      .then(data => {
+        updateAddressField(addressId, 'streetAddress', data.address.road || '');
+        updateAddressField(addressId, 'city', data.address.city || data.address.town || '');
+        updateAddressField(addressId, 'state', data.address.state || '');
+        updateAddressField(addressId, 'zipCode', data.address.postcode || '');
+      })
+      .catch(error => console.error('Error fetching address:', error));
+  };
+
+  const handleDeleteAddress = (addressId: string) => {
+    deleteAddress(addressId);
+  };
+
+  const handleRefetchAddress = (addressId: string) => {
+    const address = getAddressById(addressId);
+    if (address) {
+      handleFetchAddress(addressId, address.position);
     }
   };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
-      <style>{`
+      <style>
+        {`
           @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
-          .leaflet-div-icon { background: transparent; border: none; }
-      `}</style>
+          .leaflet-div-icon {
+            background: transparent;
+            border: none;
+          }
+        `}
+      </style>
+      
       <Typography variant="h6" sx={{ mb: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'center' }}>
         <h2>Confirm / Edit Your Pre-Entered Site Location</h2>
       </Typography>
 
-      <Box sx={{ display: 'flex', gap: 2, p: '10px', pl: '160px', pr: '160px' }}>
-        <Tooltip title="Click on any desired location on the map to place the pin" placement="top" arrow>
-          <Box sx={{ flex: 1, height: '268.5px', border: '1px solid lightgrey', borderRadius: 1 }}>
-            <MapContainer center={position ? [position.lat, position.lng] : [51.505, -0.09]} zoom={13} style={{ height: '100%', width: '100%' }} ref={mapRef}>
+      <Box sx={{ display: 'flex', gap: 2, p: '10px', pl: '20px', pr: '20px', height: '600px' }}>
+        {/* Map Section */}
+        <Tooltip title="Click anywhere on the map to add a new location pin" placement="top" arrow>
+          <Box sx={{ flex: 1, height: '100%', border: '1px solid lightgrey', borderRadius: 1 }}>
+            <MapContainer 
+              center={[51.505, -0.09]} 
+              zoom={13} 
+              style={{ height: '100%', width: '100%' }} 
+              ref={mapRef}
+            >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <MapMarker
-                position={position}
-                onPositionChange={(newPos) => updateFacilityAddress({ position: newPos })}
+              <MapMarkers
+                addresses={addresses}
+                onAddLocation={handleAddLocation}
+                selectedAddressId={selectedAddressId}
               />
             </MapContainer>
           </Box>
         </Tooltip>
 
-        <Box sx={{ flex: 1, border: '1px solid lightgrey', p: 1, borderRadius: 1, height: '253px', pl: 2, pr: 2 }}>
-          <Typography variant="subtitle2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', display: 'flex', justifyContent: 'flex-end', mt: 0.5 }}>
-            <Tooltip title="Click to autofill below based on the pin." placement='left' arrow>
-              <Button variant="outlined" size="small" onClick={handleSavePinnedLocation} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', minWidth: '60px', padding: '2px 4px', textTransform: 'none', '&:focus': { outline: 'none' } }}>
-                Confirm Location
-              </Button>
-            </Tooltip>
-          </Typography><br />
-          <Box sx={{ fontFamily: 'Nunito Sans, sans-serif', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-            {[
-              { label: "Street Address:", key: "streetAddress" as keyof typeof address, placeholder: "Enter street address" },
-              { label: "City:", key: "city" as keyof typeof address, placeholder: "Enter city name" },
-              { label: "State:", key: "state" as keyof typeof address, placeholder: "Enter state" },
-              { label: "Zip Code:", key: "zipCode" as keyof typeof address, placeholder: "Enter zip code" }
-            ].map(({ label, key, placeholder }) => (
-              <Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', width: '150px', flex: 0.5 }}><b>{label}</b></Typography>
-                <TextField 
-                    variant="outlined" 
-                    size="small" 
-                    type="text" 
-                    value={address[key]} 
-                    onChange={(e) => updateAddressField(key, e.target.value)}
-                    placeholder={placeholder}
-                    sx={{ flex: 1, fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif', '& .MuiInputBase-root': { height: '30px', padding: '0 6px' }, '& input': { padding: 0, fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' } }} 
-                />
+        {/* Addresses List Section */}
+        <Box sx={{ 
+          flex: 1, 
+          border: '1px solid lightgrey', 
+          borderRadius: 1, 
+          height: '100%', 
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0', bgcolor: '#f5f5f5' }}>
+            <Typography variant="subtitle2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 'bold' }}>
+              Facility Locations ({addresses.length})
+            </Typography>
+            <Typography variant="caption" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', color: '#666' }}>
+              Click on the map to add new locations
+            </Typography>
+          </Box>
+          
+          <Box sx={{
+            flex: 1,
+            overflow: 'auto',
+            '&::-webkit-scrollbar': {
+              display: 'none'
+            },
+            '-ms-overflow-style': 'none',
+            'scrollbar-width': 'none'
+          }}>
+            {addresses.length === 0 ? (
+              <Box sx={{ p: 3, textAlign: 'center', color: '#666' }}>
+                <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem' }}>
+                  No locations added yet. Click on the map to add your first location.
+                </Typography>
               </Box>
-            ))}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', width: '150px', flex: 0.5 }}><b>Other Addresses:</b></Typography>
-              <TextField 
-                variant="outlined" 
-                size="small" 
-                type="text" 
-                value={address.otherAddress} 
-                placeholder='Address 1; Address 2; Address 3, ...' 
-                onChange={(e) => updateAddressField('otherAddress', e.target.value)} 
-                sx={{ flex: 1, fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif', '& .MuiInputBase-root': { height: '30px', padding: '0 6px' }, '& input': { padding: 0, fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' } }} 
-              />
-            </Box>
+            ) : (
+              <Box sx={{ p: 1 }}>
+                {addresses.map((address, index) => (
+                  <Paper 
+                    key={address.id} 
+                    sx={{ 
+                      mb: 2, 
+                      p: 2, 
+                      border: address.id === selectedAddressId ? '2px solid #2196f3' : '1px solid #e0e0e0',
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: '#f9f9f9' }
+                    }}
+                    onClick={() => setSelectedAddress(address.id)}
+                  >
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                      <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                        Location {index + 1}
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Tooltip title="Refetch address from map coordinates" arrow>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRefetchAddress(address.id);
+                            }}
+                            sx={{
+                              fontFamily: 'Nunito Sans, sans-serif',
+                              fontSize: '0.6rem',
+                              minWidth: '50px',
+                              padding: '2px 4px',
+                              textTransform: 'none'
+                            }}
+                          >
+                            Refresh
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="Delete this location" arrow>
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteAddress(address.id);
+                            }}
+                            sx={{ color: '#f44336' }}
+                          >
+                            <FaTrash size={12} />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      {[
+                        { label: "Street Address:", key: "streetAddress", placeholder: "Enter street address" },
+                        { label: "City:", key: "city", placeholder: "Enter city name" },
+                        { label: "State:", key: "state", placeholder: "Enter state" },
+                        { label: "Zip Code:", key: "zipCode", placeholder: "Enter zip code" }
+                      ].map(({ label, key, placeholder }) => (
+                        <Box key={key} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                            {label}
+                          </Typography>
+                          <TextField
+                            variant="outlined"
+                            size="small"
+                            type="text"
+                            value={address[key as keyof typeof address]}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              updateAddressField(address.id, key as any, e.target.value);
+                            }}
+                            placeholder={placeholder}
+                            onClick={(e) => e.stopPropagation()}
+                            sx={{
+                              fontSize: '0.7rem',
+                              fontFamily: 'Nunito Sans, sans-serif',
+                              '& .MuiInputBase-root': { height: '28px', padding: '0 6px' },
+                              '& input': { padding: 0, fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' }
+                            }}
+                          />
+                        </Box>
+                      ))}
+                    </Box>
+
+                    <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid #e0e0e0' }}>
+                      <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.65rem', color: '#666' }}>
+                        Coordinates: {address.position.lat.toFixed(6)}, {address.position.lng.toFixed(6)}
+                      </Typography>
+                    </Box>
+                  </Paper>
+                ))}
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>

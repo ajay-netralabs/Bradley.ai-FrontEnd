@@ -10,42 +10,42 @@ const SubStep2: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleRatekWhChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value;
+    const value = event.target.value;
     if (/^(0(\.\d{0,2})?)?$/.test(value) || value === '0' || value === '') {
       updateField('ratekWh', value);
     }
   };
 
   const handleRateMMBTuChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value;
+    const value = event.target.value;
     if (/^(0(\.\d{0,2})?)?$/.test(value) || value === '0' || value === '') {
       updateField('rateMMBTu', value);
     }
   };
 
   const handleEscalatorkWhChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value.replace('%', '');
+    const value = event.target.value.replace('%', '');
     if (/^([1-9](\.\d{0,2})?)?$/.test(value) || value === '') {
       updateField('escalatorkWh', value);
     }
   };
 
   const handleEscalatorMMBTuChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value.replace('%', '');
+    const value = event.target.value.replace('%', '');
     if (/^([1-9](\.\d{0,2})?)?$/.test(value) || value === '') {
       updateField('escalatorMMBTu', value);
     }
   };
 
   const handleTermkWhChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value;
+    const value = event.target.value;
     if (/^(?:[1-9]|[12]\d|30)?$/.test(value) || value === '') {
       updateField('termkWh', value);
     }
   };
 
   const handleTermMMBTuChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value;
+    const value = event.target.value;
     if (/^(?:[1-9]|[12]\d|30)?$/.test(value) || value === '') {
       updateField('termMMBTu', value);
     }

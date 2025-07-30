@@ -10,14 +10,14 @@ const SubStep2: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePpaRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value;
+    const value = event.target.value;
     if (/^(0(\.\d{0,2})?)?$/.test(value) || value === '0' || value === '') {
       updateField('ppaRate', value);
     }
   };
 
   const handlePpaEscalationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value.replace('%', '');
+    const value = event.target.value.replace('%', '');
     if (/^([1-9](\.\d{0,2})?)?$/.test(value) || value === '') {
       updateField('ppaEscalation', value);
     }

@@ -72,7 +72,7 @@ export const SiteCharacteristicsIProvider: React.FC<{ children: ReactNode }> = (
     const numValue = parseInt(value, 10);
     if (value === '' || (numValue >= 1 && numValue <= 5)) {
         setSiteCharacteristicsIState(prevState => {
-            let newBreakers: Breaker[] = [];
+            const newBreakers: Breaker[] = [];
             if (value === '') {
                 // Keep newBreakers as empty array
             } else {

@@ -10,21 +10,39 @@ interface Address {
   city: string;
   state: string;
   zipCode: string;
-  otherAddress: string;
+  // otherAddress: string;
+}
+
+/**
+ * Interface for individual address data with position and unique ID.
+ */
+interface AddressData {
+  id: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  // otherAddress: string;
+  position: L.LatLng;
 }
 
 /**
  * Interface for the entire state managed by this context.
  */
 interface FacilityAddressState {
-  position: L.LatLng | null;
-  address: Address;
+  addresses: AddressData[];
+  selectedAddressId: string | null;
 }
 
 interface FacilityAddressContextType {
   facilityAddress: FacilityAddressState;
   updateFacilityAddress: (newState: Partial<FacilityAddressState>) => void;
-  updateAddressField: (field: keyof Address, value: string) => void;
+  addAddress: (addressData: Omit<AddressData, 'id'>) => string;
+  updateAddress: (addressId: string, updates: Partial<Omit<AddressData, 'id'>>) => void;
+  updateAddressField: (addressId: string, field: keyof Address, value: string) => void;
+  deleteAddress: (addressId: string) => void;
+  setSelectedAddress: (addressId: string | null) => void;
+  getAddressById: (addressId: string) => AddressData | undefined;
 }
 
 const FacilityAddressContext = createContext<FacilityAddressContextType | undefined>(undefined);
@@ -42,37 +60,59 @@ interface FacilityAddressProviderProps {
 }
 
 const defaultState: FacilityAddressState = {
-  position: null,
-  address: {
-    streetAddress: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    otherAddress: '',
-  },
+  addresses: [],
+  selectedAddressId: null,
 };
+
+const generateId = (): string => Math.random().toString(36).substr(2, 9);
 
 export const FacilityAddressProvider: React.FC<FacilityAddressProviderProps> = ({ children }) => {
   const [facilityAddress, setFacilityAddress] = useState<FacilityAddressState>(() => {
     const savedState = Cookies.get('facilityAddressState');
     if (savedState) {
-      const parsedState = JSON.parse(savedState);
-      // IMPORTANT: Re-hydrate the LatLng object from the plain object stored in the cookie.
-      if (parsedState.position) {
-        parsedState.position = new L.LatLng(parsedState.position.lat, parsedState.position.lng);
+      try {
+        const parsedState = JSON.parse(savedState);
+        // Validate that the parsed state has the expected structure
+        if (parsedState && 
+            typeof parsedState === 'object' && 
+            Array.isArray(parsedState.addresses)) {
+          
+          // Re-hydrate the LatLng objects from the plain objects stored in the cookie.
+          const rehydratedAddresses = parsedState.addresses
+            .map((addr: any) => ({
+              ...addr,
+              position: addr.position ? new L.LatLng(addr.position.lat, addr.position.lng) : null,
+            }))
+            .filter((addr: any) => addr.position !== null); // Filter out invalid addresses
+
+          return {
+            addresses: rehydratedAddresses,
+            selectedAddressId: parsedState.selectedAddressId || null,
+          };
+        }
+      } catch (error) {
+        console.error('Error parsing saved facility address state:', error);
       }
-      return parsedState;
     }
     return defaultState;
   });
 
   useEffect(() => {
-    // IMPORTANT: De-hydrate the LatLng object to a plain object for JSON serialization.
+    // Add safety check to ensure addresses exists and is an array
+    if (!facilityAddress.addresses || !Array.isArray(facilityAddress.addresses)) {
+      console.warn('facilityAddress.addresses is not an array, skipping save to cookies');
+      return;
+    }
+
+    // De-hydrate the LatLng objects to plain objects for JSON serialization.
     const stateToSave = {
       ...facilityAddress,
-      position: facilityAddress.position
-        ? { lat: facilityAddress.position.lat, lng: facilityAddress.position.lng }
-        : null,
+      addresses: facilityAddress.addresses.map(addr => ({
+        ...addr,
+        position: addr.position
+          ? { lat: addr.position.lat, lng: addr.position.lng }
+          : null,
+      })),
     };
     Cookies.set('facilityAddressState', JSON.stringify(stateToSave));
   }, [facilityAddress]);
@@ -84,19 +124,78 @@ export const FacilityAddressProvider: React.FC<FacilityAddressProviderProps> = (
     }));
   };
 
-  // Helper function to update a single field in the address object.
-  const updateAddressField = (field: keyof Address, value: string) => {
+  const addAddress = (addressData: Omit<AddressData, 'id'>): string => {
+    const newId = generateId();
+    const newAddress: AddressData = {
+      ...addressData,
+      id: newId,
+    };
+
     setFacilityAddress((prevState) => ({
       ...prevState,
-      address: {
-        ...prevState.address,
-        [field]: value,
-      },
+      addresses: [...(prevState.addresses || []), newAddress],
+      selectedAddressId: newId, // Auto-select the newly added address
+    }));
+
+    return newId;
+  };
+
+  const updateAddress = (addressId: string, updates: Partial<Omit<AddressData, 'id'>>) => {
+    setFacilityAddress((prevState) => ({
+      ...prevState,
+      addresses: (prevState.addresses || []).map(addr =>
+        addr.id === addressId ? { ...addr, ...updates } : addr
+      ),
     }));
   };
 
+  const updateAddressField = (addressId: string, field: keyof Address, value: string) => {
+    setFacilityAddress((prevState) => ({
+      ...prevState,
+      addresses: (prevState.addresses || []).map(addr =>
+        addr.id === addressId ? { ...addr, [field]: value } : addr
+      ),
+    }));
+  };
+
+  const deleteAddress = (addressId: string) => {
+    setFacilityAddress((prevState) => {
+      const currentAddresses = prevState.addresses || [];
+      const filteredAddresses = currentAddresses.filter(addr => addr.id !== addressId);
+      return {
+        ...prevState,
+        addresses: filteredAddresses,
+        selectedAddressId: prevState.selectedAddressId === addressId 
+          ? (filteredAddresses.length > 0 ? filteredAddresses[0].id : null)
+          : prevState.selectedAddressId,
+      };
+    });
+  };
+
+  const setSelectedAddress = (addressId: string | null) => {
+    setFacilityAddress((prevState) => ({
+      ...prevState,
+      selectedAddressId: addressId,
+    }));
+  };
+
+  const getAddressById = (addressId: string): AddressData | undefined => {
+    return facilityAddress.addresses?.find(addr => addr.id === addressId);
+  };
+
   return (
-    <FacilityAddressContext.Provider value={{ facilityAddress, updateFacilityAddress, updateAddressField }}>
+    <FacilityAddressContext.Provider 
+      value={{ 
+        facilityAddress, 
+        updateFacilityAddress, 
+        addAddress,
+        updateAddress,
+        updateAddressField, 
+        deleteAddress,
+        setSelectedAddress,
+        getAddressById
+      }}
+    >
       {children}
     </FacilityAddressContext.Provider>
   );

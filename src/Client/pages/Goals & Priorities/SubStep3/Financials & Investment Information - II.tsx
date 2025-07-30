@@ -12,7 +12,7 @@ const SubStep3: React.FC = () => {
     const numericValue = value.replace(/[^0-9.]/g, '');
     if (numericValue === '') return '';
     const parts = numericValue.split('.');
-    let integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     let decimalPart = parts.length > 1 ? '.' + parts[1] : '';
     if (decimalPart.length > 3) {
       decimalPart = decimalPart.substring(0, 3);
