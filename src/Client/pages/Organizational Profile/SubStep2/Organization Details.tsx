@@ -33,7 +33,7 @@ const companyOptions = [
 
 const SubStep2: React.FC = () => { 
 
-  const { organizationDetails, updateOrganizationDetails } = useOrganizationDetails();
+  const { organizationDetailsState, updateOrganizationDetails } = useOrganizationDetails();
 
   const handleEmployeeCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/,/g, '');
@@ -61,7 +61,7 @@ const SubStep2: React.FC = () => {
     <Autocomplete
       options={['Select your Organization Name', ...companyOptions]}
       getOptionDisabled={(option) => option === 'Select your Organization Name'}
-      value={organizationDetails.organizationName || null} // Read value from context
+      value={organizationDetailsState.organizationName || null} // Read value from context
       onChange={(_event: any, newValue: string | null) => {
         updateOrganizationDetails({ organizationName: newValue || '' }); // Update context
       }}
@@ -130,7 +130,7 @@ const SubStep2: React.FC = () => {
     variant="outlined"
     size="small"
     type="text"
-                value={organizationDetails.userName} // Read value from context
+                value={organizationDetailsState.userName} // Read value from context
                 onChange={(e) => updateOrganizationDetails({ userName: e.target.value })}
     sx={{
       flex: 0.5,
@@ -151,7 +151,7 @@ const SubStep2: React.FC = () => {
     variant="outlined"
     size="small"
     type="email"
-                value={organizationDetails.userEmail} // Read value from context
+                value={organizationDetailsState.userEmail} // Read value from context
                 onChange={(e) => updateOrganizationDetails({ userEmail: e.target.value })}
     sx={{
       flex: 0.5,
@@ -172,7 +172,7 @@ const SubStep2: React.FC = () => {
     variant="outlined"
     size="small"
     type="text"
-                value={organizationDetails.userTitle} // Read value from context
+                value={organizationDetailsState.userTitle} // Read value from context
                 onChange={(e) => updateOrganizationDetails({ userTitle: e.target.value })}
     sx={{
       flex: 0.5,
@@ -192,7 +192,7 @@ const SubStep2: React.FC = () => {
   fullWidth
   size="small"
   variant="outlined"
-                value={organizationDetails.organizationType || "default"} // Read from context, provide default for placeholder
+                value={organizationDetailsState.organizationType || "default"} // Read from context, provide default for placeholder
                 onChange={(e) => updateOrganizationDetails({ organizationType: e.target.value })}
   defaultValue="Option 1"
   sx={{
@@ -243,7 +243,7 @@ const SubStep2: React.FC = () => {
   fullWidth
   size="small"
   variant="outlined"
-                value={organizationDetails.industry || "default"} // Read from context
+                value={organizationDetailsState.industry || "default"} // Read from context
                 onChange={(e) => updateOrganizationDetails({ industry: e.target.value })}
   defaultValue="Option 1"
   sx={{
@@ -313,7 +313,7 @@ const SubStep2: React.FC = () => {
   fullWidth
   size="small"
   variant="outlined"
-                value={organizationDetails.irsCategory || "default"} // Read from context
+                value={organizationDetailsState.irsCategory || "default"} // Read from context
                 onChange={(e) => updateOrganizationDetails({ irsCategory: e.target.value })}
   defaultValue="Option 1"
   sx={{
@@ -461,7 +461,7 @@ const SubStep2: React.FC = () => {
       placeholder='Enter the number of employees at your facility'
       variant="outlined"
       size="small"
-                value={organizationDetails.employeeCount} // Read from context
+                value={organizationDetailsState.employeeCount} // Read from context
                 onChange={handleEmployeeCountChange}
       type="text"
       inputProps={{

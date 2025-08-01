@@ -76,7 +76,7 @@ const MapMarkers = ({
 
 const SubStep2 = () => {
   const { 
-    facilityAddress, 
+    facilityAddressState, 
     addAddress, 
     updateAddressField, 
     deleteAddress, 
@@ -86,10 +86,10 @@ const SubStep2 = () => {
   const { setAddresses: setBillAddresses } = useBillAddress();
   
   useEffect(() => {
-    setBillAddresses(facilityAddress.addresses.map(a => ({ id: a.id, address: `${a.streetAddress}, ${a.city}, ${a.state} ${a.zipCode}` })));
-  }, [facilityAddress.addresses, setBillAddresses]);
+    setBillAddresses(facilityAddressState.addresses.map(a => ({ id: a.id, address: `${a.streetAddress}, ${a.city}, ${a.state} ${a.zipCode}` })));
+  }, [facilityAddressState.addresses, setBillAddresses]);
   
-  const { addresses, selectedAddressId } = facilityAddress;
+  const { addresses, selectedAddressId } = facilityAddressState;
   const mapRef = useRef<L.Map | null>(null);
 
   const handleAddLocation = (position: L.LatLng) => {

@@ -19,8 +19,8 @@ const SubStep1: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [currentExpandedPanel, setCurrentExpandedPanel] = useState<ExpandablePanelInfo | null>(null);
 
-  const { organizationDetails } = useOrganizationDetails();
-  const { userName, organizationName } = organizationDetails;
+  const { organizationDetailsState } = useOrganizationDetails();
+  const { userName, organizationName } = organizationDetailsState;
 
   const recommendationTitle = (userName && organizationName) 
     ? `Bradley's Recommendation For ${userName}, ${organizationName}` 

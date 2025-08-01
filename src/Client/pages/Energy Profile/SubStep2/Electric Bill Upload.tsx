@@ -3,12 +3,12 @@ import { Box, Typography, TextField, List, ListItem, IconButton, Tooltip, Select
 
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useElectricBillUploadProvider } from '../../../../Context/Energy Profile/SubStep2/Electric Bill Upload Context'
+import { useElectricBillUpload } from '../../../../Context/Energy Profile/SubStep2/Electric Bill Upload Context'
 import { useBillAddress } from '../../../../Context/Energy Profile/BillAddressContext';
 
 const SubStep2: React.FC = () => {
-  const { addFiles, removeFile } = useElectricBillUploadProvider();
-  const { bills, addBill, removeBill: removeBillFromContext, addresses, mapping, assignAddressToBill, getUnassignedAddresses, isAddressAssigned, updateBillDateRange } = useBillAddress();
+  const { addFiles, removeFile } = useElectricBillUpload();
+  const { bills, addBill, removeBill: removeBillFromContext, addresses, assignAddressToBill, getUnassignedAddresses, isAddressAssigned, updateBillDateRange } = useBillAddress();
   const electricBills = bills.filter(b => b.type === 'electric');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const unassignedAddresses = getUnassignedAddresses();
@@ -18,7 +18,7 @@ const SubStep2: React.FC = () => {
     const newFiles = event.target.files;
     if (newFiles) {
       Array.from(newFiles).forEach(file => {
-        addBill({ name: file.name, size: file.size, type: 'electric', dateRange: { start: '', end: '' } });
+        addBill({ name: file.name, size: formatFileSize(file.size), type: 'electric' });
       });
       addFiles(Array.from(newFiles));
     }
@@ -33,7 +33,7 @@ const SubStep2: React.FC = () => {
     const newFiles = event.dataTransfer.files;
     if (newFiles) {
       Array.from(newFiles).forEach(file => {
-        addBill({ name: file.name, size: file.size, type: 'electric', dateRange: { start: '', end: '' } });
+        addBill({ name: file.name, size: formatFileSize(file.size), type: 'electric' });
       });
       addFiles(Array.from(newFiles));
     }
@@ -140,7 +140,7 @@ const SubStep2: React.FC = () => {
                           {bill.name}
                         </Typography>
                         <Typography sx={{ fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif', color: 'text.secondary' }}>
-                          {formatFileSize(bill.size)}
+                          {bill.size}
                         </Typography>
                       </Box>
                     
@@ -160,7 +160,7 @@ const SubStep2: React.FC = () => {
                             <FormControl sx={{ width: '180px' }} size="small">
                                 <InputLabel sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>Address</InputLabel>
                                 <Select
-                                    value={mapping[bill.id] || ''}
+                                    value={bill.id || ''}
                                     onChange={(e) => assignAddressToBill(bill.id, e.target.value as string)}
                                     label="Address"
                                     sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
@@ -169,7 +169,7 @@ const SubStep2: React.FC = () => {
                                     <MenuItem  
                                         key={address.id}  
                                         value={address.id}  
-                                        disabled={isAddressAssigned(address.id) && mapping[bill.id] !== address.id}
+                                        disabled={isAddressAssigned(address.id) && bill.addressId !== address.id}
                                         sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
                                     >
                                         {address.address}

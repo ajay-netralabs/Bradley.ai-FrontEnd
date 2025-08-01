@@ -15,7 +15,7 @@ interface OrganizationDetails {
 }
 
 interface OrganizationDetailsContextType {
-  organizationDetails: OrganizationDetails;
+  organizationDetailsState: OrganizationDetails;
   updateOrganizationDetails: (details: Partial<OrganizationDetails>) => void;
 }
 
@@ -34,8 +34,8 @@ interface OrganizationDetailsProviderProps {
 }
 
 export const OrganizationDetailsProvider: React.FC<OrganizationDetailsProviderProps> = ({ children }) => {
-  const [organizationDetails, setOrganizationDetails] = useState<OrganizationDetails>(() => {
-    const savedDetails = Cookies.get('organizationDetails');
+  const [organizationDetailsState, setOrganizationDetailsState] = useState<OrganizationDetails>(() => {
+    const savedDetails = Cookies.get('organizationDetailsState');
     return savedDetails ? JSON.parse(savedDetails) : {
       organizationName: '',
       userName: '',
@@ -49,15 +49,15 @@ export const OrganizationDetailsProvider: React.FC<OrganizationDetailsProviderPr
   });
 
   useEffect(() => {
-    Cookies.set('organizationDetails', JSON.stringify(organizationDetails));
-  }, [organizationDetails]);
+    Cookies.set('organizationDetailsState', JSON.stringify(organizationDetailsState));
+  }, [organizationDetailsState]);
 
   const updateOrganizationDetails = (details: Partial<OrganizationDetails>) => {
-    setOrganizationDetails((prevDetails) => ({ ...prevDetails, ...details }));
+    setOrganizationDetailsState((prevDetails) => ({ ...prevDetails, ...details }));
   };
 
   return (
-    <OrganizationDetailsContext.Provider value={{ organizationDetails, updateOrganizationDetails }}>
+    <OrganizationDetailsContext.Provider value={{ organizationDetailsState, updateOrganizationDetails }}>
       {children}
     </OrganizationDetailsContext.Provider>
   );

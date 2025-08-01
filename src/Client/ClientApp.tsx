@@ -12,7 +12,7 @@ import { AnnualEnergySpendProvider } from '../Context/Organizational Profile/Sub
 import { FacilityOperationProvider } from '../Context/Organizational Profile/SubStep2/Facility Operation Description Context';
 import { FacilityAddressProvider } from '../Context/Organizational Profile/SubStep2/Facility Address Context';
 import { OtherDetailsProvider } from '../Context/Organizational Profile/SubStep2/Other Details Context';
-import { ElectricBillUploadProvider, useElectricBillUploadProvider } from '../Context/Energy Profile/SubStep2/Electric Bill Upload Context';
+import { ElectricBillUploadProvider, useElectricBillUpload } from '../Context/Energy Profile/SubStep2/Electric Bill Upload Context';
 import { LOAProvider } from '../Context/Energy Profile/SubStep2/Letter Of Authorization Context';
 import { LOAStatusProvider } from '../Context/Energy Profile/SubStep2/LOA - Status Context';
 import { NaturalGasBillUploadProvider } from '../Context/Energy Profile/SubStep2/Natural Gas Bill Upload Context';
@@ -166,7 +166,7 @@ const AppContent: React.FC = () => {
   } = useAppContext();
 
   const { ownershipPreference, setOwnershipPreference } = useOwnershipPreference();
-  const { electricBillUploadState } = useElectricBillUploadProvider();
+  const { electricBillUploadState } = useElectricBillUpload();
   const navigate = useNavigate();
 
   const markVisited = (step: number, subStep: number) => {

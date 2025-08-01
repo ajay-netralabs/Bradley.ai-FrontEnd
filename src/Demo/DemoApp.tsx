@@ -15,10 +15,10 @@ import Footer from '../components/Footer';
 import ChatBot from '../components/ChatBot';
 
 
-import { OrganizationDetailsProvider } from '../Context/Organizational Profile/SubStep2/Organization Details Context';
-import { FacilityAddressProvider } from '../Context/Organizational Profile/SubStep2/Facility Address Context';
-import { ElectricBillUploadProvider, useElectricBillUploadProvider } from '../Context/Energy Profile/SubStep2/Electric Bill Upload Context';
-import { NaturalGasBillUploadProvider } from '../Context/Energy Profile/SubStep2/Natural Gas Bill Upload Context';
+import { OrganizationDetailsProvider, useOrganizationDetails } from '../Context/Organizational Profile/SubStep2/Organization Details Context';
+import { FacilityAddressProvider, useFacilityAddress } from '../Context/Organizational Profile/SubStep2/Facility Address Context';
+import { ElectricBillUploadProvider, useElectricBillUpload } from '../Context/Energy Profile/SubStep2/Electric Bill Upload Context';
+import { NaturalGasBillUploadProvider, useNaturalGasBillUpload } from '../Context/Energy Profile/SubStep2/Natural Gas Bill Upload Context';
 import { LOAProvider } from '../Context/Energy Profile/SubStep2/Letter Of Authorization Context';
 import { LOAStatusProvider } from '../Context/Energy Profile/SubStep2/LOA - Status Context';
 import { ThermalEnergyNeedsIProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
@@ -26,7 +26,8 @@ import { ThermalEnergyNeedsIIProvider } from '../Context/Energy Profile/SubStep2
 import { ThermalEnergyNeedsIIIProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
 import { ThermalEnergyNeedsIVProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
 import { BoilerCogenerationProvider } from '../Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
-import { BillAddressProvider } from '../Context/Energy Profile/BillAddressContext';
+import { BillAddressProvider, useBillAddress } from '../Context/Energy Profile/BillAddressContext';
+import { updateOrganizationDetails, updateFacilityAddresses, uploadBillData, BillMetadata } from '../services/APIServices';
 
 // The main content of the app, which can now use all the contexts
 const AppContent: React.FC = () => {
@@ -39,7 +40,11 @@ const AppContent: React.FC = () => {
     logout,
   } = useAppContext();
 
-  const { electricBillUploadState } = useElectricBillUploadProvider();
+  const { organizationDetailsState } = useOrganizationDetails();
+  const { facilityAddressState } = useFacilityAddress();
+  const { electricBillUploadState } = useElectricBillUpload();
+  const { naturalGasBillUploadState } = useNaturalGasBillUpload();
+  const { bills } = useBillAddress();
 
   const navigate = useNavigate();
 
@@ -76,12 +81,48 @@ const AppContent: React.FC = () => {
     }
   };
 
-  // const { electricBillUploadState } = useElectricBillUploadProvider();
-
-  const handleNext = () => {
+  const handleNext = async () => {
     const isLastFurtherSubStep = currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1;
     const isLastSubStep = currentSubStep === steps[currentStep].subSteps - 1;
     const isLastStep = currentStep === steps.length - 1;
+
+    if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 0) {
+      await updateOrganizationDetails(organizationDetailsState);
+    }
+
+    if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 1) {
+      await updateFacilityAddresses(facilityAddressState.addresses);
+    }
+
+    if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6) {
+      const billsWithAddress = bills.filter(bill => bill.addressId);
+
+      const electricBillMetadataList: BillMetadata[] = billsWithAddress
+        .filter(bill => bill.type === 'electric')
+        .map(bill => ({
+          ...bill,
+          size: bill.size.toString(),
+          addressId: bill.addressId!,
+        }));
+
+      const gasBillMetadataList: BillMetadata[] = billsWithAddress
+        .filter(bill => bill.type === 'gas')
+        .map(bill => ({
+          ...bill,
+          size: bill.size.toString(),
+          addressId: bill.addressId!,
+        }));
+
+      const electricBillNames = new Set(electricBillMetadataList.map(bill => bill.name));
+      const electricFiles = electricBillUploadState.files.filter(file => electricBillNames.has(file.name));
+
+      const gasBillNames = new Set(gasBillMetadataList.map(bill => bill.name));
+      const gasFiles = naturalGasBillUploadState.files.filter(file => gasBillNames.has(file.name));
+
+      const Files = [...electricFiles, ...gasFiles];
+
+      await uploadBillData(Files, /* electricFiles, */ /* electricBillMetadataList, gasFiles *//* , gasBillMetadataList */);
+    }
 
     if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 2) {
         markCompleted(0, 0);

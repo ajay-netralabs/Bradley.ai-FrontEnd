@@ -8,11 +8,11 @@ const SubStep3: React.FC = () => {
   const { loaState, updateField, updateNestedField } = useLOA();
   const { utilityCompanyName, textFields, contactDetails, signature, agreed } = loaState;
 
-  const { organizationDetails, updateOrganizationDetails } = useOrganizationDetails();
-  const { userName, organizationName, userEmail } = organizationDetails;
+  const { organizationDetailsState, updateOrganizationDetails } = useOrganizationDetails();
+  const { userName, organizationName, userEmail } = organizationDetailsState;
 
-  const { facilityAddress, updateAddressField, getAddressById } = useFacilityAddress();
-  const { addresses, selectedAddressId } = facilityAddress;
+  const { facilityAddressState, updateAddressField, getAddressById } = useFacilityAddress();
+  const { addresses, selectedAddressId } = facilityAddressState;
 
   // Get the selected address for individual field editing
   const currentAddress = selectedAddressId 
