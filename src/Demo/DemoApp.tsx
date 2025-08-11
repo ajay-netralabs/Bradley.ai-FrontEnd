@@ -15,7 +15,7 @@ import Footer from '../components/Footer';
 import ChatBot from '../components/ChatBot';
 
 // Import the EmissionsDashboard component
-import EmissionsDashboard from './pages/Demo/SubStep1/DemoPage';
+// import EmissionsDashboard from './pages/Demo/SubStep1/EmissionsDashboard';
 
 // Feature Contexts
 import { OrganizationDetailsProvider, useOrganizationDetails } from '../Context/Organizational Profile/SubStep2/Organization Details Context';
@@ -47,7 +47,7 @@ const AppContent: React.FC = () => {
     } = useAppContext();
 
     // Use the dashboard context
-    const { dashboardData, setDashboardData, isLoading, setIsLoading } = useDashboardData();
+    const { /* dashboardData, */ setDashboardData, isLoading, setIsLoading } = useDashboardData();
 
     const { organizationDetailsState } = useOrganizationDetails();
     const { facilityAddressState } = useFacilityAddress();
@@ -213,7 +213,7 @@ const AppContent: React.FC = () => {
     };
 
     // Check if we should show the dashboard instead of the stepper
-    const shouldShowDashboard = dashboardData && dashboardData.length > 0;
+    // const shouldShowDashboard = dashboardData && dashboardData.length > 0;
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', zIndex: 500 }}>
@@ -233,10 +233,10 @@ const AppContent: React.FC = () => {
                         <Box sx={{ flexGrow: 1 }}>
                             <HorizontalStepper currentSubStep={currentSubStep} totalSubSteps={steps[currentStep]?.subSteps} visitedSteps={visitedSteps[currentStep]} completedSubSteps={completedSubSteps[currentStep]} onSubStepChange={handleSubStepChange} currentStep={currentStep} />
                             <LinearProgress variant="determinate" value={calculateProgress()} sx={{ width: 'calc(100% + 16px)', height: '3.5px', margin: '0px -16px', mt: '30px', mb: '10px', backgroundColor: '#e0e0e0', '& .MuiLinearProgress-bar': { backgroundColor: '#036cc1' } }} />
-                            {shouldShowDashboard ? (
+                            {/* {shouldShowDashboard ? (
                                 <EmissionsDashboard data={dashboardData} />
                             ) : (
-                                <>
+                                <> */}
                                     <StepContent step={currentStep} subStep={currentSubStep} furtherSubStep={currentFurtherSubStep} />
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3, mr: 5.2, ml: 1, mb: 1 }}>
                                         {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
@@ -269,8 +269,8 @@ const AppContent: React.FC = () => {
                                             </Tooltip>
                                         </Box>
                                     </Box>
-                                </>
-                            )}
+                                {/* </>
+                            )} */}
                         </Box>
                     </Box>
                     <ChatBot />

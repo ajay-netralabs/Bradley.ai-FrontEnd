@@ -5,10 +5,8 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart } from 'recharts';
 
-// Import the updated interfaces
-import { LocationData, EmissionDataPoint, CurrentYearSummary, TargetGoals, Penalty } from '../../../../Context/DashboardDataContext';
+import { LocationData/* , EmissionDataPoint, CurrentYearSummary, TargetGoals, Penalty */ } from '../../../../Context/DashboardDataContext';
 
-// FIX: Added an interface for chart data rows with an index signature.
 interface ChartDataRow {
     month: string;
     [key: string]: string | number;
@@ -382,25 +380,31 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data }) => {
                                                             <SubHeaderCell>Previous Year</SubHeaderCell>
                                                         </TableRow>
                                                         <TableRow>
-                                                            <StyledTableCell>{formatNumber(target_goals?.["Baseline CO2 (Metric Tons)"]?.YTD)}</StyledTableCell>
+                                                            <LabelCell></LabelCell>
                                                             <RedCell>{formatNumber(current_year_summary?.ytd_emissions)}</RedCell>
                                                             <RedCell>{formatNumber(target_goals?.["Baseline CO2 (Metric Tons)"]?.Forecast)}</RedCell>
                                                             <StyledTableCell>{formatNumber(target_goals?.["Baseline CO2 (Metric Tons)"]?.["Previous Year"])}</StyledTableCell>
+                                                        </TableRow>
+                                                        {/* <TableRow>
+                                                            <LabelCell>Reduction Amount</LabelCell>
+                                                            <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.YTD)}</StyledTableCell>
+                                                            <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.Forecast)}</StyledTableCell>
+                                                            <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.["Previous Year"])}</StyledTableCell>
+                                                        </TableRow> */}
+                                                        {/* <TableRow>
+                                                            <TableCell colSpan={4} sx={{ p: 0.5, border: 0, borderTop: 1, borderColor: 'divider' }}></TableCell>
+                                                        </TableRow> */}
+                                                        <TableRow>
+                                                            <SubHeaderCell></SubHeaderCell>
+                                                            <SubHeaderCell>COUNTY</SubHeaderCell>
+                                                            <SubHeaderCell>STATE</SubHeaderCell>
+                                                            <SubHeaderCell>CORP</SubHeaderCell>
                                                         </TableRow>
                                                         <TableRow>
                                                             <LabelCell>Reduction Amount</LabelCell>
                                                             <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.YTD)}</StyledTableCell>
                                                             <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.Forecast)}</StyledTableCell>
                                                             <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.["Previous Year"])}</StyledTableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <TableCell colSpan={4} sx={{ p: 0.5, border: 0, borderTop: 1, borderColor: 'divider' }}></TableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <SubHeaderCell></SubHeaderCell>
-                                                            <SubHeaderCell>COUNTY</SubHeaderCell>
-                                                            <SubHeaderCell>STATE</SubHeaderCell>
-                                                            <SubHeaderCell>CORP</SubHeaderCell>
                                                         </TableRow>
                                                         <TableRow>
                                                             <LabelCell>Reduction %</LabelCell>
