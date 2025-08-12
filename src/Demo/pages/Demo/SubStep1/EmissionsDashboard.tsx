@@ -215,7 +215,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data }) => {
     const formatBoolean = (b?: boolean | null, yesNo = false) => b === null || b === undefined ? 'N/A' : (yesNo ? (b ? 'YES' : 'NO') : (b ? 'ON' : 'OFF'));
 
     // --- RENDER LOGIC ---
-    const { target_goals, current_year_summary, penalty } = selectedLocationData ?? {};
+    const { target_goals, current_year_summary, targets_2030 } = selectedLocationData ?? {};
     const hasData = data && data.length > 0;
     const selectedLocationSourceKey = `${dashboardState.selectedLocationName} (${dashboardState.selectedSource})`;
 
@@ -230,314 +230,367 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data }) => {
                     </Typography>
                     
                     <Grid container spacing={3} mb={4}>
-                        <Grid item xs={12} lg={7}>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
-                                    <FilterCard>
-                                        <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">FILTERS</Typography>} sx={{ textAlign: 'center', py: 1 }} />
-                                        <CardContent>
-                                            <TableContainer component={Paper} elevation={0}>
-                                                <Table size="small" sx={{ tableLayout: 'fixed' }}>
-                                                    <TableBody>
-                                                        <TableRow>
-                                                            <LabelCell>Location</LabelCell>
-                                                            <StyledTableCell>
-                                                                <FormControl size="small" fullWidth>
-                                                                    <Select
-                                                                        value={dashboardState.selectedLocationName || ''}
-                                                                        onChange={handleLocationChange}
-                                                                        sx={{ fontSize: '0.75rem' }}
-                                                                        disabled={!hasData}
-                                                                        displayEmpty
-                                                                    >
-                                                                        {hasData ? (
-                                                                            uniqueLocations.map(location => (
-                                                                                <MenuItem key={location} value={location}>
-                                                                                    {location}
-                                                                                </MenuItem>
-                                                                            ))
-                                                                        ) : (
-                                                                            <MenuItem value="" disabled>
-                                                                                No location found
-                                                                            </MenuItem>
-                                                                        )}
-                                                                    </Select>
-                                                                </FormControl>
-                                                            </StyledTableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>Source</LabelCell>
-                                                            <StyledTableCell>
-                                                                <FormControl size="small" fullWidth>
-                                                                    <Select
-                                                                        value={dashboardState.selectedSource || ''}
-                                                                        onChange={handleSourceChange}
-                                                                        sx={{ fontSize: '0.75rem' }}
-                                                                        disabled={!hasData || availableSources.length === 0}
-                                                                        displayEmpty
-                                                                    >
-                                                                        {availableSources.length > 0 ? (
-                                                                            availableSources.map(source => (
-                                                                                <MenuItem key={source} value={source}>
-                                                                                    {source}
-                                                                                </MenuItem>
-                                                                            ))
-                                                                        ) : (
-                                                                            <MenuItem value="" disabled>
-                                                                                No source available
-                                                                            </MenuItem>
-                                                                        )}
-                                                                    </Select>
-                                                                </FormControl>
-                                                            </StyledTableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                          <LabelCell>Year</LabelCell>
-                                                            <StyledTableCell>
-                                                                <FormControl size="small" fullWidth>
-                                                                    <Select
-                                                                        value={dashboardState.selectedYear || ''}
-                                                                        onChange={handleYearChange}
-                                                                        sx={{ fontSize: '0.75rem' }}
-                                                                        disabled={!hasData}
-                                                                        displayEmpty
-                                                                    >
-                                                                        {uniqueYears.length > 0 ? (
-                                                                            uniqueYears.map(year => (
-                                                                                <MenuItem key={year} value={year}>
-                                                                                    {year}
-                                                                                </MenuItem>
-                                                                            ))
-                                                                        ) : (
-                                                                            <MenuItem value="" disabled>
-                                                                                No year found
-                                                                            </MenuItem>
-                                                                        )}
-                                                                    </Select>
-                                                                </FormControl>
-                                                            </StyledTableCell>
-                                                        </TableRow>
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                            <Box mt={2}>
-                                                <Typography variant="caption" fontWeight="medium" gutterBottom display="block">Current Year CO2e Reduction Goal %</Typography>
-                                                <Box display="flex" alignItems="center" gap={2}>
-                                                    <Slider disabled value={dashboardState.co2eGoal} min={0} max={100} size="small" sx={{ flexGrow: 1 }} />
-                                                    <Typography variant="caption" color="text.secondary" minWidth="35px">{dashboardState.co2eGoal}%</Typography>
-                                                </Box>
+    {/* LEFT HALF: Filters Card */}
+    <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
+        <FilterCard>
+            <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">FILTERS</Typography>} sx={{ textAlign: 'center', py: 1 }} />
+            <CardContent>
+                <TableContainer component={Paper} elevation={0}>
+                    <Table size="small" sx={{ tableLayout: 'fixed' }}>
+                        <TableBody>
+                            <TableRow>
+                                <LabelCell>Location</LabelCell>
+                                <StyledTableCell>
+                                    <FormControl size="small" fullWidth>
+                                        <Select
+                                            value={dashboardState.selectedLocationName || ''}
+                                            onChange={handleLocationChange}
+                                            sx={{ fontSize: '0.75rem' }}
+                                            disabled={!hasData}
+                                            displayEmpty
+                                        >
+                                            {hasData ? (
+                                                uniqueLocations.map(location => (
+                                                    <MenuItem key={location} value={location}>
+                                                        {location}
+                                                    </MenuItem>
+                                                ))
+                                            ) : (
+                                                <MenuItem value="" disabled>
+                                                    No location found
+                                                </MenuItem>
+                                            )}
+                                        </Select>
+                                    </FormControl>
+                                </StyledTableCell>
+                            </TableRow>
+                            <TableRow>
+                                <LabelCell>Source</LabelCell>
+                                <StyledTableCell>
+                                    <FormControl size="small" fullWidth>
+                                        <Select
+                                            value={dashboardState.selectedSource || ''}
+                                            onChange={handleSourceChange}
+                                            sx={{ fontSize: '0.75rem' }}
+                                            disabled={!hasData || availableSources.length === 0}
+                                            displayEmpty
+                                        >
+                                            {availableSources.length > 0 ? (
+                                                availableSources.map(source => (
+                                                    <MenuItem key={source} value={source}>
+                                                        {source}
+                                                    </MenuItem>
+                                                ))
+                                            ) : (
+                                                <MenuItem value="" disabled>
+                                                    No source available
+                                                </MenuItem>
+                                            )}
+                                        </Select>
+                                    </FormControl>
+                                </StyledTableCell>
+                            </TableRow>
+                            <TableRow>
+                                <LabelCell>Year</LabelCell>
+                                <StyledTableCell>
+                                    <FormControl size="small" fullWidth>
+                                        <Select
+                                            value={dashboardState.selectedYear || ''}
+                                            onChange={handleYearChange}
+                                            sx={{ fontSize: '0.75rem' }}
+                                            disabled={!hasData}
+                                            displayEmpty
+                                        >
+                                            {uniqueYears.length > 0 ? (
+                                                uniqueYears.map(year => (
+                                                    <MenuItem key={year} value={year}>
+                                                        {year}
+                                                    </MenuItem>
+                                                ))
+                                            ) : (
+                                                <MenuItem value="" disabled>
+                                                    No year found
+                                                </MenuItem>
+                                            )}
+                                        </Select>
+                                    </FormControl>
+                                </StyledTableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Box mt={2}>
+                    <Typography variant="caption" fontWeight="medium" gutterBottom display="block">Current Year CO2e Reduction Goal %</Typography>
+                    <Box display="flex" alignItems="center" gap={2}>
+                        <Slider disabled value={dashboardState.co2eGoal} min={0} max={100} size="small" sx={{ flexGrow: 1 }} />
+                        <Typography variant="caption" color="text.secondary" minWidth="35px">{dashboardState.co2eGoal}%</Typography>
+                    </Box>
+                </Box>
+            </CardContent>
+        </FilterCard>
+    </Grid>
+
+    {/* RIGHT HALF: Plant and DER System Cards */}
+    <Grid item xs={12} md={6}>
+        <Grid container spacing={3} direction="column">
+            <Grid item>
+                <StyledCard>
+                    <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">PLANT ALLOCATION</Typography>} sx={{ textAlign: 'center', py: 1 }} />
+                    <CardContent sx={{ p: '0 !important' }}>
+                        <TableContainer>
+                            <Table size="small" sx={{ tableLayout: 'fixed' }}>
+                                <TableHead>
+                                    <TableRow>
+                                        <HeaderCell>System</HeaderCell>
+                                        <HeaderCell>Allocation%</HeaderCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    <TableRow>
+                                        <LabelCell>PLANT</LabelCell>
+                                        <StyledTableCell>
+                                            <Box display="flex" alignItems="center" gap={1} px={1}>
+                                                <Slider value={dashboardState.derAllocation.PLANT} disabled size="small" sx={{ flexGrow: 1 }} />
+                                                <Typography variant="caption" fontWeight="medium" minWidth="35px">{dashboardState.derAllocation.PLANT}%</Typography>
                                             </Box>
-                                        </CardContent>
-                                    </FilterCard>
-                                </Grid>
-                                <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
-                                    <StyledCard>
-                                        <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">2030 TARGETS</Typography>} sx={{ textAlign: 'center', py: 1 }} />
-                                        <CardContent sx={{ p: '0 !important' }}>
-                                            <TableContainer>
-                                                <Table size="small" sx={{ tableLayout: 'fixed' }}>
-                                                    <TableHead>
-                                                        <TableRow>
-                                                            <SubHeaderCell></SubHeaderCell>
-                                                            <SubHeaderCell>COUNTY</SubHeaderCell>
-                                                            <SubHeaderCell>STATE</SubHeaderCell>
-                                                            <SubHeaderCell>CORP</SubHeaderCell>
-                                                        </TableRow>
-                                                    </TableHead>
-                                                    <TableBody>
-                                                        <TableRow>
-                                                            <LabelCell>Location</LabelCell>
-                                                            <StyledTableCell>{formatString(penalty?.location?.county)}</StyledTableCell>
-                                                            <StyledTableCell>{formatString(penalty?.location?.state)}</StyledTableCell>
-                                                            <RedCell>{formatString(penalty?.location?.corp)}</RedCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>Penalty Rule ($/kg CO2e)</LabelCell>
-                                                            <StyledTableCell>{formatString(penalty?.penalty_rule?.county)}</StyledTableCell>
-                                                            <StyledTableCell>{formatString(penalty?.penalty_rule?.state)}</StyledTableCell>
-                                                            <StyledTableCell>{formatString(penalty?.penalty_rule?.corp)}</StyledTableCell>
-                                                        </TableRow>
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                        </CardContent>
-                                    </StyledCard>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <StyledCard>
-                                        <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">TARGET GOALS</Typography>} sx={{ textAlign: 'center', py: 1 }} />
-                                        <CardContent sx={{ p: '0 !important' }}>
-                                            <TableContainer>
-                                                <Table size="small">
-                                                    <TableBody>
-                                                        <TableRow>
-                                                            <StyledTableCell colSpan={4} sx={{ fontSize: '0.75rem', p: 1 }}>2030 Reduction kg CO2e goals by sector</StyledTableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <SubHeaderCell>Baseline CO2 (Tons)</SubHeaderCell>
-                                                            <SubHeaderCell>YTD</SubHeaderCell>
-                                                            <SubHeaderCell>Forecast</SubHeaderCell>
-                                                            <SubHeaderCell>Previous Year</SubHeaderCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell></LabelCell>
-                                                            <RedCell>{formatNumber(current_year_summary?.ytd_emissions)}</RedCell>
-                                                            <RedCell>{formatNumber(target_goals?.["Baseline CO2 (Metric Tons)"]?.Forecast)}</RedCell>
-                                                            <StyledTableCell>{formatNumber(target_goals?.["Baseline CO2 (Metric Tons)"]?.["Previous Year"])}</StyledTableCell>
-                                                        </TableRow>
-                                                        {/* <TableRow>
-                                                            <LabelCell>Reduction Amount</LabelCell>
-                                                            <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.YTD)}</StyledTableCell>
-                                                            <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.Forecast)}</StyledTableCell>
-                                                            <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.["Previous Year"])}</StyledTableCell>
-                                                        </TableRow> */}
-                                                        {/* <TableRow>
-                                                            <TableCell colSpan={4} sx={{ p: 0.5, border: 0, borderTop: 1, borderColor: 'divider' }}></TableCell>
-                                                        </TableRow> */}
-                                                        <TableRow>
-                                                            <SubHeaderCell></SubHeaderCell>
-                                                            <SubHeaderCell>COUNTY</SubHeaderCell>
-                                                            <SubHeaderCell>STATE</SubHeaderCell>
-                                                            <SubHeaderCell>CORP</SubHeaderCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>Reduction Amount</LabelCell>
-                                                            <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.YTD)}</StyledTableCell>
-                                                            <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.Forecast)}</StyledTableCell>
-                                                            <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.["Previous Year"])}</StyledTableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>Reduction %</LabelCell>
-                                                            <StyledTableCell>{formatPercent(target_goals?.["Reduction %"]?.county)}</StyledTableCell>
-                                                            <StyledTableCell>{formatPercent(target_goals?.["Reduction %"]?.state)}</StyledTableCell>
-                                                            <RedCell>{formatPercent(target_goals?.["Reduction %"]?.corp)}</RedCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>Target (ON/OFF)</LabelCell>
-                                                            <StyledTableCell>{formatBoolean(target_goals?.["Target (ON/OFF)"]?.county)}</StyledTableCell>
-                                                            <StyledTableCell>{formatBoolean(target_goals?.["Target (ON/OFF)"]?.state)}</StyledTableCell>
-                                                            <StyledTableCell>{formatBoolean(target_goals?.["Target (ON/OFF)"]?.corp)}</StyledTableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>Action Needed</LabelCell>
-                                                            <RedCell>{formatBoolean(target_goals?.["Action Needed"]?.county, true)}</RedCell>
-                                                            <RedCell>{formatBoolean(target_goals?.["Action Needed"]?.state, true)}</RedCell>
-                                                            <RedCell>{formatBoolean(target_goals?.["Action Needed"]?.corp, true)}</RedCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>Penalty</LabelCell>
-                                                            <StyledTableCell>${formatNumber(target_goals?.Penalty?.county)}</StyledTableCell>
-                                                            <RedCell>${formatNumber(target_goals?.Penalty?.state)}</RedCell>
-                                                            <StyledTableCell>${formatNumber(target_goals?.Penalty?.corp)}</StyledTableCell>
-                                                        </TableRow>
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                        </CardContent>
-                                    </StyledCard>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        {/* RIGHT COLUMN */}
-                        <Grid item xs={12} lg={5}>
-                            <Grid container spacing={3} direction="column">
-                                <Grid item xs>
-                                    <StyledCard>
-                                        <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">PLANT ALLOCATION</Typography>} sx={{ textAlign: 'center', py: 1 }} />
-                                        <CardContent sx={{ p: '0 !important' }}>
-                                            <TableContainer>
-                                                <Table size="small" sx={{ tableLayout: 'fixed' }}>
-                                                    <TableHead>
-                                                        <TableRow>
-                                                            <HeaderCell>System</HeaderCell>
-                                                            <HeaderCell>Allocation%</HeaderCell>
-                                                        </TableRow>
-                                                    </TableHead>
-                                                    <TableBody>
-                                                        <TableRow>
-                                                            <LabelCell>PLANT</LabelCell>
-                                                            <StyledTableCell>
-                                                                <Box display="flex" alignItems="center" gap={1} px={1}>
-                                                                    <Slider value={dashboardState.derAllocation.PLANT} disabled size="small" sx={{ flexGrow: 1 }} />
-                                                                    <Typography variant="caption" fontWeight="medium" minWidth="35px">{dashboardState.derAllocation.PLANT}%</Typography>
-                                                                </Box>
-                                                            </StyledTableCell>
-                                                        </TableRow>
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                        </CardContent>
-                                    </StyledCard>
-                                </Grid>
-                                <Grid item xs>
-                                    <StyledCard>
-                                        <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">DER SYSTEM</Typography>} sx={{ textAlign: 'center', py: 1 }} />
-                                        <CardContent sx={{ p: '0 !important' }}>
-                                            <TableContainer>
-                                                <Table size="small" sx={{ tableLayout: 'fixed' }}>
-                                                    <TableHead>
-                                                        <TableRow>
-                                                            <HeaderCell>DER System</HeaderCell>
-                                                            <HeaderCell>Allocation%</HeaderCell>
-                                                        </TableRow>
-                                                    </TableHead>
-                                                    <TableBody>
-                                                        {Object.entries(dashboardState.derAllocation).filter(([name]) => name !== 'PLANT').map(([name, value]) => (
-                                                            <TableRow key={name}>
-                                                                <LabelCell>{name}</LabelCell>
-                                                                <StyledTableCell>
-                                                                    <Box display="flex" alignItems="center" gap={1} px={1}>
-                                                                        <Slider value={value} onChange={handleDERAllocationChange(name)} size="small" sx={{ flexGrow: 1 }} />
-                                                                        <Typography variant="caption" fontWeight="medium" minWidth="35px">{value}%</Typography>
-                                                                    </Box>
-                                                                </StyledTableCell>
-                                                            </TableRow>
-                                                        ))}
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                        </CardContent>
-                                    </StyledCard>
-                                </Grid>
-                                <Grid item xs>
-                                    <SummaryCard>
-                                        <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">CURRENT YEAR SUMMARY</Typography>} sx={{ textAlign: 'center', py: 1 }} />
-                                        <CardContent sx={{ p: '0 !important' }}>
-                                            <TableContainer>
-                                                <Table size="small" sx={{ tableLayout: 'fixed' }}>
-                                                    <TableBody>
-                                                        <TableRow>
-                                                            <StyledTableCell colSpan={3} sx={{ textAlign: 'right', py: 0.5 }}>YTD: {formatString(current_year_summary?.current_month)}</StyledTableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>YTD CO2e</LabelCell>
-                                                            <RedCell>{formatNumber(current_year_summary?.ytd_emissions)}</RedCell>
-                                                            <StyledTableCell>Metric Tons</StyledTableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>Current Month</LabelCell>
-                                                            <StyledTableCell>{formatString(current_year_summary?.current_month)}</StyledTableCell>
-                                                            <StyledTableCell></StyledTableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>Up/Down from previous month</LabelCell>
-                                                            <RedCell>{formatNumber(current_year_summary?.difference_from_last_month, 1)}% ({formatString(current_year_summary?.up_or_down)})</RedCell>
-                                                            <StyledTableCell></StyledTableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <LabelCell>Current Year CO2e Reduction Goal Amount</LabelCell>
-                                                            <StyledTableCell>{formatNumber(current_year_summary?.emission_reduction_goal)}</StyledTableCell>
-                                                            <StyledTableCell>Metric Tons</StyledTableCell>
-                                                        </TableRow>
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                        </CardContent>
-                                    </SummaryCard>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
+                                        </StyledTableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </CardContent>
+                </StyledCard>
+            </Grid>
+            <Grid item>
+                <StyledCard>
+                    <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">DER SYSTEM</Typography>} sx={{ textAlign: 'center', py: 1 }} />
+                    <CardContent sx={{ p: '0 !important' }}>
+                        <TableContainer>
+                            <Table size="small" sx={{ tableLayout: 'fixed' }}>
+                                <TableHead>
+                                    <TableRow>
+                                        <HeaderCell>DER System</HeaderCell>
+                                        <HeaderCell>Allocation%</HeaderCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {Object.entries(dashboardState.derAllocation).filter(([name]) => name !== 'PLANT').map(([name, value]) => (
+                                        <TableRow key={name}>
+                                            <LabelCell>{name}</LabelCell>
+                                            <StyledTableCell>
+                                                <Box display="flex" alignItems="center" gap={1} px={1}>
+                                                    <Slider value={value} onChange={handleDERAllocationChange(name)} size="small" sx={{ flexGrow: 1 }} />
+                                                    <Typography variant="caption" fontWeight="medium" minWidth="35px">{value}%</Typography>
+                                                </Box>
+                                            </StyledTableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </CardContent>
+                </StyledCard>
+            </Grid>
+        </Grid>
+    </Grid>
+
+    {/* LEFT HALF: 2030 Targets Card */}
+    <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
+        <StyledCard>
+            <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">2030 TARGETS</Typography>} sx={{ textAlign: 'center', py: 1 }} />
+            <CardContent sx={{ p: '0 !important' }}>
+                <TableContainer>
+                    <Table size="small" sx={{ tableLayout: 'fixed' }}>
+                        <TableHead>
+                            <TableRow>
+                                <SubHeaderCell></SubHeaderCell>
+                                <SubHeaderCell>COUNTY</SubHeaderCell>
+                                <SubHeaderCell>STATE</SubHeaderCell>
+                                <SubHeaderCell>CORP</SubHeaderCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <TableRow>
+                                <LabelCell>Location</LabelCell>
+                                <StyledTableCell>{formatString(targets_2030?.location?.county)}</StyledTableCell>
+                                <StyledTableCell>{formatString(targets_2030?.location?.state)}</StyledTableCell>
+                                <RedCell>{formatString(targets_2030?.location?.corp)}</RedCell>
+                            </TableRow>
+                            <TableRow>
+                                <LabelCell>Penalty Rule ($/kg CO2e)</LabelCell>
+                                <StyledTableCell>{formatString(targets_2030?.penalty_rule?.county)}</StyledTableCell>
+                                <StyledTableCell>${formatString(targets_2030?.penalty_rule?.state)}kg</StyledTableCell>
+                                <StyledTableCell>{formatString(targets_2030?.penalty_rule?.corp)}</StyledTableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </CardContent>
+        </StyledCard>
+    </Grid>
+
+    {/* RIGHT HALF: Target Goals Card */}
+    <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
+        <StyledCard>
+            <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">TARGET GOALS</Typography>} sx={{ textAlign: 'center', py: 1 }} />
+            <CardContent sx={{ p: '0 !important' }}>
+                <TableContainer>
+                    <Table size="small">
+                        <TableBody>
+                            <TableRow>
+                                <StyledTableCell colSpan={4} sx={{ fontSize: '0.75rem', p: 1 }}>2030 Reduction kg CO2e goals by sector</StyledTableCell>
+                            </TableRow>
+                            <TableRow>
+                                <SubHeaderCell>Baseline CO2 (Tons)</SubHeaderCell>
+                                <SubHeaderCell>YTD</SubHeaderCell>
+                                <SubHeaderCell>Forecast</SubHeaderCell>
+                                <SubHeaderCell>Previous Year</SubHeaderCell>
+                            </TableRow>
+                            <TableRow>
+                                {/* Note: First cell is empty to align with the columns */}
+                                <LabelCell></LabelCell>
+                                <RedCell>{formatNumber(current_year_summary?.ytd_emissions)}</RedCell>
+                                <RedCell>{formatNumber(target_goals?.baseline_co2?.forecast)}</RedCell>
+                                <StyledTableCell>{formatNumber(target_goals?.baseline_co2?.previous_year)}</StyledTableCell>
+                            </TableRow>
+                            {/* <TableRow>
+                                <LabelCell>Reduction Amount</LabelCell>
+                                <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.YTD)}</StyledTableCell>
+                                <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.Forecast)}</StyledTableCell>
+                                <StyledTableCell>{formatNumber(target_goals?.["Reduction Amount"]?.["Previous Year"])}</StyledTableCell>
+                            </TableRow> */}
+                            {/* <TableRow>
+                                <TableCell colSpan={4} sx={{ p: 0.5, border: 0, borderTop: 1, borderColor: 'divider' }}></TableCell>
+                            </TableRow> */}
+                            <TableRow>
+                                <SubHeaderCell></SubHeaderCell>
+                                <SubHeaderCell>COUNTY</SubHeaderCell>
+                                <SubHeaderCell>STATE</SubHeaderCell>
+                                <SubHeaderCell>CORP</SubHeaderCell>
+                            </TableRow>
+                            <TableRow>
+                                <LabelCell>Reduction Amount</LabelCell>
+                                <StyledTableCell>{formatNumber(target_goals?.reduction_amount?.county)}</StyledTableCell>
+                                <StyledTableCell>{formatNumber(target_goals?.reduction_amount?.state)}</StyledTableCell>
+                                <StyledTableCell>{formatNumber(target_goals?.reduction_amount?.corp)}</StyledTableCell>
+                            </TableRow>
+                            <TableRow>
+                                <LabelCell>Reduction %</LabelCell>
+                                <StyledTableCell>{formatPercent(target_goals?.reduction_percentage?.county)}</StyledTableCell>
+                                <StyledTableCell>{formatPercent(target_goals?.reduction_percentage?.state)}</StyledTableCell>
+                                <RedCell>{formatPercent(target_goals?.reduction_percentage?.corp)}</RedCell>
+                            </TableRow>
+                            <TableRow>
+                                <LabelCell>Target (ON/OFF)</LabelCell>
+                                <StyledTableCell>{target_goals?.target_on_off?.county}</StyledTableCell>
+                                <StyledTableCell>{target_goals?.target_on_off?.state}</StyledTableCell>
+                                <StyledTableCell>{target_goals?.target_on_off?.corp}</StyledTableCell>
+                            </TableRow>
+                            <TableRow>
+                                <LabelCell>Action Needed</LabelCell>
+                                <RedCell>{formatBoolean(target_goals?.action_needed?.county === 'YES', true)}</RedCell>
+                                <RedCell>{formatBoolean(target_goals?.action_needed?.state === 'YES', true)}</RedCell>
+                                <RedCell>{formatBoolean(target_goals?.action_needed?.corp === 'YES', true)}</RedCell>
+                            </TableRow>
+                            <TableRow>
+                                <LabelCell>Penalty</LabelCell>
+                                <StyledTableCell>{target_goals?.penalty?.county}</StyledTableCell>
+                                <RedCell>{target_goals?.penalty?.state}</RedCell>
+                                <StyledTableCell>{target_goals?.penalty?.corp}</StyledTableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </CardContent>
+        </StyledCard>
+    </Grid>
+
+    {/* LEFT HALF: Current Year Summary Card */}
+<Grid item xs={12} md={6}>
+    <SummaryCard>
+        <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">CURRENT YEAR SUMMARY</Typography>} sx={{ textAlign: 'center', py: 1 }} />
+        <CardContent sx={{ p: '0 !important' }}>
+            <TableContainer>
+                <Table size="small" sx={{ tableLayout: 'fixed' }}>
+                    <TableBody>
+                        <TableRow>
+                            <StyledTableCell colSpan={3} sx={{ textAlign: 'right', py: 0.5 }}>YTD: {formatString(current_year_summary?.current_month)}</StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <LabelCell>YTD CO2e</LabelCell>
+                            <RedCell>{formatNumber(current_year_summary?.ytd_emissions)}</RedCell>
+                            <StyledTableCell>Metric Tons</StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <LabelCell>Current Month</LabelCell>
+                            <StyledTableCell>{formatString(current_year_summary?.current_month)}</StyledTableCell>
+                            <StyledTableCell></StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <LabelCell>Up/Down from previous month</LabelCell>
+                            <RedCell>{formatNumber(current_year_summary?.difference_from_last_month, 1)}% ({formatString(current_year_summary?.up_or_down)})</RedCell>
+                            <StyledTableCell></StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <LabelCell>Current Year CO2e Reduction Goal Amount</LabelCell>
+                            <StyledTableCell>{formatNumber(current_year_summary?.emission_reduction_goal)}</StyledTableCell>
+                            <StyledTableCell>Metric Tons</StyledTableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </CardContent>
+    </SummaryCard>
+</Grid>
+
+{/* RIGHT HALF: Emissions by Scope Card */}
+<Grid item xs={12} md={6}>
+    <StyledCard>
+        <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">EMISSIONS BY SCOPE</Typography>} sx={{ textAlign: 'center', py: 1 }}/>
+        <CardContent sx={{ p: '0 !important' }}>
+            <TableContainer>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <HeaderCell>SCOPE 1</HeaderCell>
+                            <HeaderCell>SCOPE 2</HeaderCell>
+                            <HeaderCell>SCOPE 3</HeaderCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <TableRow>
+                            <StyledTableCell>
+                                {selectedLocationData?.source === 'gas' ? 
+                                    <RedCell>{formatNumber(current_year_summary?.ytd_emissions)}</RedCell> : 
+                                    'N/A'
+                                }
+                            </StyledTableCell>
+                            <StyledTableCell>
+                                {selectedLocationData?.source === 'electric' ? 
+                                    <RedCell>{formatNumber(current_year_summary?.ytd_emissions)}</RedCell> : 
+                                    'N/A'
+                                }
+                            </StyledTableCell>
+                            <StyledTableCell>N/A</StyledTableCell>
+                        </TableRow>
+                        <TableRow>
+                            <StyledTableCell sx={{ fontSize: '0.75rem', p: 1, textAlign: 'left' }}>
+                                Direct Emissions that are owned or controlled by you. Ex. Company fleet vehicles
+                            </StyledTableCell>
+                            <StyledTableCell sx={{ fontSize: '0.75rem', p: 1, textAlign: 'left' }}>
+                                Emissions that you directly caused. Ex. Emissions from the purchase of electricity
+                            </StyledTableCell>
+                            <StyledTableCell sx={{ fontSize: '0.75rem', p: 1, textAlign: 'left' }}>
+                                Emissions products purchased by you, uses and disposes of.
+                            </StyledTableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </CardContent>
+    </StyledCard>
+</Grid>
+</Grid>
 
                     <Box mb={4}>
                         <Typography variant="h5" component="h2" textAlign="center" fontWeight="bold" mb={3} color="text.primary">EMISSIONS MONITORING</Typography>
@@ -728,7 +781,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data }) => {
                         </Fade>
                     </Modal>
 
-                    <StyledCard>
+                    {/* <StyledCard>
                         <CardHeader title={<Typography variant="subtitle2" fontWeight="bold">EMISSIONS BY SCOPE</Typography>} sx={{ textAlign: 'center', py: 1 }}/>
                         <CardContent sx={{ p: '0 !important' }}>
                             <TableContainer>
@@ -771,7 +824,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data }) => {
                                 </Table>
                             </TableContainer>
                         </CardContent>
-                    </StyledCard>
+                    </StyledCard> */}
                 
                 </Container>
             </Box>

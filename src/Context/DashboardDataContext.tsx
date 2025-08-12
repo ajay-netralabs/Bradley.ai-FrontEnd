@@ -19,15 +19,39 @@ export interface CurrentYearSummary {
 }
 
 export interface TargetGoals {
-    "Baseline CO2 (Metric Tons)": { YTD: number | null; Forecast: number | null; "Previous Year": number | null; };
-    "Reduction Amount": { YTD: number | null; Forecast: number | null; "Previous Year": number | null; };
-    "Reduction %": { county: number | null; state: number | null; corp: number | null; };
-    "Target (ON/OFF)": { county: boolean | null; state: boolean | null; corp: boolean | null; };
-    "Action Needed": { county: boolean | null; state: boolean | null; corp: boolean | null; };
-    "Penalty": { county: number | null; state: number | null; corp: number | null; };
+  baseline_co2: {
+    ytd_emissions: number | string | null;
+    forecast: number | null;
+    previous_year: number | null;
+  };
+  reduction_amount: {
+    county: number | null;
+    state: number | null;
+    corp: number | null;
+  };
+  reduction_percentage: {
+    county: number | null;
+    state: number | null;
+    corp: number | null;
+  };
+  target_on_off: {
+    county: string | null;
+    state: string | null;
+    corp: string | null;
+  };
+  action_needed: {
+    county: string | null;
+    state: string | null;
+    corp: string | null;
+  };
+  penalty: {
+    county: number | string | null;
+    state: number | string | null;
+    corp: number | string | null;
+  };
 }
 
-export interface Penalty {
+export interface Targets2030 {
     location: { county: string; state: string; corp: string; };
     penalty_rule: { county: string; state: string; corp: string; };
 }
@@ -38,7 +62,7 @@ export interface LocationData {
     emissions: EmissionDataPoint[];
     current_year_summary: CurrentYearSummary;
     target_goals?: TargetGoals;
-    penalty?: Penalty;
+    targets_2030?: Targets2030;
 }
 
 export type DashboardData = LocationData[];

@@ -71,18 +71,27 @@ export const updateFacilityAddresses = async (data: AddressData[]): Promise<void
 };
 
 // Bill Upload
-export const uploadBillData = async (Files: File[]): Promise<DashboardData | null> => {
+export const uploadBillData = async (Files: File[], sources: string[]): Promise<DashboardData | null> => {
     try {
         const uuids: string[] = globalResponse.mapping;
         const formData = new FormData();
+
+        // Append each file
         Files.forEach(file => {
             formData.append('files', file);
         });
+
+        // Append each corresponding source
+        sources.forEach(source => {
+            formData.append('sources', source);
+        });
+
+        // Append UUIDs
         uuids.forEach(uuid => {
             formData.append('uuids', uuid);
         });
 
-        console.log("Form data: ", formData);
+        console.log("Form data being sent:", formData);
 
         const response = await fetch(ENERGY_INTERVAL_DATA, {
             method: 'POST',

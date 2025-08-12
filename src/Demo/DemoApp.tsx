@@ -125,10 +125,14 @@ const AppContent: React.FC = () => {
             const gasFiles = naturalGasBillUploadState.files.filter(file => gasBillNames.has(file.name));
 
             const Files = [...electricFiles, ...gasFiles];
+            const sources = [
+                ...electricFiles.map(() => 'electric'),
+                ...gasFiles.map(() => 'gas')
+            ];
 
             setIsLoading(true);
             // The uploadBillData function is called here
-            const apiResponse = await uploadBillData(Files);
+            const apiResponse = await uploadBillData(Files, sources);
             if (apiResponse) {
                 // Set the response into the shared context
                 setDashboardData(apiResponse);
