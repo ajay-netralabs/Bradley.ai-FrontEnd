@@ -412,7 +412,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data }) => {
                         <TableBody>
                             <TableRow>
                                 <LabelCell>Location</LabelCell>
-                                <StyledTableCell>{formatString(targets_2030?.location?.county)}</StyledTableCell>
+                                <StyledTableCell>{targets_2030?.location?.county}</StyledTableCell>
                                 <StyledTableCell>{formatString(targets_2030?.location?.state)}</StyledTableCell>
                                 <RedCell>{formatString(targets_2030?.location?.corp)}</RedCell>
                             </TableRow>
@@ -494,9 +494,9 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data }) => {
                             </TableRow>
                             <TableRow>
                                 <LabelCell>Penalty</LabelCell>
-                                <StyledTableCell>{target_goals?.penalty?.county}</StyledTableCell>
-                                <RedCell>{target_goals?.penalty?.state}</RedCell>
-                                <StyledTableCell>{target_goals?.penalty?.corp}</StyledTableCell>
+                                <StyledTableCell>${formatNumber(target_goals?.penalty?.county)}</StyledTableCell>
+                                <RedCell>${formatNumber(target_goals?.penalty?.state)}</RedCell>
+                                <StyledTableCell>${formatNumber(target_goals?.penalty?.corp)}</StyledTableCell>
                             </TableRow>
                         </TableBody>
                     </Table>

@@ -45,9 +45,9 @@ export interface TargetGoals {
     corp: string | null;
   };
   penalty: {
-    county: number | string | null;
-    state: number | string | null;
-    corp: number | string | null;
+    county: number | null;
+    state: number | null;
+    corp: number | null;
   };
 }
 
