@@ -16,13 +16,11 @@ const EmissionsDashboardWrapper: React.FC = () => {
     const [socket, setSocket] = useState<WebSocket | null>(null);
     const socketRef = useRef<WebSocket | null>(null);
 
-    // State lifted from child to preserve it across re-renders
     const [dashboardState, setDashboardState] = useState<DashboardState | null>(null);
     const [isUpdating, setIsUpdating] = useState(false);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
-    // Effect to set the initial filter state
     useEffect(() => {
         if (dashboardData && !dashboardState) {
             const firstLocation = dashboardData[0]?.location || '';
@@ -40,55 +38,63 @@ const EmissionsDashboardWrapper: React.FC = () => {
         }
     }, [dashboardData, dashboardState]);
 
-    // Effect for the WebSocket connection
-    useEffect(() => {
-        if (dashboardData && !socketRef.current) {
-            const socketInstance = new WebSocket('ws://127.0.0.1:8000/ws');
-            socketRef.current = socketInstance;
+    const connect = () => {
+        if (socketRef.current && socketRef.current.readyState !== WebSocket.CLOSED) {
+            return;
+        }
 
-            socketInstance.onopen = () => {
-                console.log('WebSocket connected successfully.');
-                setSocket(socketInstance);
-            };
-            
-            socketInstance.onmessage = (event) => {
-                setIsUpdating(false); // Stop loading on any response
-                try {
-                    const receivedData = JSON.parse(event.data);
-                    if (Array.isArray(receivedData)) {
-                        setDashboardData(receivedData as DashboardData);
-                    } else {
-                        console.log('Received non-data message, ignoring:', receivedData);
-                    }
-                } catch (error) {
-                    console.error("Failed to parse incoming WebSocket message:", error);
+        const socketInstance = new WebSocket('ws://127.0.0.1:8000/ws');
+        socketRef.current = socketInstance;
+
+        socketInstance.onopen = () => {
+            console.log('WebSocket connected successfully.');
+            setSocket(socketInstance);
+        };
+
+        socketInstance.onmessage = (event) => {
+            setIsUpdating(false);
+            try {
+                const receivedData = JSON.parse(event.data);
+                if (Array.isArray(receivedData)) {
+                    setDashboardData(receivedData as DashboardData);
+                } else {
+                    console.log('Received non-data message, ignoring:', receivedData);
                 }
-            };
+            } catch (error) {
+                console.error("Failed to parse incoming WebSocket message:", error);
+            }
+        };
 
-            socketInstance.onclose = () => {
-                console.log('WebSocket disconnected.');
-                socketRef.current = null;
-                setSocket(null);
-                setIsUpdating(false);
-            };
+        socketInstance.onclose = () => {
+            console.log('WebSocket disconnected. Reconnecting...');
+            socketRef.current = null;
+            setSocket(null);
+            setIsUpdating(false);
+            connect();
+        };
 
-            socketInstance.onerror = (error) => {
-                console.error("WebSocket error:", error);
-                socketRef.current = null;
-                setSocket(null);
-                setIsUpdating(false);
-            };
+        socketInstance.onerror = (error) => {
+            console.error("WebSocket error:", error);
+            if (socketRef.current) {
+                socketRef.current.close();
+            }
+        };
+    };
+
+    useEffect(() => {
+        if (dashboardData) {
+            connect();
         }
 
         return () => {
             if (socketRef.current) {
+                socketRef.current.onclose = null; 
                 socketRef.current.close();
                 socketRef.current = null;
             }
         };
     }, [dashboardData, setDashboardData]);
 
-    // Effect for the loading message timer
     useEffect(() => {
         if (isUpdating) {
             const timer = setInterval(() => {
