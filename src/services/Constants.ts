@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export const ORGANIZATION_DATA = `${BASE_URL}/api/organization-data/`;
 export const ADDRESS_DATA = `${BASE_URL}/api/address-data/`;
