@@ -1,12 +1,36 @@
-
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Box, Typography, TextField, Button, Tooltip, IconButton, Paper } from '@mui/material';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+// ADDED: Imports for search and layer control
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap, LayersControl } from 'react-leaflet'; 
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-geosearch/dist/geosearch.css'; // ADDED: Styles for search
 import L from 'leaflet';
 import { FaMapMarkerAlt, FaTrash } from 'react-icons/fa';
 import { renderToStaticMarkup } from 'react-dom/server';
+// ADDED: Imports for search functionality
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch'; 
 import { useFacilityAddress } from '../../../../Context/Organizational Profile/SubStep2/Facility Address Context';
+import { useBillAddress } from '../../../../Context/Energy Profile/BillAddressContext';
+
+// ADDED: Helper component for the search bar
+const MapSearch = () => {
+  const map = useMap();
+  useEffect(() => {
+    const provider = new OpenStreetMapProvider();
+    const searchControl = new (GeoSearchControl as any)({
+      provider: provider,
+      style: 'button', // Using 'button' style as in the previous example
+      autoClose: true,
+      keepResult: true,
+      searchLabel: 'Enter address to search...',
+    });
+    map.addControl(searchControl);
+    return () => {
+      map.removeControl(searchControl);
+    };
+  }, [map]);
+  return null;
+};
 
 const createCustomIcon = (IconComponent: React.ElementType, color: string = '#e74c3c') => {
   const iconMarkup = renderToStaticMarkup(
@@ -53,26 +77,26 @@ const MapMarkers = ({
 
 const SubStep2 = () => {
   const { 
-    facilityAddress, 
+    facilityAddressState, 
     addAddress, 
     updateAddressField, 
     deleteAddress, 
     setSelectedAddress,
     getAddressById 
   } = useFacilityAddress();
+  const { setAddresses: setBillAddresses } = useBillAddress();
   
-  const { addresses, selectedAddressId } = facilityAddress;
+  useEffect(() => {
+    setBillAddresses(facilityAddressState.addresses.map(a => ({ id: a.id, address: `${a.streetAddress}, ${a.city}, ${a.state} ${a.zipCode}` })));
+  }, [facilityAddressState.addresses, setBillAddresses]);
+  
+  const { addresses, selectedAddressId } = facilityAddressState;
   const mapRef = useRef<L.Map | null>(null);
 
   const handleAddLocation = (position: L.LatLng) => {
     const newAddressId = addAddress({
-      streetAddress: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      position
+      streetAddress: '', city: '', state: '', zipCode: '', position
     });
-    
     handleFetchAddress(newAddressId, position);
   };
 
@@ -109,6 +133,25 @@ const SubStep2 = () => {
             background: transparent;
             border: none;
           }
+          /* --- Style overrides for leaflet-geosearch --- */
+          .leaflet-control-geosearch.bar {
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 4px;
+          }
+          .leaflet-control-geosearch.bar form input {
+            font-family: 'Nunito Sans', sans-serif;
+            font-size: 0.8rem;
+            height: 30px;
+          }
+          .leaflet-control-geosearch .results > * {
+            font-family: 'Nunito Sans', sans-serif;
+            font-size: 0.75rem;
+          }
+          .leaflet-bar a, .leaflet-bar a:hover {
+            height: 32px;
+            width: 32px;
+            line-height: 32px;
+          }
         `}
       </style>
       
@@ -118,7 +161,7 @@ const SubStep2 = () => {
 
       <Box sx={{ display: 'flex', gap: 2, p: '10px', pl: '20px', pr: '20px', height: '600px' }}>
         {/* Map Section */}
-        <Tooltip title="Click anywhere on the map to add a new location pin" placement="top" arrow>
+        <Tooltip title="Search for an address or click the map to add a new location pin" placement="top" arrow>
           <Box sx={{ flex: 1, height: '100%', border: '1px solid lightgrey', borderRadius: 1 }}>
             <MapContainer 
               center={[51.505, -0.09]} 
@@ -126,7 +169,24 @@ const SubStep2 = () => {
               style={{ height: '100%', width: '100%' }} 
               ref={mapRef}
             >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              {/* ADDED: LayersControl for map types */}
+              <LayersControl position="topright">
+                <LayersControl.BaseLayer checked name="Street View">
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  />
+                </LayersControl.BaseLayer>
+                <LayersControl.BaseLayer name="Satellite View">
+                  <TileLayer
+                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                    attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                  />
+                </LayersControl.BaseLayer>
+              </LayersControl>
+
+              {/* ADDED: Search component */}
+              <MapSearch />
               <MapMarkers
                 addresses={addresses}
                 onAddLocation={handleAddLocation}
@@ -138,12 +198,8 @@ const SubStep2 = () => {
 
         {/* Addresses List Section */}
         <Box sx={{ 
-          flex: 1, 
-          border: '1px solid lightgrey', 
-          borderRadius: 1, 
-          height: '100%', 
-          display: 'flex',
-          flexDirection: 'column'
+          flex: 1, border: '1px solid lightgrey', borderRadius: 1, height: '100%', 
+          display: 'flex', flexDirection: 'column' 
         }}>
           <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0', bgcolor: '#f5f5f5' }}>
             <Typography variant="subtitle2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 'bold' }}>
@@ -153,15 +209,10 @@ const SubStep2 = () => {
               Click on the map to add new locations
             </Typography>
           </Box>
-          
           <Box sx={{
-            flex: 1,
-            overflow: 'auto',
-            '&::-webkit-scrollbar': {
-              display: 'none'
-            },
-            '-ms-overflow-style': 'none',
-            'scrollbar-width': 'none'
+            flex: 1, overflow: 'auto',
+            '&::-webkit-scrollbar': { display: 'none' },
+            '-ms-overflow-style': 'none', 'scrollbar-width': 'none'
           }}>
             {addresses.length === 0 ? (
               <Box sx={{ p: 3, textAlign: 'center', color: '#666' }}>
@@ -174,13 +225,7 @@ const SubStep2 = () => {
                 {addresses.map((address, index) => (
                   <Paper 
                     key={address.id} 
-                    sx={{ 
-                      mb: 2, 
-                      p: 2, 
-                      border: address.id === selectedAddressId ? '2px solid #2196f3' : '1px solid #e0e0e0',
-                      cursor: 'pointer',
-                      '&:hover': { bgcolor: '#f9f9f9' }
-                    }}
+                    sx={{ mb: 2, p: 2, border: address.id === selectedAddressId ? '2px solid #2196f3' : '1px solid #e0e0e0', cursor: 'pointer', '&:hover': { bgcolor: '#f9f9f9' } }}
                     onClick={() => setSelectedAddress(address.id)}
                   >
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
@@ -189,39 +234,19 @@ const SubStep2 = () => {
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 1 }}>
                         <Tooltip title="Refetch address from map coordinates" arrow>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRefetchAddress(address.id);
-                            }}
-                            sx={{
-                              fontFamily: 'Nunito Sans, sans-serif',
-                              fontSize: '0.6rem',
-                              minWidth: '50px',
-                              padding: '2px 4px',
-                              textTransform: 'none'
-                            }}
+                          <Button size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); handleRefetchAddress(address.id); }}
+                            sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.6rem', minWidth: '50px', padding: '2px 4px', textTransform: 'none' }}
                           >
                             Refresh
                           </Button>
                         </Tooltip>
                         <Tooltip title="Delete this location" arrow>
-                          <IconButton
-                            size="small"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteAddress(address.id);
-                            }}
-                            sx={{ color: '#f44336' }}
-                          >
+                          <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleDeleteAddress(address.id); }} sx={{ color: '#f44336' }}>
                             <FaTrash size={12} />
                           </IconButton>
                         </Tooltip>
                       </Box>
                     </Box>
-
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                       {[
                         { label: "Street Address:", key: "streetAddress", placeholder: "Enter street address" },
@@ -234,27 +259,16 @@ const SubStep2 = () => {
                             {label}
                           </Typography>
                           <TextField
-                            variant="outlined"
-                            size="small"
-                            type="text"
+                            variant="outlined" size="small" type="text"
                             value={address[key as keyof typeof address]}
-                            onChange={(e) => {
-                              e.stopPropagation();
-                              updateAddressField(address.id, key as any, e.target.value);
-                            }}
+                            onChange={(e) => { e.stopPropagation(); updateAddressField(address.id, key as any, e.target.value); }}
                             placeholder={placeholder}
                             onClick={(e) => e.stopPropagation()}
-                            sx={{
-                              fontSize: '0.7rem',
-                              fontFamily: 'Nunito Sans, sans-serif',
-                              '& .MuiInputBase-root': { height: '28px', padding: '0 6px' },
-                              '& input': { padding: 0, fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' }
-                            }}
+                            sx={{ fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif', '& .MuiInputBase-root': { height: '28px', padding: '0 6px' }, '& input': { padding: 0, fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' } }}
                           />
                         </Box>
                       ))}
                     </Box>
-
                     <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid #e0e0e0' }}>
                       <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.65rem', color: '#666' }}>
                         Coordinates: {address.position.lat.toFixed(6)}, {address.position.lng.toFixed(6)}

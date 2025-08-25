@@ -157,7 +157,7 @@ const SubStep1: React.FC = () => {
   const { setCurrentStep, setCurrentSubStep } = useAppContext();
   const [expanded, setExpanded] = useState<number[]>([0, 1, 2, 3, 4]);
 
-  const { organizationDetails } = useOrganizationDetails();
+  const { organizationDetailsState } = useOrganizationDetails();
   const { annualEnergySpend } = useAnnualEnergySpend();
   const { prioritizationIState } = usePrioritizationI();
   const { budgetGoalsState } = useBudgetGoals();
@@ -175,9 +175,9 @@ const SubStep1: React.FC = () => {
   const { loaStatusState } = useLOAStatus();
 
   const orgData = [
-    { label: 'Company Name', value: organizationDetails.organizationName },
-    { label: 'Industry', value: organizationDetails.industry },
-    { label: 'Contact Email', value: organizationDetails.userEmail },
+    { label: 'Company Name', value: organizationDetailsState.organizationName },
+    { label: 'Industry', value: organizationDetailsState.industry },
+    { label: 'Contact Email', value: organizationDetailsState.userEmail },
   ];
 
   const totalAnnualSpend =

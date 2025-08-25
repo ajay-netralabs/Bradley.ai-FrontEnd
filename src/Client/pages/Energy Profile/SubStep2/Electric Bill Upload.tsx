@@ -1,17 +1,23 @@
 import React, { useRef } from 'react';
-import { Box, Typography, TextField, List, ListItem, ListItemText, IconButton, Tooltip } from '@mui/material';
+import { Box, Typography, TextField, List, ListItem, IconButton, Tooltip, Select, MenuItem, FormControl, InputLabel, Paper } from '@mui/material';
+
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useElectricBillUploadProvider } from '../../../../Context/Energy Profile/SubStep2/Electric Bill Upload Context'
+import { useElectricBillUpload } from '../../../../Context/Energy Profile/SubStep2/Electric Bill Upload Context'
+import { useBillAddress } from '../../../../Context/Energy Profile/BillAddressContext';
 
 const SubStep2: React.FC = () => {
-  const { electricBillUploadState, addFiles, removeFile, updateDateRange } = useElectricBillUploadProvider();
-  const { fileMetadata, dateRange } = electricBillUploadState;
+  const { addFiles, removeFile } = useElectricBillUpload();
+  const { bills, addBill, removeBill: removeBillFromContext, addresses, assignAddressToBill, updateBillDateRange } = useBillAddress();
+  const electricBills = bills.filter(b => b.type === 'electric');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = event.target.files;
     if (newFiles) {
+      Array.from(newFiles).forEach(file => {
+        addBill({ name: file.name, size: formatFileSize(file.size), type: 'electric' });
+      });
       addFiles(Array.from(newFiles));
     }
   };
@@ -24,6 +30,9 @@ const SubStep2: React.FC = () => {
     event.preventDefault();
     const newFiles = event.dataTransfer.files;
     if (newFiles) {
+      Array.from(newFiles).forEach(file => {
+        addBill({ name: file.name, size: formatFileSize(file.size), type: 'electric' });
+      });
       addFiles(Array.from(newFiles));
     }
   };
@@ -32,13 +41,18 @@ const SubStep2: React.FC = () => {
     fileInputRef.current?.click();
   };
 
-  // const formatFileSize = (bytes: number) => {
-  //   if (bytes === 0) return '0 Bytes';
-  //   const k = 1024;
-  //   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  //   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  //   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  // };
+  const handleRemoveFile = (billId: string, fileName: string) => {
+    removeFile(fileName);
+    removeBillFromContext(billId);
+  };
+
+  const formatFileSize = (bytes: number) => {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -52,42 +66,7 @@ const SubStep2: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
           <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', mb: 0, textAlign: 'center' }}><b>Bradley will extract the expense, usage (kW demand and kWh usage), tax, tariff and other data from your uploaded utility bills for the technical and financial modeling algorithms.</b></Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1.5 }}>
-            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.25 }}><b>Data Range (Optional):</b></Typography>
-            <Tooltip title="Start date" placement='top-start' arrow>
-              <TextField
-                variant="outlined"
-                size="small"
-                type="date"
-                value={dateRange.start}
-                onChange={(e) => updateDateRange({ start: e.target.value })}
-                sx={{
-                  flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
-                  fontSize: '0.7rem',
-                  '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-                  '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }
-                }}
-              />
-            </Tooltip>
-            to
-            <Tooltip title="End date" placement='top-end' arrow>
-              <TextField
-                variant="outlined"
-                size="small"
-                type="date"
-                value={dateRange.end}
-                onChange={(e) => updateDateRange({ end: e.target.value })}
-                sx={{
-                  flex: 0.75, fontFamily: 'Nunito Sans, sans-serif',
-                  fontSize: '0.7rem',
-                  '& .MuiInputBase-root': { height: '40px', padding: '0 6px' },
-                  '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }
-                }}
-              />
-            </Tooltip>
-          </Box>
-          <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', mb: 0, textAlign: 'right' }}><b>*</b>Minimum of 12 months of data/24+ months for optimal results.</Typography>
-
+          
           <input
             type="file"
             multiple
@@ -95,6 +74,7 @@ const SubStep2: React.FC = () => {
             onChange={handleFileChange}
             ref={fileInputRef}
             style={{ display: 'none' }}
+            
           />
 
           <Tooltip title="Click to upload files here." placement='top-start' arrow>
@@ -109,8 +89,9 @@ const SubStep2: React.FC = () => {
                 mt: 1.5,
                 justifyContent: 'center',
                 cursor: 'pointer',
+                backgroundColor: 'transparent',
                 '&:hover': {
-                  borderColor: 'primary.main',
+                  borderColor: /* allAddressesAssigned ? 'grey' : */ 'primary.main',
                 }
               }}
               onClick={handleUploadBoxClick}
@@ -124,29 +105,135 @@ const SubStep2: React.FC = () => {
 
           <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', mb: 0, textAlign: 'right' }}><b>*</b>Accepted File Formats: .xls, .xlsx, .csv</Typography>
 
-          {fileMetadata.length > 0 && (
-            <Box sx={{ mt: 2 }}>
-              <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif', mb: 1, fontWeight: 'bold' }}>Uploaded Files:</Typography>
-              <List dense>
-                {fileMetadata.map((file, index) => (
+          {electricBills.length > 0 && (
+            <Paper elevation={2} sx={{ mt: 2, p: 2 }}>
+              <Typography sx={{ fontSize: '0.85rem', fontFamily: 'Nunito Sans, sans-serif', mb: 1, fontWeight: 'bold' }}>Uploaded Files:</Typography>
+              <List dense sx={{ p: 0 }}>
+                {electricBills.map((bill) => (
                   <ListItem
-                    key={index}
-                    secondaryAction={
-                      <IconButton edge="end" aria-label="delete" onClick={() => removeFile(file.name)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    }
+                    key={bill.id}
+                    sx={{  
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      py: 2,
+                      px: 1,
+                      gap: 4, // Add gap between file info and controls
+                      borderBottom: '1px solid #eee',
+                      '&:last-child': { borderBottom: 'none' },
+                    }}
                   >
-                    <ListItemText
-                      primary={file.name}
-                      secondary={file.size}
-                      primaryTypographyProps={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' }}
-                      secondaryTypographyProps={{ fontSize: '0.65rem', fontFamily: 'Nunito Sans, sans-serif' }}
-                    />
+                    {/* Left side: File info */}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: '250px', flexShrink: 0 }}>
+                      
+                      {/* Top section for File Info. */}
+                      <Box sx={{ 
+                        height: '40px', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        justifyContent: 'center', 
+                        mb: 1.5 /* This should match the gap on the right side */ 
+                      }}>
+                        <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600, wordBreak: 'break-all' }}>
+                          {bill.name}
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif', color: 'text.secondary' }}>
+                          {bill.size}
+                        </Typography>
+                      </Box>
+                    
+                      {/* Bottom section for the Date Range Label. */}
+                      <Box sx={{ height: '40px', display: 'flex', alignItems: 'center' }}>
+                          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 600 }}>
+                              Data Range (Optional):
+                          </Typography>
+                      </Box>
+                    
+                    </Box>
+
+                    {/* Right side: All controls grouped together */}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, width: '100%' }}>
+                        {/* Row 1: Dropdowns and Delete Icon */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3.3 }}>
+                            <FormControl sx={{ width: '180px' }} size="small">
+                                <InputLabel sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>Address</InputLabel>
+                                                                <Select
+                                    value={bill.addressId || ''}
+                                    onChange={(e) => assignAddressToBill(bill.id, e.target.value as string)}
+                                    label="Address"
+                                    sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
+                                >
+                                    {addresses.map(address => (
+                                    <MenuItem  
+                                        key={address.id}  
+                                        value={address.id}  
+                                        sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
+                                    >
+                                        {address.address}
+                                    </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            
+                            <FormControl sx={{ width: '180px' }} size="small">
+                                <InputLabel sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>Sub-Region</InputLabel>
+                                <Select
+                                    value=""
+                                    label="Sub-Region"
+                                    sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
+                                    disabled
+                                >
+                                </Select>
+                            </FormControl>
+                            <IconButton  
+                                aria-label="delete"  
+                                onClick={() => handleRemoveFile(bill.id, bill.name)}
+                            >
+                                <DeleteIcon />
+                            </IconButton>
+                        </Box>
+
+                        {/* Row 2: Date range */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Tooltip title="Start date" placement='top-start' arrow>
+                            <TextField
+                                variant="outlined"
+                                size="small"
+                                type="date"
+                                value={bill.dateRange.start}
+                                onChange={(e) => updateBillDateRange(bill.id, { ...bill.dateRange, start: e.target.value })}
+                                sx={{
+                                width: '180px',
+                                '& .MuiInputBase-root': { height: '40px' },
+                                '& input': { padding: '8px', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }
+                                }}
+                            />
+                            </Tooltip>
+                            <Typography sx={{ mx: -1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>to</Typography>
+                            <Tooltip title="End date" placement='top-end' arrow>
+                            <TextField
+                                variant="outlined"
+                                size="small"
+                                type="date"
+                                value={bill.dateRange.end}
+                                onChange={(e) => updateBillDateRange(bill.id, { ...bill.dateRange, end: e.target.value })}
+                                sx={{
+                                width: '180px',
+                                '& .MuiInputBase-root': { height: '40px' },
+                                '& input': { padding: '8px', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }
+                                }}
+                            />
+                            </Tooltip>
+                        </Box>
+                        
+                        {/* Row 3: Helper Text */}
+                        <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', textAlign: 'left', mt: 0.01 }}>
+                            <b>**</b>Minimum of 12 months of data/24+ months for optimal results.
+                        </Typography>
+                    </Box>
                   </ListItem>
                 ))}
               </List>
-            </Box>
+            </Paper>
           )}
 
           <Typography sx={{ mt: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 1 }}><i><b>*</b>To accurately develop the <b>DER</b>, <b>Bradley</b> will need you to approve the <b>LOA</b>. The <b>LOA</b> allows <b>Bradley</b> to directly pull the demand/usage data of your <b>Electric Load Profile</b>, providing critical energy use details that will increase the accuracy of the <b>DER</b> solution.</i></Typography>

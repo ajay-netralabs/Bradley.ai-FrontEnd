@@ -5,28 +5,24 @@ import Cookies from 'js-cookie';
 interface FileMetadata {
   name: string;
   size: string; // Stored as a formatted string e.g., "1.23 MB"
+  dateRange: { start: string; end: string };
 }
 
 // Main state interface
 interface ElectricBillUploadState {
   fileMetadata: FileMetadata[];
-  dateRange: {
-    start: string;
-    end: string;
-  };
+  files: File[]; // Add files here
 }
 
 interface ElectricBillUploadContextType {
   electricBillUploadState: ElectricBillUploadState;
   addFiles: (newFiles: File[]) => void;
   removeFile: (fileName: string) => void;
-  updateDateRange: (range: Partial<ElectricBillUploadState['dateRange']>) => void;
 }
 
 const ElectricBillUploadContext = createContext<ElectricBillUploadContextType | undefined>(undefined);
 
-// Changed hook name to match convention
-export const useElectricBillUploadProvider = () => {
+export const useElectricBillUpload = () => {
   const context = useContext(ElectricBillUploadContext);
   if (!context) {
     throw new Error('useElectricBillUpload must be used within an ElectricBillUploadProvider');
@@ -36,7 +32,7 @@ export const useElectricBillUploadProvider = () => {
 
 const defaultState: ElectricBillUploadState = {
   fileMetadata: [],
-  dateRange: { start: '', end: '' },
+  files: [],
 };
 
 // Helper function to format file size
@@ -51,28 +47,35 @@ const formatFileSize = (bytes: number): string => {
 export const ElectricBillUploadProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [electricBillUploadState, setElectricBillUploadState] = useState<ElectricBillUploadState>(() => {
     const savedState = Cookies.get('electricBillUploadState');
-    return savedState ? JSON.parse(savedState) : defaultState;
+    const initialState = savedState ? JSON.parse(savedState) : defaultState;
+    initialState.files = []; // Ensure files are not persisted
+    return initialState;
   });
 
   useEffect(() => {
-    // Only fileMetadata and dateRange are in state, so the whole object is safe to save.
-    Cookies.set('electricBillUploadState', JSON.stringify(electricBillUploadState));
+    const stateToSave = { ...electricBillUploadState, files: undefined };
+    Cookies.set('electricBillUploadState', JSON.stringify(stateToSave));
   }, [electricBillUploadState]);
 
   const addFiles = (newFiles: File[]) => {
     setElectricBillUploadState(prevState => {
       const newMetadata = newFiles.map(file => ({ 
         name: file.name, 
-        size: formatFileSize(file.size) // Store size as formatted text
+        size: formatFileSize(file.size),
+        dateRange: { start: '', end: '' }
       }));
       
       const uniqueNewMetadata = newMetadata.filter(
         nm => !prevState.fileMetadata.some(em => em.name === nm.name)
       );
+      const uniqueNewFiles = newFiles.filter(
+        nf => !prevState.files.some(ef => ef.name === nf.name)
+      );
       
       return {
         ...prevState,
         fileMetadata: [...prevState.fileMetadata, ...uniqueNewMetadata],
+        files: [...prevState.files, ...uniqueNewFiles],
       };
     });
   };
@@ -81,18 +84,12 @@ export const ElectricBillUploadProvider: React.FC<{ children: ReactNode }> = ({ 
     setElectricBillUploadState(prevState => ({
       ...prevState,
       fileMetadata: prevState.fileMetadata.filter(meta => meta.name !== fileName),
-    }));
-  };
-  
-  const updateDateRange = (range: Partial<ElectricBillUploadState['dateRange']>) => {
-    setElectricBillUploadState(prevState => ({
-      ...prevState,
-      dateRange: { ...prevState.dateRange, ...range },
+      files: prevState.files.filter(file => file.name !== fileName),
     }));
   };
 
   return (
-    <ElectricBillUploadContext.Provider value={{ electricBillUploadState, addFiles, removeFile, updateDateRange }}>
+    <ElectricBillUploadContext.Provider value={{ electricBillUploadState, addFiles, removeFile }}>
       {children}
     </ElectricBillUploadContext.Provider>
   );
