@@ -14,9 +14,6 @@ import Sidebar from './components/Sidebar';
 import Footer from '../components/Footer';
 import ChatBot from '../components/ChatBot';
 
-// Import the EmissionsDashboard component
-// import EmissionsDashboard from './pages/Demo/SubStep1/EmissionsDashboard';
-
 // Feature Contexts
 import { OrganizationDetailsProvider, useOrganizationDetails } from '../Context/Organizational Profile/SubStep2/Organization Details Context';
 import { FacilityAddressProvider, useFacilityAddress } from '../Context/Organizational Profile/SubStep2/Facility Address Context';
@@ -46,8 +43,8 @@ const AppContent: React.FC = () => {
         logout,
     } = useAppContext();
 
-    // Use the dashboard context
-    const { /* dashboardData, */ setDashboardData, isLoading, setIsLoading } = useDashboardData();
+    // CORRECTED: Removed `setUuids` as it's no longer provided by the context
+    const { setDashboardData, isLoading, setIsLoading } = useDashboardData();
 
     const { organizationDetailsState } = useOrganizationDetails();
     const { facilityAddressState } = useFacilityAddress();
@@ -56,8 +53,8 @@ const AppContent: React.FC = () => {
     const { bills, isNextDisabled } = useBillAddress();
 
     const navigate = useNavigate();
-
     const [organizationId, setOrganizationId] = useState<string | null>(null);
+    const [addressUuidMap, setAddressUuidMap] = useState<{ [key: string]: string }>({});
 
     const markVisited = (step: number, subStep: number) => {
         setVisitedSteps((prev) => {
@@ -101,10 +98,9 @@ const AppContent: React.FC = () => {
             setIsLoading(true);
             const orgId = await updateOrganizationDetails(organizationDetailsState);
             if (orgId) {
-                setOrganizationId(orgId); // Store the returned ID
+                setOrganizationId(orgId);
             } else {
                 console.error("Failed to retrieve organization ID.");
-                // Optionally handle the error, e.g., show a user notification
             }
             setIsLoading(false);
         }
@@ -112,53 +108,64 @@ const AppContent: React.FC = () => {
         if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 1) {
             if (!organizationId) {
                 console.error("Organization ID not found. Cannot update addresses.");
-                return; // Prevent proceeding without the ID
+                return;
             }
-            
-            // Map addresses to the new payload, adding organizationId and removing the client-side id
             const addressesPayload = facilityAddressState.addresses.map(({ id, ...address }) => ({
                 ...address,
                 organizationId: organizationId,
             }));
-
             setIsLoading(true);
-            await updateFacilityAddresses(addressesPayload);
+            const response = await updateFacilityAddresses(addressesPayload);
+            if (response && response.facility_ids) {
+                const newMap: { [key: string]: string } = {};
+                facilityAddressState.addresses.forEach((address, index) => {
+                    newMap[address.id] = response.facility_ids[index];
+                });
+                setAddressUuidMap(newMap);
+            } else {
+                console.error("Failed to retrieve facility address mapping.");
+            }
             setIsLoading(false);
         }
 
         if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6) {
             const billsWithAddress = bills.filter(bill => bill.addressId);
-
-            const electricBillMetadataList: BillMetadata[] = billsWithAddress
-                .filter(bill => bill.type === 'electric')
-                .map(bill => ({ ...bill, size: bill.size.toString(), addressId: bill.addressId! }));
-
-            const gasBillMetadataList: BillMetadata[] = billsWithAddress
-                .filter(bill => bill.type === 'gas')
-                .map(bill => ({ ...bill, size: bill.size.toString(), addressId: bill.addressId! }));
-
+            const electricBillMetadataList: BillMetadata[] = billsWithAddress.filter(bill => bill.type === 'electric').map(bill => ({ ...bill, size: bill.size.toString(), addressId: bill.addressId! }));
+            const gasBillMetadataList: BillMetadata[] = billsWithAddress.filter(bill => bill.type === 'gas').map(bill => ({ ...bill, size: bill.size.toString(), addressId: bill.addressId! }));
             const electricBillNames = new Set(electricBillMetadataList.map(bill => bill.name));
             const electricFiles = electricBillUploadState.files.filter(file => electricBillNames.has(file.name));
-
             const gasBillNames = new Set(gasBillMetadataList.map(bill => bill.name));
             const gasFiles = naturalGasBillUploadState.files.filter(file => gasBillNames.has(file.name));
-
             const Files = [...electricFiles, ...gasFiles];
-            const sources = [
-                ...electricFiles.map(() => 'electric'),
-                ...gasFiles.map(() => 'gas')
-            ];
+            const sources = [...electricFiles.map(() => 'electric'), ...gasFiles.map(() => 'gas')];
+            const allBillMetadata = [...electricBillMetadataList, ...gasBillMetadataList];
+            const fileToMetadataMap = new Map<string, BillMetadata>();
+            allBillMetadata.forEach(meta => fileToMetadataMap.set(meta.name, meta));
+            const uuidsForUpload = Files.map(file => {
+                const metadata = fileToMetadataMap.get(file.name);
+                if (metadata && metadata.addressId) {
+                    return addressUuidMap[metadata.addressId]; 
+                }
+                return null;
+            }).filter((uuid): uuid is string => uuid !== null);
+
+            if (uuidsForUpload.length !== Files.length) {
+                console.error("Could not map a UUID to every file. Aborting upload.");
+                setIsLoading(false);
+                return;
+            }
 
             setIsLoading(true);
-            // The uploadBillData function is called here
-            const apiResponse = await uploadBillData(Files, sources);
-            if (apiResponse) {
-                // Set the response into the shared context
+            const apiResponse = await uploadBillData(Files, sources, uuidsForUpload);
+
+            // CORRECTED: The logic for setting UUIDs is removed.
+            if (apiResponse && Array.isArray(apiResponse) && apiResponse.length > 0) {
                 setDashboardData(apiResponse);
+                // The 'setUuids' call is no longer needed and has been removed.
             } else {
-                // Handle the error case, maybe show a notification
-                console.error("Failed to get dashboard data.");
-                setDashboardData(null); // Clear any old data
+                console.error("Failed to get valid dashboard data from API response.");
+                setDashboardData(null);
+                 // The 'setUuids' call is no longer needed and has been removed.
             }
             setIsLoading(false);
         }
@@ -166,7 +173,6 @@ const AppContent: React.FC = () => {
         if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 2) {
             markCompleted(0, 0);
             const hasFiles = electricBillUploadState.fileMetadata.length > 0;
-
             if (hasFiles) {
                 setCurrentStep(0);
                 setCurrentSubStep(0);
@@ -201,7 +207,6 @@ const AppContent: React.FC = () => {
     const handleBack = () => {
         if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6) {
             const hasFiles = electricBillUploadState.fileMetadata.length > 0;
-
             if (hasFiles) {
                 setCurrentStep(0);
                 setCurrentSubStep(0);
@@ -236,50 +241,34 @@ const AppContent: React.FC = () => {
     };
 
     const loadingMessages = [
-    "Analyzing your energy consumption patterns...",
-    "Did you know? Switching to LED bulbs can reduce energy use by 75%.",
-    "Calculating your carbon footprint based on utility data...",
-    "Compiling your emissions report...",
-    "Renewable energy sources like solar and wind are key to a sustainable future.",
-    "Optimizing recommendations for Distributed Energy Resources (DERs)..."
-];
+        "Analyzing your energy consumption patterns...",
+        "Did you know? Switching to LED bulbs can reduce energy use by 75%.",
+        "Calculating your carbon footprint based on utility data...",
+        "Compiling your emissions report...",
+        "Renewable energy sources like solar and wind are key to a sustainable future.",
+        "Optimizing recommendations for Distributed Energy Resources (DERs)..."
+    ];
 
-const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+    const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
-useEffect(() => {
-    if (isLoading) {
-        const timer = setInterval(() => {
-            setLoadingMessageIndex(prevIndex => 
-                (prevIndex + 1) % loadingMessages.length
-            );
-        }, 3000); // Change message every 3 seconds
-
-        return () => clearInterval(timer); // Cleanup the timer
-    }
-}, [isLoading]);
-
-    // Check if we should show the dashboard instead of the stepper
-    // const shouldShowDashboard = dashboardData && dashboardData.length > 0;
+    useEffect(() => {
+        if (isLoading) {
+            const timer = setInterval(() => {
+                setLoadingMessageIndex(prevIndex => (prevIndex + 1) % loadingMessages.length);
+            }, 3000);
+            return () => clearInterval(timer);
+        }
+    }, [isLoading]);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', zIndex: 500 }}>
             <Backdrop
-    sx={{ 
-        color: '#fff', 
-        zIndex: (theme) => theme.zIndex.drawer + 1, 
-        position: 'absolute', 
-        backdropFilter: 'blur(3px)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2
-    }}
-    open={isLoading}
->
-    <CircularProgress color="inherit" />
-    <Typography variant="h6" sx={{ fontFamily: 'Nunito Sans, sans-serif' }}>
-        {loadingMessages[loadingMessageIndex]}
-    </Typography>
-</Backdrop>
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, position: 'absolute', backdropFilter: 'blur(3px)', display: 'flex', flexDirection: 'column', gap: 2 }}
+                open={isLoading}
+            >
+                <CircularProgress color="inherit" />
+                <Typography variant="h6" sx={{ fontFamily: 'Nunito Sans, sans-serif' }}>{loadingMessages[loadingMessageIndex]}</Typography>
+            </Backdrop>
             <Navbar />
             <Box sx={{ display: 'flex', flexGrow: 1, mt: '64px', width: '100vw' }}>
                 <Box sx={{ width: '210px', flexShrink: 0 }}>
@@ -290,44 +279,31 @@ useEffect(() => {
                         <Box sx={{ flexGrow: 1 }}>
                             <HorizontalStepper currentSubStep={currentSubStep} totalSubSteps={steps[currentStep]?.subSteps} visitedSteps={visitedSteps[currentStep]} completedSubSteps={completedSubSteps[currentStep]} onSubStepChange={handleSubStepChange} currentStep={currentStep} />
                             <LinearProgress variant="determinate" value={calculateProgress()} sx={{ width: 'calc(100% + 16px)', height: '3.5px', margin: '0px -16px', mt: '30px', mb: '10px', backgroundColor: '#e0e0e0', '& .MuiLinearProgress-bar': { backgroundColor: '#036cc1' } }} />
-                            {/* {shouldShowDashboard ? (
-                                <EmissionsDashboard data={dashboardData} />
-                            ) : (
-                                <> */}
-                                    <StepContent step={currentStep} subStep={currentSubStep} furtherSubStep={currentFurtherSubStep} />
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3, mr: 5.2, ml: 1, mb: 1 }}>
-                                        {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
-                                            <Tooltip title="Navigate to previous step" placement='bottom' arrow>
-                                                <Button variant="outlined" onClick={handleBack} disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 0} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Back</Button>
-                                            </Tooltip>
-                                        )}
-                                        <Box sx={{ display: 'flex', gap: 1, ml: 'auto' }}>
-                                            {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
-                                                <Tooltip title="Save progress and log out" placement='bottom' arrow>
-                                                    <Button variant="outlined" onClick={handleSaveAndContinueLater} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Save and Continue Later</Button>
-                                                </Tooltip>
-                                            )}
-                                            <Tooltip title={(currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()) ? "You haven't uploaded bills for all addresses. Upload atleast one bill for every address first." : "Navigate to next step"} placement='bottom' arrow>
-                                                <span>
-                                                    <Button variant="contained" color="primary" onClick={handleNext} disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', boxShadow: 'none', '&:focus': { outline: 'none' } }}>
-                                                        {currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2 ? (
-                                                            "Generate Report"
-                                                        ) : currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? (
-                                                            "Download Report"
-                                                        ) : currentStep === 1 && currentSubStep === 1 && currentFurtherSubStep === 2 ? (
-                                                            "Authorize & Send Request"
-                                                        ) : currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0 ? (
-                                                            "Submit"
-                                                        ) : (
-                                                            "Next"
-                                                        )}
-                                                    </Button>
-                                                </span>
-                                            </Tooltip>
-                                        </Box>
-                                    </Box>
-                                {/* </>
-                            )} */}
+                            <StepContent step={currentStep} subStep={currentSubStep} furtherSubStep={currentFurtherSubStep} />
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3, mr: 5.2, ml: 1, mb: 1 }}>
+                                {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
+                                    <Tooltip title="Navigate to previous step" placement='bottom' arrow>
+                                        <Button variant="outlined" onClick={handleBack} disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 0} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Back</Button>
+                                    </Tooltip>
+                                )}
+                                <Box sx={{ display: 'flex', gap: 1, ml: 'auto' }}>
+                                    {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
+                                        <Tooltip title="Save progress and log out" placement='bottom' arrow>
+                                            <Button variant="outlined" onClick={handleSaveAndContinueLater} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Save and Continue Later</Button>
+                                        </Tooltip>
+                                    )}
+                                    <Tooltip title={(currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()) ? "You haven't uploaded bills for all addresses. Upload atleast one bill for every address first." : "Navigate to next step"} placement='bottom' arrow>
+                                        <span>
+                                            <Button variant="contained" color="primary" onClick={handleNext} disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', boxShadow: 'none', '&:focus': { outline: 'none' } }}>
+                                                {currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2 ? ("Generate Report") :
+                                                 currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? ("Download Report") :
+                                                 currentStep === 1 && currentSubStep === 1 && currentFurtherSubStep === 2 ? ("Authorize & Send Request") :
+                                                 currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0 ? ("Submit") : ("Next")}
+                                            </Button>
+                                        </span>
+                                    </Tooltip>
+                                </Box>
+                            </Box>
                         </Box>
                     </Box>
                     <ChatBot />
