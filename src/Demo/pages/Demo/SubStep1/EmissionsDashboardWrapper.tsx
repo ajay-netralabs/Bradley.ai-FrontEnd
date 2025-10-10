@@ -49,7 +49,7 @@ const EmissionsDashboardWrapper: React.FC = () => {
         const connect = () => {
             if (socketRef.current || connectAttempts >= maxConnectAttempts) return;
 
-            const socketInstance = new WebSocket('ws://bradley-emission.onrender.com/ws');
+            const socketInstance = new WebSocket('wss://bradley-emission.onrender.com/ws');
             socketRef.current = socketInstance;
 
             socketInstance.onopen = () => {
