@@ -13,6 +13,7 @@ import Navbar from '../components/Navbar';
 import Sidebar from './components/Sidebar';
 import Footer from '../components/Footer';
 import ChatBot from '../components/ChatBot';
+import ApiPrePinger from './components/ApiPrePinger';
 
 // Feature Contexts
 import { OrganizationDetailsProvider, useOrganizationDetails } from '../Context/Organizational Profile/SubStep2/Organization Details Context';
@@ -42,8 +43,7 @@ const AppContent: React.FC = () => {
         completedSubSteps, setCompletedSubSteps,
         logout,
     } = useAppContext();
-
-    // CORRECTED: Removed `setUuids` as it's no longer provided by the context
+    
     const { setDashboardData, isLoading, setIsLoading } = useDashboardData();
 
     const { organizationDetailsState } = useOrganizationDetails();
@@ -73,7 +73,7 @@ const AppContent: React.FC = () => {
             return newCompleted;
         });
     };
-    
+
     const handleStepChange = (step: number) => {
         if (visitedSteps[step]?.[0]) {
             setCurrentStep(step);
@@ -96,11 +96,14 @@ const AppContent: React.FC = () => {
 
         if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 0) {
             setIsLoading(true);
-            const orgId = await updateOrganizationDetails(organizationDetailsState);
-            if (orgId) {
+            try {
+                const orgId = await updateOrganizationDetails(organizationDetailsState);
                 setOrganizationId(orgId);
-            } else {
-                console.error("Failed to retrieve organization ID.");
+            } catch (error: any) {
+                console.error("Failed to update organization details:", error);
+                window.alert(`Failed to save organization details. Server responded with: "${error.message}". Please try again.`);
+                setIsLoading(false);
+                return; 
             }
             setIsLoading(false);
         }
@@ -115,19 +118,23 @@ const AppContent: React.FC = () => {
                 organizationId: organizationId,
             }));
             setIsLoading(true);
-            const response = await updateFacilityAddresses(addressesPayload);
-            if (response && response.facility_ids) {
+            try {
+                const response = await updateFacilityAddresses(addressesPayload);
                 const newMap: { [key: string]: string } = {};
                 facilityAddressState.addresses.forEach((address, index) => {
                     newMap[address.id] = response.facility_ids[index];
                 });
                 setAddressUuidMap(newMap);
-            } else {
-                console.error("Failed to retrieve facility address mapping.");
+            } catch (error: any) {
+                console.error("Failed to update facility addresses:", error);
+                window.alert(`Failed to save facility addresses. Server responded with: "${error.message}". Please try again.`);
+                setIsLoading(false);
+                return;
             }
             setIsLoading(false);
         }
 
+        // CORRECT: Added error handling for the bill upload API call
         if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6) {
             const billsWithAddress = bills.filter(bill => bill.addressId);
             const electricBillMetadataList: BillMetadata[] = billsWithAddress.filter(bill => bill.type === 'electric').map(bill => ({ ...bill, size: bill.size.toString(), addressId: bill.addressId! }));
@@ -151,21 +158,25 @@ const AppContent: React.FC = () => {
 
             if (uuidsForUpload.length !== Files.length) {
                 console.error("Could not map a UUID to every file. Aborting upload.");
+                window.alert("An internal error occurred: Could not map a facility to every file. Please review your uploads.");
                 setIsLoading(false);
                 return;
             }
 
             setIsLoading(true);
-            const apiResponse = await uploadBillData(Files, sources, uuidsForUpload);
-
-            // CORRECTED: The logic for setting UUIDs is removed.
-            if (apiResponse && Array.isArray(apiResponse) && apiResponse.length > 0) {
-                setDashboardData(apiResponse);
-                // The 'setUuids' call is no longer needed and has been removed.
-            } else {
-                console.error("Failed to get valid dashboard data from API response.");
-                setDashboardData(null);
-                 // The 'setUuids' call is no longer needed and has been removed.
+            try {
+                const apiResponse = await uploadBillData(Files, sources, uuidsForUpload);
+                if (apiResponse && Array.isArray(apiResponse) && apiResponse.length > 0) {
+                    setDashboardData(apiResponse);
+                } else {
+                    // Throw an error if the response is not what we expect
+                    throw new Error("API returned invalid or empty dashboard data.");
+                }
+            } catch (error: any) {
+                console.error("Failed to upload bill data:", error);
+                window.alert(`Failed to process your energy bills. Server responded with: "${error.message}". Please try again.`);
+                setIsLoading(false);
+                return; // Stay on the current step
             }
             setIsLoading(false);
         }
@@ -263,12 +274,13 @@ const AppContent: React.FC = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', zIndex: 500 }}>
             <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, position: 'absolute', backdropFilter: 'blur(3px)', display: 'flex', flexDirection: 'column', gap: 2 }}
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 2, position: 'absolute', backdropFilter: 'blur(3px)', display: 'flex', flexDirection: 'column', gap: 2 }}
                 open={isLoading}
             >
                 <CircularProgress color="inherit" />
                 <Typography variant="h6" sx={{ fontFamily: 'Nunito Sans, sans-serif' }}>{loadingMessages[loadingMessageIndex]}</Typography>
             </Backdrop>
+
             <Navbar />
             <Box sx={{ display: 'flex', flexGrow: 1, mt: '64px', width: '100vw' }}>
                 <Box sx={{ width: '210px', flexShrink: 0 }}>
@@ -317,6 +329,7 @@ const AppContent: React.FC = () => {
 const DemoApp: React.FC = () => {
     return (
         <AppProvider steps={steps} appPrefix="demo">
+            <ApiPrePinger />
             <DashboardDataProvider>
                 <OrganizationDetailsProvider>
                     <FacilityAddressProvider>
