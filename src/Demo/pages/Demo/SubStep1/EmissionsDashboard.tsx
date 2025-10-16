@@ -2,11 +2,12 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
     Box, Typography, Card, styled, CardContent, Paper, Tabs, Tab, FormControl,
     Select, MenuItem, Slider, Button, Grid, Table, TableBody, TableCell,
-    TableContainer, TableRow, TableHead
+    TableContainer, TableRow, TableHead, Modal, IconButton, Stack
 } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts';
+import { HelpOutline, Close } from '@mui/icons-material';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend, Cell } from 'recharts';
 
-// --- TYPE DEFINITIONS for the FINAL Backend Data Structure ---
+// --- TYPE DEFINITIONS ---
 interface DashboardData {
     file_id: string;
     source: string;
@@ -17,13 +18,11 @@ interface DashboardData {
     monthly_tracking: { target_per_month: number; with_bradley_der_per_month: number; monthly_emissions: { month: string; year: number | string; actual: number | null; projected: number | null; }[]; };
     action_center: {
         recommended_solution: { title: string; components: { type: string; size: string; }[]; investment_usd: number; payback_years: number; eliminates_penalties: boolean; };
-        alternatives?: { title: string; investment_usd: number; reduction_pct: number; estimated_penalties_remaining_usd_per_year?: number; }[];
+        alternatives?: { title: string; investment_usd: number; reduction_pct: number; estimated_penalties_remaining_usd_per_year?: number; carbon_negative_by_year?: number; }[];
     };
 }
 
 // --- STYLED COMPONENTS ---
-// --- STYLED COMPONENTS ---
-
 const StyledTitle = styled(Typography)(({ theme }) => ({
     fontFamily: 'Nunito Sans, sans-serif', fontSize: '2rem', fontWeight: 'bold',
     textAlign: 'center', marginBottom: theme.spacing(1),
@@ -51,8 +50,24 @@ const BenefitDescription = styled(Typography)(({ theme }) => ({
     position: 'relative', zIndex: 2, lineHeight: 1.5,
 }));
 
-interface BenefitData { value: string; title: string; description: React.ReactNode; watermark: string; }
+const ModalBox = styled(Box)(({ theme }) => ({
+    position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+    width: 500, backgroundColor: 'white', border: '1px solid #ddd',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.1)', borderRadius: '12px', padding: theme.spacing(3),
+}));
 
+const StyledTabPanelBox = styled(Box)(({ theme }) => ({ position: 'relative', padding: theme.spacing(2), backgroundColor: theme.palette.grey[100], borderRadius: theme.shape.borderRadius }));
+
+interface TabPanelProps { children?: React.ReactNode; index: number; value: number; }
+const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => ( <div role="tabpanel" hidden={value !== index}>{value === index && <Box sx={{ p: 3 }}>{children}</Box>}</div> );
+
+// --- HELPER FUNCTIONS & DATA ---
+const formatValue = (value?: number | string | null, type: 'number' | 'currency' | 'percent' = 'number'): string => { if (value === null || value === undefined || value === "") return 'N/A'; const num = typeof value === 'string' ? parseFloat(value) : value; if (isNaN(num)) return 'N/A'; const options: Intl.NumberFormatOptions = { maximumFractionDigits: 2 }; if (type === 'currency') { options.style = 'currency'; options.currency = 'USD'; } if (type === 'percent') { return `${num.toFixed(1)}%`; } return new Intl.NumberFormat('en-US', options).format(num); };
+const derOrder = ['Solar PV', 'Battery Storage', 'CHP', 'Fuel Cells', 'Simple Turbines', 'Linear Generation', 'PLANT'];
+const derNameMapping: {[key: string]: string} = { solar_pv: 'Solar PV', battery_storage: 'Battery Storage', chp: 'CHP', fuel_cells: 'Fuel Cells', simple_turbines: 'Simple Turbines', linear_generation: 'Linear Generation', grid: 'PLANT', efficiency_retrofit: 'Efficiency Retrofit' };
+
+// --- CHILD COMPONENTS ---
+interface BenefitData { value: string; title: string; description: React.ReactNode; watermark: string; }
 const EnhancedBenefitCard: React.FC<{ benefit: BenefitData }> = ({ benefit }) => (
     <StyledBenefitCard>
         <WatermarkIcon>{benefit.watermark}</WatermarkIcon>
@@ -63,13 +78,6 @@ const EnhancedBenefitCard: React.FC<{ benefit: BenefitData }> = ({ benefit }) =>
         </CardContent>
     </StyledBenefitCard>
 );
-const StyledTabPanelBox = styled(Box)(({ theme }) => ({ position: 'relative', padding: theme.spacing(2), backgroundColor: theme.palette.grey[100], borderRadius: theme.shape.borderRadius }));
-interface TabPanelProps { children?: React.ReactNode; index: number; value: number; }
-const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => ( <div role="tabpanel" hidden={value !== index}>{value === index && <Box sx={{ p: 3 }}>{children}</Box>}</div> );
-
-// --- HELPER FUNCTIONS ---
-const formatValue = (value?: number | string | null, type: 'number' | 'currency' | 'percent' = 'number'): string => { if (value === null || value === undefined || value === "") return 'N/A'; const num = typeof value === 'string' ? parseFloat(value) : value; if (isNaN(num)) return 'N/A'; const options: Intl.NumberFormatOptions = { maximumFractionDigits: 2 }; if (type === 'currency') { options.style = 'currency'; options.currency = 'USD'; } if (type === 'percent') { return `${num.toFixed(1)}%`; } return new Intl.NumberFormat('en-US', options).format(num); };
-const derOrder = ['Solar PV', 'Battery Storage', 'CHP', 'Fuel Cells', 'Simple Turbines', 'Linear Generation', 'PLANT'];
 
 // --- MAIN DASHBOARD COMPONENT ---
 interface EmissionsDashboardProps { 
@@ -79,12 +87,16 @@ interface EmissionsDashboardProps {
     setHasUnsavedChanges: (changed: boolean) => void;
 }
 
-const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data, onConfirmChanges, /* hasUnsavedChanges, */ setHasUnsavedChanges }) => {
+const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data, onConfirmChanges, setHasUnsavedChanges }) => {
     const [tabValue, setTabValue] = useState(0);
     const [selectedYear, setSelectedYear] = useState<number | string>('');
     const [userDerAllocation, setUserDerAllocation] = useState({});
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalContentId, setModalContentId] = useState<number | null>(null);
 
-    // Memoize the initial state from props to use for comparison
+    const handleOpenModal = (id: number) => { setModalContentId(id); setModalOpen(true); };
+    const handleCloseModal = () => { setModalOpen(false); setModalContentId(null); };
+    
     const initialState = useMemo(() => {
         const current = data?.der_control_panel?.current_mix_pct;
         return {
@@ -94,17 +106,13 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data, onConfirm
         };
     }, [data]);
 
-    // This effect now only runs when the data prop (and thus initialState) changes.
     useEffect(() => {
         setUserDerAllocation(initialState);
         setHasUnsavedChanges(false);
     }, [initialState, setHasUnsavedChanges]);
 
-    // CORRECTED: This logic performs a deep comparison to see if changes are real.
-    const isChanged = useMemo(() => {
-        return JSON.stringify(userDerAllocation) !== JSON.stringify(initialState);
-    }, [userDerAllocation, initialState]);
-
+    const isChanged = useMemo(() => JSON.stringify(userDerAllocation) !== JSON.stringify(initialState), [userDerAllocation, initialState]);
+    
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => setTabValue(newValue);
 
     const handleSliderChange = (name: string, value: number) => {
@@ -114,9 +122,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data, onConfirm
         setUserDerAllocation(prev => ({ ...prev, [name]: value, PLANT: 100 - newTotal }));
     };
     
-    const handleReset = () => {
-        setUserDerAllocation(initialState);
-    };
+    const handleReset = () => setUserDerAllocation(initialState);
     
     const handleApplyRecommendation = () => {
         const recommended = data?.der_control_panel?.recommended_mix_pct;
@@ -146,24 +152,125 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data, onConfirm
     useEffect(() => {
         if (availableYears.length > 0 && !selectedYear) { setSelectedYear(availableYears[0]); }
     }, [availableYears, selectedYear]);
-
+    
     const filteredAndSortedChartData = useMemo(() => {
         if (!data || !selectedYear) return [];
         const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        return data.monthly_tracking.monthly_emissions.filter(em => em.year == selectedYear).sort((a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month));
+        const filtered = data.monthly_tracking.monthly_emissions.filter(em => em.year == selectedYear);
+        const processed = filtered.map(em => ({
+            ...em,
+            emissions: em.actual ?? em.projected,
+            fill: em.actual !== null ? '#007aff' : '#82ca9d'
+        }));
+        return processed.sort((a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month));
     }, [data, selectedYear]);
 
-    const derNameMapping: {[key: string]: string} = { solar_pv: 'Solar PV', battery_storage: 'Battery Storage', chp: 'CHP', fuel_cells: 'Fuel Cells', simple_turbines: 'Simple Turbines', linear_generation: 'Linear Generation', grid: 'PLANT', efficiency_retrofit: 'Efficiency Retrofit' };
-    
     const evidenceCards: BenefitData[] = [
         { value: `${formatValue(data?.evidence?.metrics?.actual_emissions)} MT`, title: 'Actual Emissions', description: <><b>+{formatValue(data?.evidence?.metrics?.actual_yoy_pct)}%</b> YoY<br/>Over by: <b>{formatValue(data?.evidence?.metrics?.over_by)} MT</b><br/>Est. Penalty: <b>{formatValue(data?.evidence?.metrics?.estimated_penalty_cost_usd_per_year, 'currency')}/yr</b></>, watermark: '🔥' },
         { value: `${formatValue(data?.evidence?.metrics?.compliance_target)} MT`, title: 'Compliance Target', description: <>State: <b>{data?.evidence?.metrics?.compliance_jurisdiction}</b><br/>Required by law<br/><b>{data?.evidence?.metrics?.required_reduction_pct}%</b> reduction</>, watermark: '⚖️' },
         { value: `${formatValue(data?.evidence?.metrics?.bradley_solution)} MT`, title: 'Bradley Solution', description: <><b>-{formatValue(data?.evidence?.metrics?.bradley_reduction_pct)}%</b> Reduction<br/>Saves: <b>{formatValue(data?.evidence?.metrics?.bradley_savings)} MT/yr</b><br/>ROI: <b>{formatValue(data?.evidence?.metrics?.bradley_roi_years)} years</b></>, watermark: '💡' },
     ];
 
+    const renderModalContent = () => {
+        const content: { title: React.ReactNode; body: React.ReactNode } = {
+            title: '',
+            body: <></>
+        }
+        
+        switch (modalContentId) {
+    case 0: 
+        content.title = (
+            <Typography variant="h6" sx={{ color: 'black' }}>
+                How to Optimize Your Energy Mix
+            </Typography>
+        );
+        content.body = (
+            <>
+                <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                    This control panel is your sandbox for energy strategy. By adjusting the sliders for different Distributed Energy Resources (DERs), you can instantly model the financial and environmental impact.
+                </Typography>
+                <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                    <Typography variant="body1"><strong>Bradley's Recommendation:</strong></Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                        This is our AI-driven optimal mix to guarantee you meet compliance, based on your facility's unique profile. It's the most direct path to eliminating penalties.
+                    </Typography>
+                    <Typography variant="body1"><strong>Your Allocation & Impact:</strong></Typography>
+                    <Typography variant="body2">
+                        As you adjust the sliders, the 'PLANT' (grid energy) value auto-updates. The "Impact" column shows the real-time effect on emissions, helping you understand the trade-offs of each resource.
+                    </Typography>
+                </Paper>
+            </>
+        );
+        break;
+
+    case 1: 
+        content.title = (
+            <Typography variant="h6" sx={{ color: 'black' }}>
+                Reading Your Performance Chart
+            </Typography>
+        );
+        content.body = (
+            <>
+                <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                    This chart visualizes your monthly progress, comparing your actual emissions to critical benchmarks. Use it to track trends and validate your strategy.
+                </Typography>
+                <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                    <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                        <li><b><span style={{ color: '#007aff' }}>Blue bars</span></b> show your recorded historical emissions.</li>
+                        <li><b><span style={{ color: '#82ca9d' }}>Green bars</span></b> are our AI-powered forecasts for the upcoming months.</li>
+                        <li style={{ marginTop: '8px' }}>The <b style={{ color: '#ff3b30' }}>Red Target Line</b> represents your monthly compliance limit. Staying below this is key to avoiding penalties.</li>
+                        <li style={{ marginTop: '8px' }}>The <b style={{ color: '#34c759' }}>Green Bradley Line</b> shows your projected emissions if you adopt our recommended solution, keeping you safely under target.</li>
+                    </ul>
+                </Paper>
+            </>
+        );
+        break;
+
+    case 2:
+        content.title = (
+            <Typography variant="h6" sx={{ color: 'black' }}>
+                Understanding Your Action Plan
+            </Typography>
+        );
+        content.body = (
+            <>
+                <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                    Here, we turn data into a clear, actionable roadmap. Our goal is to provide a comprehensive solution that not only solves your compliance problem but also delivers long-term value.
+                </Typography>
+                <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                    <Typography variant="body1"><strong>The Recommended Solution:</strong></Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                        This is a complete, turnkey project designed to fully eliminate your penalty risk of <b>{formatValue(data?.evidence?.metrics?.estimated_penalty_cost_usd_per_year, 'currency')}/yr</b>. It offers a clear payback period and a significant return on investment.
+                    </Typography>
+                    <Typography variant="body1"><strong>Alternative Options:</strong></Typography>
+                    <Typography variant="body2">
+                        These are smaller, incremental steps you can take. While they offer partial emission reductions, they may not be sufficient to avoid penalties entirely and are best viewed as supplementary actions.
+                    </Typography>
+                </Paper>
+            </>
+        );
+        break;
+
+    default: 
+        return null;
+}
+
+
+        return (
+            <>
+                <IconButton onClick={handleCloseModal} sx={{position: 'absolute', top: 8, right: 8}}><Close /></IconButton>
+                <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>{content.title}</Typography>
+                {content.body}
+            </>
+        );
+    };
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
             <style>{`@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;900&display=swap');`}</style>
+            
+            <Modal open={modalOpen} onClose={handleCloseModal}><ModalBox>{renderModalContent()}</ModalBox></Modal>
+
             <StyledTitle variant="h6">Bradley.ai Emissions Dashboard</StyledTitle>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: { xs: '20px', md: '80px' } }}>
                 <Paper variant="outlined" sx={{ p: 2, position: 'relative' }}>
@@ -185,9 +292,13 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data, onConfirm
                 <Paper elevation={0} sx={{ width: '100%', mt: 4, backgroundColor: 'transparent' }}>
                     <Box sx={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #e0e0e0', backgroundColor: 'white' }}>
                         <Tabs value={tabValue} onChange={handleTabChange} centered sx={{ borderBottom: 1, borderColor: 'divider' }}><Tab label="The Solution" /><Tab label="The Proof" /><Tab label="The Commitment" /></Tabs>
+                        
                         <TabPanel value={tabValue} index={0}>
                             <StyledTabPanelBox>
-                                <Typography sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem', pb: 2 }}>OPTIMIZE YOUR ENERGY MIX</Typography>
+                                <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
+                                    <Typography sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>OPTIMIZE YOUR ENERGY MIX</Typography>
+                                    <IconButton size="small" onClick={() => handleOpenModal(0)}><HelpOutline sx={{fontSize: '1.2rem'}} /></IconButton>
+                                </Box>
                                 <TableContainer component={Paper} variant="outlined">
                                     <Table size="small">
                                         <TableHead sx={{ backgroundColor: '#fafafa' }}><TableRow><TableCell sx={{ fontWeight: 'bold' }}>DER System</TableCell><TableCell align="center" sx={{ fontWeight: 'bold' }}>Bradley Recommended</TableCell><TableCell align="center" sx={{ fontWeight: 'bold', width: '30%' }}>Your Allocation</TableCell><TableCell align="right" sx={{ fontWeight: 'bold' }}>Impact (MT)</TableCell></TableRow></TableHead>
@@ -209,38 +320,71 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data, onConfirm
                                 </Box>
                             </StyledTabPanelBox>
                         </TabPanel>
-                        <TabPanel value={tabValue} index={1}><StyledTabPanelBox><Typography sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem', pb: 2 }}>MONTHLY PERFORMANCE & FORECASTING</Typography><Box sx={{ height: 350 }}><ResponsiveContainer width="100%" height="100%"><BarChart data={filteredAndSortedChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis /><Tooltip /><Legend /><ReferenceLine y={data?.monthly_tracking?.target_per_month} label={{ value: `Target`, position: 'insideTopLeft' }} stroke="#ff3b30" strokeDasharray="3 3" /><ReferenceLine y={data?.monthly_tracking?.with_bradley_der_per_month} label={{ value: `With Bradley`, position: 'insideBottomLeft' }} stroke="#34c759" strokeDasharray="3 3" /><Bar dataKey="actual" fill="#007aff" name="Actual Emissions" /><Bar dataKey="projected" fill="#82ca9d" name="Projected Emissions" /></BarChart></ResponsiveContainer></Box></StyledTabPanelBox></TabPanel>
-                        <TabPanel value={tabValue} index={2}>
+
+                        <TabPanel value={tabValue} index={1}>
                             <StyledTabPanelBox>
-                                <Typography sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem', pb: 2 }}>YOUR ACTION PLAN</Typography>
-                                <Grid container spacing={3}>
-                                    <Grid item xs={7}>
-                                        <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
-                                            <Typography sx={{ fontWeight: 'bold' }}>RECOMMENDED SOLUTION</Typography>
-                                            <Card variant="outlined" sx={{ mt: 1 }}>
-                                                <CardContent>
-                                                    <Typography sx={{ fontWeight: 'bold' }}>📋 {data?.action_center?.recommended_solution?.title}</Typography>
-                                                    <ul style={{ fontSize: '0.9rem', margin: '8px 0', paddingLeft: '20px' }}>
-                                                        {data?.action_center?.recommended_solution?.components?.map(c => <li key={c.type}>{`${c.size} ${derNameMapping[c.type] || c.type}`}</li>)}
-                                                    </ul>
-                                                    <Typography><b>Investment:</b> {formatValue(data?.action_center?.recommended_solution?.investment_usd, 'currency')} | <b>Payback:</b> {data?.action_center?.recommended_solution?.payback_years} years</Typography>
+                                <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
+                                    <Typography sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>MONTHLY PERFORMANCE & FORECASTING</Typography>
+                                    <IconButton size="small" onClick={() => handleOpenModal(1)}><HelpOutline sx={{fontSize: '1.2rem'}} /></IconButton>
+                                </Box>
+                                <Box sx={{ height: 350 }}>
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={filteredAndSortedChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis dataKey="month" />
+                                            <YAxis />
+                                            <Tooltip />
+                                            <Legend payload={[{ value: 'Actual', type: 'square', color: '#007aff' }, { value: 'Projected', type: 'square', color: '#82ca9d' }]} />
+                                            <ReferenceLine y={data?.monthly_tracking?.target_per_month} label={{ value: `Target`, position: 'insideTopLeft' }} stroke="#ff3b30" strokeDasharray="3 3" />
+                                            <ReferenceLine y={data?.monthly_tracking?.with_bradley_der_per_month} label={{ value: `With Bradley`, position: 'insideBottomLeft' }} stroke="#34c759" strokeDasharray="3 3" />
+                                            <Bar dataKey="emissions" name="Emissions">
+                                                {filteredAndSortedChartData.map((entry, index) => ( <Cell key={`cell-${index}`} fill={entry.fill} /> ))}
+                                            </Bar>
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </Box>
+                            </StyledTabPanelBox>
+                        </TabPanel>
+
+                        <TabPanel value={tabValue} index={2}>
+                            <StyledTabPanelBox sx={{minHeight: 360}}>
+                                <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
+                                    <Typography sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>YOUR ACTION PLAN</Typography>
+                                    <IconButton size="small" onClick={() => handleOpenModal(2)}><HelpOutline sx={{fontSize: '1.2rem'}} /></IconButton>
+                                </Box>
+                                <Grid container spacing={3} alignItems="stretch">
+                                    <Grid item xs={12} md={7}>
+                                        <Paper variant="outlined" sx={{ p: 2.5, height: '85%', display: 'flex', flexDirection: 'column' }}>
+                                            <Typography sx={{ fontWeight: 'bold', fontSize: '1rem', mb: 1.5 }}>RECOMMENDED SOLUTION</Typography>
+                                            <Card variant="outlined" sx={{ flexGrow: 1 }}>
+                                                <CardContent sx={{display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between'}}>
+                                                    <div>
+                                                        <Typography sx={{ fontWeight: 'bold' }}>📋 {data?.action_center?.recommended_solution?.title}</Typography>
+                                                        <ul style={{ fontSize: '0.9rem', margin: '12px 0', paddingLeft: '20px' }}>
+                                                            {data?.action_center?.recommended_solution?.components?.map(c => <li key={c.type}>{`${c.size} ${derNameMapping[c.type] || c.type}`}</li>)}
+                                                        </ul>
+                                                        <Typography><b>Investment:</b> {formatValue(data?.action_center?.recommended_solution?.investment_usd, 'currency')} | <b>Payback:</b> {data?.action_center?.recommended_solution?.payback_years} years</Typography>
+                                                    
                                                     <Box sx={{ mt: 2, display: 'flex', gap: 1 }}><Button variant="contained" size="small">Schedule Consultation</Button><Button variant="outlined" size="small">Email Proposal</Button></Box>
-                                                </CardContent>
+                                                </div></CardContent>
                                             </Card>
                                         </Paper>
                                     </Grid>
-                                    <Grid item xs={5}>
-                                        <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
-                                            <Typography sx={{ fontWeight: 'bold' }}>ALTERNATIVE OPTIONS</Typography>
-                                            {data?.action_center?.alternatives?.map(alt => (
-                                                <Card key={alt.title} variant="outlined" sx={{ mt: 1 }}>
-                                                    <CardContent sx={{py:1}}>
-                                                        <Typography sx={{ fontWeight: 'bold' }}>{alt.title.includes("Quick") || alt.title.includes("Solar") ? '💡' : '🚀'} {alt.title}</Typography>
-                                                        <Typography><b>Investment:</b> {formatValue(alt.investment_usd, 'currency')} | <b>Reduction:</b> {formatValue(alt.reduction_pct, 'percent')}</Typography>
-                                                        {alt.estimated_penalties_remaining_usd_per_year != null && <Typography sx={{ fontWeight: 'bold', color: alt.estimated_penalties_remaining_usd_per_year > 0 ? '#ff3b30' : '#34c759' }}>Penalties: {formatValue(alt.estimated_penalties_remaining_usd_per_year, 'currency')}/yr</Typography>}
-                                                    </CardContent>
-                                                </Card>
-                                            ))}
+                                    <Grid item xs={12} md={5}>
+                                        <Paper variant="outlined" sx={{ p: 2.5, height: '85%' }}>
+                                            <Typography sx={{ fontWeight: 'bold', fontSize: '1rem', mb: 1.5 }}>ALTERNATIVE OPTIONS</Typography>
+                                            <Stack spacing={2}>
+                                                {data?.action_center?.alternatives?.map(alt => (
+                                                    <Card key={alt.title} variant="outlined">
+                                                        <CardContent sx={{py: 1.5, '&:last-child': { pb: 1.5 }}}>
+                                                            <Typography sx={{ fontWeight: 'bold' }}>{alt.title.includes("Quick") || alt.title.includes("Solar") ? '💡' : '🚀'} {alt.title}</Typography>
+                                                            <Typography sx={{fontSize: '0.85rem'}}><b>Investment:</b> {formatValue(alt.investment_usd, 'currency')}<br /><b>Reduction:</b> {formatValue(alt.reduction_pct, 'percent')}</Typography>
+                                                            {alt.estimated_penalties_remaining_usd_per_year != null && <Typography sx={{ fontWeight: 'bold', fontSize: '0.85rem', color: alt.estimated_penalties_remaining_usd_per_year > 0 ? '#ff3b30' : '#34c759' }}>Penalties: {formatValue(alt.estimated_penalties_remaining_usd_per_year, 'currency')}/yr</Typography>}
+                                                            {alt.carbon_negative_by_year != null && <Typography sx={{ fontSize: '0.85rem' }}><b>Carbon -ve by year:</b> {alt.carbon_negative_by_year}</Typography>}
+                                                        </CardContent>
+                                                    </Card>
+                                                ))}
+                                            </Stack>
                                         </Paper>
                                     </Grid>
                                 </Grid>
@@ -254,3 +398,4 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ data, onConfirm
 };
 
 export default EmissionsDashboard;
+

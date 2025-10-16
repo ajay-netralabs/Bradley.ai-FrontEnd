@@ -23,14 +23,14 @@ const stepSubStepMapping: StepSubStepMapping = {
     1: {
       // 0: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - I')),
       0: lazy(() => import('./pages/Demo/SubStep1/EmissionsDashboardWrapper')),
-      1: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - II')),
-      2: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - III')),
-      3: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - IV')),
-      4: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Existing Boiler Cogeneration')),
+      // 1: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - II')),
+      // 2: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - III')),
+      // 3: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - IV')),
+      // 4: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Existing Boiler Cogeneration')),
     },
-    2: {
-      0: lazy(() => import('./pages/Demo/SubStep1/EmissionsDashboardWrapper')),
-    },
+    // 2: {
+    //   0: lazy(() => import('./pages/Demo/SubStep1/EmissionsDashboardWrapper')),
+    // },
   },
 };
 

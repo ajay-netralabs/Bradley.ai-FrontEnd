@@ -145,13 +145,42 @@ const EmissionsDashboardWrapper: React.FC = () => {
         }
     };
 
-    if (isInitialLoading || !activeDashboardData) {
-        return (
-            <Box display="flex" justifyContent="center" alignItems="center" height="80vh">
-                <CircularProgress />
-            </Box>
-        );
-    }
+    if (isInitialLoading) {
+    return (
+        <Box display="flex" justifyContent="center" alignItems="center" height="80vh">
+            <CircularProgress />
+        </Box>
+    );
+}
+
+if (!dashboardData || dashboardData.length === 0) {
+    return (
+        <Box 
+            display="flex" 
+            justifyContent="center" 
+            alignItems="center" 
+            height="80vh" 
+            flexDirection="column"
+        >
+            <Typography variant="h6" color="textSecondary">
+                No dashboard data available.
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+                Please ensure that you have uploaded the necessary data files.
+            </Typography>
+        </Box>
+    );
+}
+
+if (!activeDashboardData) {
+    return (
+        <Box display="flex" justifyContent="center" alignItems="center" height="80vh">
+            <Typography variant="h6" color="textSecondary">
+                No data for the selected location and source.
+            </Typography>
+        </Box>
+    );
+}
 
     return (
         <Box>
