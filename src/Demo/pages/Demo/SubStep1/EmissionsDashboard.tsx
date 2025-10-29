@@ -328,19 +328,17 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         );
     };
 
-    // --- FIX: Logic for conditional styling ---
     const isCompliant = data?.verdict?.compliance_status === 'COMPLIANT';
-    const complianceBannerBg = isCompliant ? '#e8f5e9' : '#fff3e0'; // Green vs Yellow
-    const complianceBannerBorder = isCompliant ? '#4caf50' : '#ff9800'; // Green vs Orange
-    const complianceBannerColor = isCompliant ? '#1b5e20' : '#e65100'; // Dark Green vs Dark Orange
-    const complianceIcon = isCompliant ? '✅' : '⚠️'; // Check vs Warning
+    const complianceBannerBg = isCompliant ? '#e8f5e9' : '#fff3e0'; 
+    const complianceBannerBorder = isCompliant ? '#4caf50' : '#ff9800'; 
+    const complianceBannerColor = isCompliant ? '#1b5e20' : '#e65100'; 
+    const complianceIcon = isCompliant ? '✅' : '⚠️'; 
 
     const utilizationPct = data?.verdict?.limit_utilization_pct ?? 0;
-    const progressBarColor = isCompliant ? '#388E3C' : '#ff3b30'; // Green vs Red
+    const progressBarColor = isCompliant ? '#388E3C' : '#ff3b30'; 
     
-    const statusColor = isCompliant ? '#388E3C' : '#d32f2f'; // Green vs Red
-    const statusIcon = isCompliant ? '🟢' : '🔴'; // Green vs Red
-    // --- END FIX ---
+    const statusColor = isCompliant ? '#388E3C' : '#d32f2f'; 
+    const statusIcon = isCompliant ? '🟢' : '🔴'; 
 
 
     return (
@@ -370,9 +368,15 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                             <Select
                                 value={selectedLocation}
                                 onChange={(e) => onLocationChange(e.target.value)}
-                                sx={{ fontSize: '0.8rem' }}
+                                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }} // <-- FONT ADDED
                             >
-                                {availableLocations.map(loc => <MenuItem key={loc} value={loc}>{loc}</MenuItem>)}
+                                {availableLocations.map(loc => <MenuItem 
+                                    key={loc} 
+                                    value={loc} 
+                                    sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }} // <-- FONT ADDED
+                                >
+                                    {loc}
+                                </MenuItem>)}
                             </Select>
                         </FormControl>
 
@@ -380,26 +384,44 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                         <Select
                             value={selectedSource}
                             onChange={(e) => onSourceChange(e.target.value)}
-                            sx={{ fontSize: '0.8rem' }}
+                            sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }} // <-- FONT ADDED
                         >
-                            {availableSources.map(src => <MenuItem key={src} value={src}>{src.charAt(0).toUpperCase() + src.slice(1)}</MenuItem>)}
+                            {availableSources.map(src => <MenuItem 
+                                key={src} 
+                                value={src} 
+                                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }} // <-- FONT ADDED
+                            >
+                                {src.charAt(0).toUpperCase() + src.slice(1)}
+                            </MenuItem>)}
                         </Select>
                     </FormControl>
-                        <FormControl size="small"><Select value={selectedYear} onChange={(e) => onYearChange(e.target.value)} sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>{availableYears.map(year => <MenuItem key={year} value={year}>{year}</MenuItem>)}</Select></FormControl>
+                        <FormControl size="small">
+                            <Select 
+                                value={selectedYear} 
+                                onChange={(e) => onYearChange(e.target.value)} 
+                                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
+                            >
+                                {availableYears.map(year => <MenuItem 
+                                    key={year} 
+                                    value={year} 
+                                    sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }} // <-- FONT ADDED
+                                >
+                                    {year}
+                                </MenuItem>)}
+                            </Select>
+                        </FormControl>
                     </Box>
                     <Typography sx={{ textAlign: 'left', fontWeight: 'bold', fontSize: '1rem' }}>COMPLIANCE STATUS</Typography>
                     
-                    {/* --- FIX: Conditional Status Banner --- */}
                     <Paper variant="outlined" sx={{ mt: 3, backgroundColor: complianceBannerBg, textAlign: 'center', p:1, borderColor: complianceBannerBorder }}>
                         <Typography sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: complianceBannerColor }}>
                             {complianceIcon} {data?.verdict?.status_banner}
                         </Typography>
                     </Paper>
 
-                    {/* --- FIX: Improved Progress Bar with Percentage --- */}
                     <Box sx={{ position: 'relative', height: '20px', backgroundColor: '#e0e0e0', borderRadius: '10px', overflow: 'hidden', margin: '16px auto', maxWidth: '100%' }}>
                         <Box sx={{ 
-                            width: `${utilizationPct > 100 ? 100 : utilizationPct}%`, // Cap width at 100%
+                            width: `${utilizationPct > 100 ? 100 : utilizationPct}%`, 
                             height: '100%', 
                             backgroundColor: progressBarColor,
                             transition: 'width 0.4s ease-in-out'
@@ -415,7 +437,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                             justifyContent: 'center',
                         }}>
                             <Typography sx={{
-                                color: utilizationPct > 40 ? '#fff' : '#000', // Dynamic text color
+                                color: utilizationPct > 40 ? '#fff' : '#000', 
                                 textShadow: utilizationPct > 40 ? '0px 0px 3px rgba(0,0,0,0.5)' : 'none',
                                 fontFamily: 'Nunito Sans, sans-serif',
                                 fontWeight: 'bold',
@@ -428,7 +450,6 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                     </Box>
                     
                     <Grid container spacing={1} sx={{ textAlign: 'center' }}>
-                        {/* --- FIX: Conditional Status Icon/Color --- */}
                         <Grid item xs={4}><Typography sx={{fontSize: '0.8rem'}}>STATUS: <b style={{ color: statusColor }}>{statusIcon} {data?.verdict?.severity}</b></Typography></Grid>
                         <Grid item xs={4}><Typography sx={{fontSize: '0.8rem'}}>PENALTY RISK: <b>{formatValue(data?.verdict?.penalty_risk_usd, 'currency')}</b></Typography></Grid>
                         <Grid item xs={4}><Typography sx={{fontSize: '0.8rem'}}>TIME LEFT: <b>{data?.verdict?.time_left_months} MONTHS</b></Typography></Grid>
