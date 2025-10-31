@@ -481,7 +481,7 @@ const SubStep2: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-          <Tooltip title="Bradley needs to confirm what temperature you provide to your tenant occupied areas for weather normalization and new load demand forecasting." placement='left' arrow>
+          <Tooltip title="CarbonCheckIQ+ needs to confirm what temperature you provide to your tenant occupied areas for weather normalization and new load demand forecasting." placement='left' arrow>
             <Typography sx={{
               fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.75rem',

@@ -75,8 +75,8 @@ const SubStep2: React.FC = () => {
           )}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography sx={{ mt: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 1 }}>
-              <i><b>* </b>If <b>Yes</b>, please provide details in the fields or upload the agreement and Bradley will autopopulate the fields for you.</i><br />
-              <i><b>** </b>If <b>No</b>, Bradley will assume you are on the standard offer rate from the regulated electric utility and will gather data from the utility tariff.</i>
+              <i><b>* </b>If <b>Yes</b>, please provide details in the fields or upload the agreement and CarbonCheckIQ+ will autopopulate the fields for you.</i><br />
+              <i><b>** </b>If <b>No</b>, CarbonCheckIQ+ will assume you are on the standard offer rate from the regulated electric utility and will gather data from the utility tariff.</i>
             </Typography>
           </Box>
         </Box>

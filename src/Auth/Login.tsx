@@ -82,9 +82,9 @@ const Login: React.FC = () => {
             </Box>
 
             <Typography variant="h6" sx={{ fontWeight: 400, lineHeight: 1.5, fontFamily: '"Nunito Sans", sans-serif' }}>
-              Transform months of DER analysis into{' '}
+              Intelligence to predict and optimize{' '}
               <span style={{ color: '#FF6B00', fontWeight: 700 }}>
-                minutes of AI<br />Agentic powered insights.
+                GHG Compliance.
               </span>
             </Typography>
 
@@ -176,7 +176,7 @@ const Login: React.FC = () => {
               fontFamily: '"Nunito Sans", sans-serif',
             }}
           >
-            <h3 style={{ fontFamily: '"Nunito Sans", sans-serif' }}>Sign in to Bradley.ai</h3>
+            <h3 style={{ fontFamily: '"Nunito Sans", sans-serif' }}>Sign in to CarbonCheckIQ+</h3>
           </Typography>
 
           <Box sx={{ width: '90%', marginBottom: 2 }}>

@@ -56,7 +56,7 @@ const SubStep1: React.FC = () => {
                 @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
             `}</style>
             <Typography variant="h6" sx={{ mb: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'center' }}>
-                <h2>DER Analysis By Bradley.ai Is Underway!</h2><br />
+                <h2>DER Analysis By CarbonCheckIQ+ Is Underway!</h2><br />
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: '10px', pb: '10px', px: '160px' }}>
                 
@@ -100,7 +100,7 @@ const SubStep1: React.FC = () => {
                     <h2>What's Next?</h2>
                 </Typography>
                 <Typography sx={{ fontFamily :'Nunito Sans,sans-serif' ,fontSize :'0.8rem' ,textAlign :'center', color: 'text.secondary' }}>
-                    Bradley.ai will review your information and perform a detailed energy, design and financial analysis. A comprehensive DER conceptual design with pricing build-up will be completed.
+                    CarbonCheckIQ+ will review your information and perform a detailed energy, design and financial analysis. A comprehensive DER conceptual design with pricing build-up will be completed.
                 </Typography>
                 <Grid container spacing={2.5} sx={{ mt: 1 }}>
                     {whatsNextData.map((item, idx) => (

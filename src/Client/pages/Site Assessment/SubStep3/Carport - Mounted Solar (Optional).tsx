@@ -63,7 +63,7 @@ const SubStep3: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ mt: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 1 }}>
-            <i><b>Hint: </b>If the total sq ft of the top level of your parking garage contains 170 parking spots or greater it is likely a solar carport solution will be financially viable. If there are no enteries for garage solar carport Bradley will ignore this option.</i>
+            <i><b>Hint: </b>If the total sq ft of the top level of your parking garage contains 170 parking spots or greater it is likely a solar carport solution will be financially viable. If there are no enteries for garage solar carport CarbonCheckIQ+ will ignore this option.</i>
           </Typography>
         </Box>
       </Box>

@@ -76,9 +76,9 @@ const Signup: React.FC = () => {
             </Box>
 
             <Typography variant="h6" sx={{ fontWeight: 400, lineHeight: 1.5, fontFamily: '"Nunito Sans", sans-serif' }}>
-              Transform months of DER analysis into{' '}
+              Intelligence to predict and optimize{' '}
               <span style={{ color: '#FF6B00', fontWeight: 700 }}>
-                minutes of AI<br />Agentic powered insights.
+                GHG Compliance.
               </span>
             </Typography>
 

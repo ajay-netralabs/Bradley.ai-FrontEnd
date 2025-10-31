@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
     <AppBar position="fixed" sx={{ bgcolor: 'white', color: 'black', zIndex: 1000, boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)' }}>
       <Toolbar>
         {/* <Typography variant="h4" component="div" sx={{ flexGrow: 1, fontFamily: 'Roboto Condensed, sans-serif', display: 'inline-flex', alignItems: 'center' }}>
-          Bradley.ai
+          CarbonCheckIQ+
           <Typography variant="h6" component="span" sx={{ ml: 0.5, position: 'relative', top: '-3px' }}>
             <sup>®</sup>
           </Typography>

@@ -63,7 +63,7 @@ const SubStep3: React.FC = () => {
   const initializeMap = () => {
     if (!mapRef.current) return;
     const map = window.L.map(mapRef.current).setView([25.7617, -80.1918], 18);
-    window.L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Bradley.ai', maxZoom: 20 }).addTo(map);
+    window.L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'CarbonCheckIQ+', maxZoom: 20 }).addTo(map);
     const streetOverlay = window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors', opacity: 0.3 });
     const baseLayers = { "Satellite": window.L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri' }) };
     const overlayLayers = { "Street Labels": streetOverlay };

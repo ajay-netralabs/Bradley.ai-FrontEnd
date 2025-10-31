@@ -77,7 +77,7 @@ const SubStep1: React.FC = () => {
             fontSize: '0.75rem',
           }}
         >
-          Provide me with details about your resiliency, emission and cost goals that you want to achieve from your customized DER System, including your financial requirements. This information will help Bradley create the most accurate and effective DER conceptualization based on your priorities.
+          Provide me with details about your resiliency, emission and cost goals that you want to achieve from your customized DER System, including your financial requirements. This information will help CarbonCheckIQ+ create the most accurate and effective DER conceptualization based on your priorities.
         </Typography>
         <Typography
           sx={{
@@ -85,7 +85,7 @@ const SubStep1: React.FC = () => {
             fontSize: '0.75rem',
           }}
         >
-          This will take about 10 minutes. The more details you provide, the better Bradley will perform.
+          This will take about 10 minutes. The more details you provide, the better CarbonCheckIQ+ will perform.
         </Typography>
         <Typography
           sx={{
@@ -104,7 +104,7 @@ const SubStep1: React.FC = () => {
           }}
         >
           <b>Priorities (Decarbonize, Increase Resiliency, Maximize Cost Reductions)</b> <br />
-          Define your priorities for DER implementation and set specific targets for your goals. Bradley creates the DER solution based on your priorities.
+          Define your priorities for DER implementation and set specific targets for your goals. CarbonCheckIQ+ creates the DER solution based on your priorities.
         </Typography>
         <Typography
           component="li"
@@ -115,7 +115,7 @@ const SubStep1: React.FC = () => {
           }}
         >
           <b>Financial Goals & Targets (IRR, ROI, Simple Payback)</b> <br />
-          Outline your financial objectives and investment preferences. Bradley can adjust how DER projects allocate cash, future budget(s), Utility rebates, and State and/or Federal grants in the financial proforma, as well as adjust depreciation based on your tax position.
+          Outline your financial objectives and investment preferences. CarbonCheckIQ+ can adjust how DER projects allocate cash, future budget(s), Utility rebates, and State and/or Federal grants in the financial proforma, as well as adjust depreciation based on your tax position.
         </Typography>
       </Box>
     </Box>

@@ -19,7 +19,7 @@ const SubStep3: React.FC = () => {
       <Typography variant="h6" sx={{ mb: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem', fontWeight: 'bold', textAlign: 'center' }}>
         <h2>Existing Solar & Wind Resource (Optional)</h2>
         <br />
-        Let Bradley Know If You Have Existing Solar Assets
+        Let CarbonCheckIQ+ Know If You Have Existing Solar Assets
       </Typography>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: '160px' }}>
@@ -87,7 +87,7 @@ const SubStep3: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ mt: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 1 }}>
-            <i><b>*</b>If you select <b>Yes</b>, Bradley will assess your site's wind resource potential using <b>Wind Resource Maps, Data and Geo-Spatial Data for North America</b> from the <b>National Renewable Energy Lab, Department of Energy</b>.</i>
+            <i><b>*</b>If you select <b>Yes</b>, CarbonCheckIQ+ will assess your site's wind resource potential using <b>Wind Resource Maps, Data and Geo-Spatial Data for North America</b> from the <b>National Renewable Energy Lab, Department of Energy</b>.</i>
           </Typography>
         </Box>
       </Box>

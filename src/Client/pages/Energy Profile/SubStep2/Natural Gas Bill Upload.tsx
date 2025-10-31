@@ -64,8 +64,7 @@ const SubStep2: React.FC = () => {
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
-          <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', mb: 0, textAlign: 'center' }}><b>Bradley will extract the expense, usage, tax, tariff and other data from your uploaded utility bills for the technical and financial modeling algorithms.</b></Typography>
-          
+          <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', mb: 0, textAlign: 'center' }}><b>CarbonCheckIQ+ will extract the data needed to compute the site specific GHG emissions from your utility bills and properly size alternate sources of power.</b></Typography>
           <input
             type="file"
             multiple
@@ -234,7 +233,7 @@ const SubStep2: React.FC = () => {
               </List>
             </Paper>
           )}
-          <Typography sx={{ mt: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 1 }}><i><b>*</b>To accurately develop the <b>DER</b>, <b>Bradley</b> will need you to approve the <b>LOA</b>. The <b>LOA</b> allows <b>Bradley</b> to directly pull the demand/usage data of your <b>Natural Gas Energy Load Profile</b>, providing critical energy use details that will increase the accuracy of the <b>DER</b> solution.</i></Typography>
+          <Typography sx={{ mt: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 1 }}><i><b>*</b><b>CarbonCheckIQ+</b> prefers to gain direct access to the Utility profile usage of your utility meter. The <b>LOA</b> enables <b>CarbonCheckIQ+</b> to pull data directly from the utility to instantly update your <b>GHG</b> emission profile.</i></Typography>
         </Box>
       </Box>
     </Box>

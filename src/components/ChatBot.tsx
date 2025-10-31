@@ -135,7 +135,7 @@ const ChatbotPanel: React.FC = () => {
           >
             <Box sx={{ padding: '10px', borderBottom: '1px solid #ccc', display: 'flex', justifyContent: 'space-between' }}>
               <h3 style={{ margin: 0, color: '#036ca1', fontFamily: '"Nunito Sans", sans-serif' }}>
-                Bradley.ai Chat
+                CarbonCheckIQ+ Chat
               </h3>
             </Box>
             <Box

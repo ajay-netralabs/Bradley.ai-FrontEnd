@@ -49,7 +49,7 @@ const SubStep2: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 0.5 }}>
-            <Tooltip title="Bradley wants to know if your company can take tax deductions or depreciate assets in the current year. If yes, choose yes, if no, enter in a date in the box below as to when your company can begin taking advantage of these tax benefits." placement="top-start" arrow>
+            <Tooltip title="CarbonCheckIQ+ wants to know if your company can take tax deductions or depreciate assets in the current year. If yes, choose yes, if no, enter in a date in the box below as to when your company can begin taking advantage of these tax benefits." placement="top-start" arrow>
               <b>Tax Appetite In First Year?</b>
             </Tooltip>
           </Typography>
