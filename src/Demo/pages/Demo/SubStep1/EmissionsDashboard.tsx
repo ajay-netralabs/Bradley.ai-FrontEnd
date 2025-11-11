@@ -3,11 +3,19 @@ import {
     Box, Typography, Card, styled, CardContent, Paper, Tabs, Tab, FormControl,
     Select, MenuItem, Slider, Button, Grid, Table, TableBody, TableCell,
     TableContainer, TableRow, TableHead, Modal, IconButton, Stack, SelectChangeEvent, Checkbox, TableFooter,
+    Zoom,
+    Grow
 } from '@mui/material';
-import { HelpOutline, Close } from '@mui/icons-material';
+import { 
+    HelpOutline, Close, 
+    // Icons for polish
+    TrendingUp, TrendingDown, CheckCircle, Warning, Error 
+} from '@mui/icons-material';
+// Import keyframes for animations
+import { keyframes } from '@mui/system';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend, Cell } from 'recharts';
 // --- Import SRECMetrics type ---
-import { SRECMetrics } from '../../../../Context/DashboardDataContext'; 
+import { SRECMetrics } from '../../../../Context/DashboardDataContext';
 
 // --- TYPE DEFINITIONS ---
 interface DashboardDataObject {
@@ -20,17 +28,17 @@ interface DashboardDataObject {
         [key: string]: number;
     };
     srec_metrics: SRECMetrics; // Use imported type
-    der_control_panel: { 
-        current_mix_pct: { [key: string]: number }; 
-        recommended_mix_pct: { [key: string]: number }; 
+    der_control_panel: {
+        current_mix_pct: { [key: string]: number };
+        recommended_mix_pct: { [key: string]: number };
         impact_by_der: { [key: string]: number };
-        insights?: string[]; 
+        insights?: string[];
     };
     monthly_tracking: { target_per_month: number | string | null; with_bradley_der_per_month: number | string | null; monthly_emissions: { month: string | number; year: number | string; actual: number | null; projected: number | null; }[]; };
     action_center: {
         recommended_solution: { title: string; components: { type: string; size: string; }[]; investment_usd: number; payback_years: number; eliminates_penalties: boolean; };
         alternatives?: { title: string; investment_usd: number; reduction_pct: number; estimated_penalties_remaining_usd_per_year?: number; carbon_negative_by_year?: number; }[];
-        insights?: string[]; 
+        insights?: string[];
     };
 }
 
@@ -42,26 +50,80 @@ const colorPalette = {
     withBradley: '#388E3C', // Clear Green
 };
 
+// --- STABLE CSS KEYFRAME ANIMATIONS ---
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+const fadeInDown = keyframes`
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const slideInFromLeft = keyframes`
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+`;
+
+const zoomIn = keyframes`
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+`;
+
+const progressFill = keyframes`
+  from { width: 0; }
+`;
+
+const pulseWarning = keyframes`
+  0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+`;
+
+const pulseCritical = keyframes`
+  0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+`;
+
+
 // --- STYLED COMPONENTS ---
 const StyledTitle = styled(Typography)(({ theme }) => ({
     fontFamily: 'Nunito Sans, sans-serif', fontSize: '2rem', fontWeight: 'bold',
     textAlign: 'center', marginBottom: theme.spacing(1),
+    animation: `${fadeInDown} 0.5s ease-out`,
 }));
 
 const StyledBenefitCard = styled(Card)(({ theme }) => ({
     flex: 1, padding: theme.spacing(1), position: 'relative', overflow: 'hidden', textAlign: 'center',
-    backgroundColor: '#f5f5f5', boxShadow: 'none', borderRadius: theme.shape.borderRadius,
-    border: '1px solid #e9ecef', transition: 'all 0.3s ease',
-    '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' },
+    backgroundColor: '#f5f5ff',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.03)', 
+    borderRadius: theme.shape.borderRadius,
+    border: '1px solid #e9ecef', 
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    cursor: 'pointer',
+    '&:hover': { 
+        transform: 'translateY(-6px) scale(1.02)',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+        borderColor: 'rgba(25, 118, 210, 0.5)',
+        '& .watermark-icon': {
+            transform: 'translateY(-50%) rotate(-5deg) scale(1.05)',
+            opacity: 0.1,
+        }
+    },
 }));
 
 const WatermarkIcon = styled('div')({
     position: 'absolute', right: '-10px', top: '50%', transform: 'translateY(-50%) rotate(-15deg)',
     fontSize: '4rem', opacity: 0.08, fontWeight: 'bold', color: '#333', zIndex: 1,
+    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 });
 
+// --- CHANGE 4 ---
+// Removed hardcoded color
 const AbsoluteValue = styled(Typography)({
-    fontFamily: 'Nunito Sans, sans-serif', fontWeight: '900', fontSize: '1.2rem', color: '#333',
+    fontFamily: 'Nunito Sans, sans-serif', fontWeight: '900', fontSize: '1.2rem',
     position: 'relative', zIndex: 2, lineHeight: 2.2,
 });
 
@@ -70,39 +132,80 @@ const BenefitDescription = styled(Typography)(({ theme }) => ({
     position: 'relative', zIndex: 2, lineHeight: 1.5,
 }));
 
+// Modal box now animates with CSS
 const ModalBox = styled(Box)(({ theme }) => ({
-    position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-    width: 500, backgroundColor: 'white', border: '1px solid #ddd',
-    boxShadow: '0 8px 32px rgba(0,0,0,0.1)', borderRadius: '12px', padding: theme.spacing(3),
+    position: 'absolute', top: '50%', left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 500,
+    backgroundColor: 'white', border: '1px solid #ddd',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.1)', 
+    borderRadius: '12px', 
+    padding: theme.spacing(3),
+    animation: `${zoomIn} 0.3s cubic-bezier(0.4, 0, 0.2, 1)`,
 }));
 
-const StyledTabPanelBox = styled(Box)(({ theme }) => ({ position: 'relative', padding: theme.spacing(2), backgroundColor: theme.palette.grey[100], borderRadius: theme.shape.borderRadius }));
+// Apply animation to the tab panel's content box
+const StyledTabPanelBox = styled(Box)(({ theme }) => ({ 
+    position: 'relative', 
+    padding: theme.spacing(2), 
+    backgroundColor: theme.palette.grey[100], 
+    borderRadius: theme.shape.borderRadius,
+    animation: `${fadeIn} 0.5s ease-in-out`
+}));
 
+// Original, stable TabPanel component
 interface TabPanelProps { children?: React.ReactNode; index: number; value: number; }
-const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => ( <div role="tabpanel" hidden={value !== index}>{value === index && <Box sx={{ p: 3 }}>{children}</Box>}</div> );
+const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => ( 
+    <div role="tabpanel" hidden={value !== index}>
+        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div> 
+);
+
+// Animated Table Row
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    transition: 'background-color 0.2s ease-out',
+    '&.animated-row': {
+        opacity: 0,
+        animation: `${slideInFromLeft} 0.4s ease-out forwards`,
+    },
+    '&:hover': {
+        backgroundColor: theme.palette.action.hover,
+    }
+}));
+
 
 // --- HELPER FUNCTIONS & DATA ---
 const formatValue = (value?: number | string | null, type: 'number' | 'currency' | 'percent' = 'number'): string => { if (value === null || value === undefined || value === "") return 'N/A'; const num = typeof value === 'string' ? parseFloat(value) : value; if (isNaN(num)) return 'N/A'; const options: Intl.NumberFormatOptions = { maximumFractionDigits: 2 }; if (type === 'currency') { options.style = 'currency'; options.currency = 'USD'; options.minimumFractionDigits = 2; } if (type === 'percent') { return `${num.toFixed(1)}%`; } return new Intl.NumberFormat('en-US', options).format(num); };
-const derOrder = ['Solar PV', 'Battery Storage', 'CHP', 'Fuel Cells', 'Simple Turbines', 'Linear Generation', 'PLANT'];
-const derNameMapping: {[key: string]: string} = { solar_pv: 'Solar PV', battery_storage: 'Battery Storage', chp: 'CHP', fuel_cells: 'Fuel Cells', simple_turbines: 'Simple Turbines', linear_generation: 'Linear Generation', grid: 'PLANT', efficiency_retrofit: 'Efficiency Retrofit' };
+const derOrder = ['Solar PV', 'Battery Storage', 'CHP', 'Fuel Cells', 'Simple Turbines', 'Linear Generation', 'GRID'];
+const derNameMapping: {[key: string]: string} = { solar_pv: 'Solar PV', battery_storage: 'Battery Storage', chp: 'CHP', fuel_cells: 'Fuel Cells', simple_turbines: 'Simple Turbines', linear_generation: 'Linear Generation', grid: 'GRID', efficiency_retrofit: 'Efficiency Retrofit' };
 
 // --- CHILD COMPONENTS ---
-interface BenefitData { value: string; title: ReactNode; description: React.ReactNode; watermark: string; }
-const EnhancedBenefitCard: React.FC<{ benefit: BenefitData }> = ({ benefit }) => (
-    <StyledBenefitCard>
-        <WatermarkIcon>{benefit.watermark}</WatermarkIcon>
+interface BenefitData { value: string; title: ReactNode; description: ReactNode; watermark: string; }
+
+// --- CHANGE 4 ---
+// Added optional valueColor prop
+interface EnhancedBenefitCardProps {
+    benefit: BenefitData;
+    onClick: () => void;
+    valueColor?: string; // Optional color prop
+}
+const EnhancedBenefitCard: React.FC<EnhancedBenefitCardProps> = ({ benefit, onClick, valueColor }) => (
+    <StyledBenefitCard onClick={onClick}>
+        <WatermarkIcon className="watermark-icon">{benefit.watermark}</WatermarkIcon>
         <CardContent sx={{ position: 'relative', zIndex: 2, py: 0.1, display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
-            <Typography sx={{fontFamily:'Nunito Sans, sans-serif', fontWeight:'bold', fontSize:'1rem', mb: 0.5}}>{benefit.title}</Typography>
-            <AbsoluteValue>{benefit.value}</AbsoluteValue>
+            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600, fontSize: '1rem', mb: 0.5 }}>{benefit.title}</Typography>
+            {/* --- CHANGE 4 --- */}
+            {/* Apply dynamic color, fallback to default */}
+            <AbsoluteValue sx={{ color: valueColor ?? '#333' }}>{benefit.value}</AbsoluteValue>
             <BenefitDescription>{benefit.description}</BenefitDescription>
         </CardContent>
     </StyledBenefitCard>
 );
 
 // --- MAIN DASHBOARD COMPONENT ---
-interface EmissionsDashboardProps { 
-    allData: DashboardDataObject[]; 
-    onConfirmChanges: (userMix: {[key: string]: number}, location: string, source: string) => void;
+interface EmissionsDashboardProps {
+    allData: DashboardDataObject[];
+    onConfirmChanges: (userMix: {[key:string]: number}, location: string, source: string) => void;
     hasUnsavedChanges: boolean;
     setHasUnsavedChanges: (changed: boolean) => void;
     selectedLocation: string;
@@ -112,36 +215,32 @@ interface EmissionsDashboardProps {
     selectedYear: number | string;
     onYearChange: (year: number | string) => void;
     
-    // --- SREC Props from Wrapper ---
     projectSelections: { [key: string]: boolean };
     onProjectSelectChange: (key: string) => void;
     srecPercentage: number;
     onSrecPercentageChange: (value: number) => void;
     onSrecChangeCommitted: (value: number) => void;
-    calculatedSrecMetrics: SRECMetrics | null; // Allow null
-    // --- END SREC Props ---
+    calculatedSrecMetrics: SRECMetrics | null;
 }
-
-const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({ 
+const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
     allData, onConfirmChanges, setHasUnsavedChanges,
     selectedLocation, onLocationChange,
     selectedSource, onSourceChange,
     selectedYear, onYearChange,
-    // --- SREC Props from Wrapper ---
     projectSelections,
     onProjectSelectChange,
     srecPercentage,
     onSrecPercentageChange,
     onSrecChangeCommitted,
     calculatedSrecMetrics
-    // --- END SREC Props ---
 }) => {
     const [tabValue, setTabValue] = useState(0);
     const [userDerAllocation, setUserDerAllocation] = useState({});
     const [modalOpen, setModalOpen] = useState(false);
     const [modalContentId, setModalContentId] = useState<number | null>(null);
 
-    // --- Local state for project selections removed, now passed as props ---
+    const [quickFixModalOpen, setQuickFixModalOpen] = useState(false);
+    const [/* selectedCreditAmount */, setSelectedCreditAmount] = useState(0);
 
     const handleOpenModal = (id: number) => { setModalContentId(id); setModalOpen(true); };
     const handleCloseModal = () => { setModalOpen(false); setModalContentId(null); };
@@ -167,25 +266,31 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         return {
             'Solar PV': current?.solar_pv ?? 0, 'Battery Storage': current?.battery_storage ?? 0, 'CHP': current?.chp ?? 0,
             'Fuel Cells': current?.fuel_cells ?? 0, 'Simple Turbines': current?.simple_turbines ?? 0,
-            'Linear Generation': current?.linear_generation ?? 0, 'PLANT': current?.grid ?? 100,
+            'Linear Generation': current?.linear_generation ?? 0, 'GRID': current?.grid ?? 100,
         };
     }, [data]);
 
-    // --- useEffect no longer resets projectSelections or srecPercentage ---
     useEffect(() => {
         setUserDerAllocation(initialState);
         setHasUnsavedChanges(false);
-    }, [initialState, setHasUnsavedChanges]); 
+    }, [initialState, setHasUnsavedChanges]);
 
     const isChanged = useMemo(() => JSON.stringify(userDerAllocation) !== JSON.stringify(initialState), [userDerAllocation, initialState]);
+
+    const handleOpenQuickFix = () => setQuickFixModalOpen(true);
+    const handleCloseQuickFix = () => setQuickFixModalOpen(false);
+
+    const handleCreditSelection = (amount: number) => {
+        setSelectedCreditAmount(amount);
+    };
     
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => setTabValue(newValue);
-
+    
     const handleSliderChange = (name: string, value: number) => {
-        const otherDersTotal = Object.entries(userDerAllocation).filter(([key]) => key !== 'PLANT' && key !== name).reduce((acc, [, val]) => acc + (val as number), 0);
+        const otherDersTotal = Object.entries(userDerAllocation).filter(([key]) => key !== 'GRID' && key !== name).reduce((acc, [, val]) => acc + (val as number), 0);
         const newTotal = otherDersTotal + value;
         if (newTotal > 100) return;
-        setUserDerAllocation(prev => ({ ...prev, [name]: value, PLANT: 100 - newTotal }));
+        setUserDerAllocation(prev => ({ ...prev, [name]: value, GRID: 100 - newTotal }));
     };
     
     const handleReset = () => setUserDerAllocation(initialState);
@@ -196,13 +301,12 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         setUserDerAllocation({
             'Solar PV': recommended.solar_pv ?? 0, 'Battery Storage': recommended.battery_storage ?? 0, 'CHP': recommended.chp ?? 0,
             'Fuel Cells': recommended.fuel_cells ?? 0, 'Simple Turbines': recommended.simple_turbines ?? 0,
-            'Linear Generation': recommended.linear_generation ?? 0, 'PLANT': recommended.grid ?? 0,
+            'Linear Generation': recommended.linear_generation ?? 0, 'GRID': recommended.grid ?? 0,
         });
     };
-
     const handleConfirm = () => {
         const payloadMix = {
-            grid: (userDerAllocation as any)['PLANT'] ?? 0, solar_pv: (userDerAllocation as any)['Solar PV'] ?? 0,
+            grid: (userDerAllocation as any)['GRID'] ?? 0, solar_pv: (userDerAllocation as any)['Solar PV'] ?? 0,
             battery_storage: (userDerAllocation as any)['Battery Storage'] ?? 0, chp: (userDerAllocation as any)['CHP'] ?? 0,
             fuel_cells: (userDerAllocation as any)['Fuel Cells'] ?? 0, simple_turbines: (userDerAllocation as any)['Simple Turbines'] ?? 0,
             linear_generation: (userDerAllocation as any)['Linear Generation'] ?? 0,
@@ -215,8 +319,6 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         return Array.from(years).sort((a, b) => b - a);
     }, [data]);
 
-
-    // This object maps the formatted, static display string to the exact backend key
     const staticProjectKeys: { [key: string]: string } = {
         'Lighting': 'Lighting',
         'Ventilation': 'Ventilation',
@@ -227,10 +329,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         'Space Heating (Electric)': 'space heating (electric)',
     };
 
-    // Calculate cumulative reduction based on selections
     const cumulativeReduction = useMemo(() => {
         if (!data?.emission_reduction_projects || !projectSelections) return 0;
-
         return Object.entries(projectSelections).reduce((sum, [formattedKey, isSelected]) => {
             if (isSelected) {
                 const backendKey = staticProjectKeys[formattedKey];
@@ -239,8 +339,6 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             return sum;
         }, 0);
     }, [projectSelections, data?.emission_reduction_projects]);
-
-    // --- handleProjectSelectChange is now passed in as a prop `onProjectSelectChange` ---
     
     const filteredAndSortedChartData = useMemo(() => {
         if (!data || !selectedYear) return [];
@@ -252,7 +350,6 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             const monthName = (typeof em.month === 'number' && monthIndex >= 0 && monthIndex < 12)
                 ? monthOrder[monthIndex]
                 : String(em.month);
-
             return {
                 ...em,
                 month: monthName,
@@ -266,22 +363,18 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
 
     const yAxisMax = useMemo(() => {
         if (!data || !filteredAndSortedChartData || filteredAndSortedChartData.length === 0) {
-            return 'auto'; 
+            return 'auto';
         }
-
         const maxBarValue = Math.max(...filteredAndSortedChartData.map(entry => entry.emissions ?? 0));
         
-        const targetValue = (data.monthly_tracking?.target_per_month !== null && 
-                             data.monthly_tracking?.target_per_month !== undefined &&
-                             isFinite(Number(data.monthly_tracking.target_per_month)))
-                             ? Number(data.monthly_tracking.target_per_month)
-                             : 0; 
-
+        const targetValue = (data.monthly_tracking?.target_per_month !== null &&
+                                     data.monthly_tracking?.target_per_month !== undefined &&
+                                     isFinite(Number(data.monthly_tracking.target_per_month)))
+                                     ? Number(data.monthly_tracking.target_per_month)
+                                     : 0;
         const dataMax = Math.max(maxBarValue, targetValue);
-
-        if (dataMax === 0) return 100; 
-
-        return Math.ceil((dataMax * 1.1) / 10) * 10; 
+        if (dataMax === 0) return 100;
+        return Math.ceil((dataMax * 1.1) / 10) * 10;
     
     }, [data, filteredAndSortedChartData]);
 
@@ -290,7 +383,27 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         { value: `${formatValue(data?.evidence?.metrics?.compliance_target)} MT`, title: (<>Compliance Target<br />by 2030</>), description: <>State: <b>{data?.evidence?.metrics?.compliance_jurisdiction}</b><br/>Required by law<br/><b>{formatValue(data?.evidence?.metrics?.required_reduction_pct, 'percent')}</b> reduction</>, watermark: '⚖️' },
         { value: `${formatValue(data?.evidence?.metrics?.bradley_solution)} MT`, title: 'Emission Compliance Energy Supply Configuration', description: <><b>{formatValue(data?.evidence?.metrics?.bradley_reduction_pct, 'percent')}</b> Reduction<br/>Saves: <b>{formatValue(data?.evidence?.metrics?.bradley_savings, 'currency')}/yr</b><br/>ROI: <b>{formatValue(data?.evidence?.metrics?.bradley_roi_years)} years</b></>, watermark: '💡' },
     ];
+    
+    const HelpButton = ({ onClick }: { onClick: () => void }) => (
+        <IconButton 
+            size="small" 
+            onClick={onClick} 
+            sx={{ 
+                ml: 0.5,
+                transition: 'all 0.2s ease-in-out',
+                '&:hover': {
+                    transform: 'scale(1.15) rotate(10deg)',
+                    color: 'primary.main'
+                }
+            }}
+        >
+            <HelpOutline sx={{fontSize: '1.1rem'}} />
+        </IconButton>
+    );
 
+    // --- CHANGE 1 & 3 ---
+    // Modal titles are simple strings now (defaults to black)
+    // Insight logic is confirmed to be present and correct
     const renderModalContent = () => {
         const content: { title: React.ReactNode; body: React.ReactNode } = {
             title: '',
@@ -298,25 +411,21 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         }
         
         switch (modalContentId) {
-    case 0: 
-        content.title = (
-            <Typography variant="h6" sx={{ color: 'black' }}>
-                How to Optimize Your Energy Mix
-            </Typography>
-        );
+    case 0:
+        content.title = <span style={{ color: '#000' }}>How to Optimize Your Energy Mix</span>;
         content.body = (
             <>
                 <Typography sx={{ mt: 1.5, mb: 2, color: '#555', fontSize: '0.9rem' }}>
-                    CarbonCheckIQ+ enables you to select various types of energy supply to evaluate the GHG emission reductions related to having energy generation on premise. This evaluation output enables you to drive compliance through energy innovation. Should you want to further evaluate the practicality of having your own generation systems on your property to attain GHG emission compliance, 8XEnergy’s AI Energy Agent (Bradley.AI) provides a deep dive evaluation, equal to a 30% conceptual design that will confirm pricing, material, contractors, financing, constructability and/or third party ownership for your consideration
+                    Adjusting your Distributed Energy Resource (DER) mix can significantly impact your emissions and compliance status. This panel allows you to experiment with different configurations to find the optimal balance for your operations.
                 </Typography>
                 <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
                     <Typography variant="body1"><strong>Key Insights:</strong></Typography>
                     {data?.der_control_panel?.insights && data.der_control_panel.insights.length > 0 ? (
                          <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px', fontSize: '0.9rem' }}>
-                            {data.der_control_panel.insights.map((insight, index) => (
-                                <li key={index} style={{ marginTop: '4px' }}>{insight}</li>
-                            ))}
-                        </ul>
+                             {data.der_control_panel.insights.map((insight, index) => (
+                                 <li key={index} style={{ marginTop: '4px' }}>{insight}</li>
+                             ))}
+                         </ul>
                     ) : (
                         <Typography variant="body2" sx={{ fontStyle: 'italic', mt: 1 }}>
                             No specific insights available for this configuration.
@@ -326,13 +435,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             </>
         );
         break;
-
-    case 1: 
-        content.title = (
-            <Typography variant="h6" sx={{ color: 'black' }}>
-                Reading Your Performance Chart
-            </Typography>
-        );
+    case 1:
+        content.title = <span style={{ color: '#000' }}>Reading Your Performance Chart</span>;
         content.body = (
             <>
                 <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
@@ -349,13 +453,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             </>
         );
         break;
-
     case 2:
-        content.title = (
-            <Typography variant="h6" sx={{ color: 'black' }}>
-                Understanding Your Action Plan
-            </Typography>
-        );
+        content.title = <span style={{ color: '#000' }}>Understanding Your Action Plan</span>;
         content.body = (
             <>
                 <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
@@ -365,10 +464,10 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                     <Typography variant="body1"><strong>Key Insights:</strong></Typography>
                      {data?.action_center?.insights && data.action_center.insights.length > 0 ? (
                          <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px', fontSize: '0.9rem' }}>
-                            {data.action_center.insights.map((insight, index) => (
-                                <li key={index} style={{ marginTop: '4px' }}>{insight}</li>
-                            ))}
-                        </ul>
+                             {data.action_center.insights.map((insight, index) => (
+                                 <li key={index} style={{ marginTop: '4px' }}>{insight}</li>
+                             ))}
+                         </ul>
                     ) : (
                         <Typography variant="body2" sx={{ fontStyle: 'italic', mt: 1 }}>
                             No specific insights available for this action plan.
@@ -378,14 +477,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             </>
         );
         break;
-
-    // --- NEW: Added case 3 and 4 for the new tab ---
     case 3:
-        content.title = (
-            <Typography variant="h6" sx={{ color: 'black' }}>
-                Emission Reduction Projects Explained
-            </Typography>
-        );
+        content.title = <span style={{ color: '#000' }}>Emission Reduction Projects Explained</span>;
         content.body = (
             <>
                 <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
@@ -404,13 +497,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             </>
         );
         break;
-
     case 4:
-        content.title = (
-            <Typography variant="h6" sx={{ color: 'black' }}>
-                SREC Impact Overview
-            </Typography>
-        );
+        content.title = <span style={{ color: '#000' }}>SREC Impact Overview</span>;
         content.body = (
             <>
                 <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
@@ -433,16 +521,68 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             </>
         );
         break;
-    // --- END NEW ---
-
-    default: 
+    case 10: 
+        content.title = <span style={{ color: '#000' }}>Annual Emissions</span>; // CHANGE 1
+        content.body = (
+            <>
+                <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                    This card summarizes your total emissions profile for the year, based on current data and future projections.
+                </Typography>
+                <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                    <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
+                        <li style={{ marginTop: '8px' }}><b>YTD (Year-to-Date):</b> {formatValue(data?.evidence?.metrics?.actual_emissions)} MT. This is your actual, recorded emissions so far.</li>
+                        <li style={{ marginTop: '8px' }}><b>Projected:</b> {formatValue(data?.evidence?.metrics?.projected_emissions)} MT. This is our AI-forecast for the rest of the year.</li>
+                        <li style={{ marginTop: '8px' }}><b>Full Projection:</b> {formatValue(data?.evidence?.metrics?.full_year_projection)} MT. This is the (YTD + Projected) total.</li>
+                        <li style={{ marginTop: '8px' }}><b>YoY (Year-over-Year):</b> +{formatValue(data?.evidence?.metrics?.actual_yoy_pct, 'percent')}. Your emissions are tracking this much higher than the previous year.</li>
+                        <li style={{ marginTop: '8px' }}><b>Over By:</b> {formatValue(data?.evidence?.metrics?.over_by)} MT. This is how much your full projection exceeds your annual compliance target.</li>
+                    </ul>
+                </Paper>
+            </>
+        );
+        break;
+    case 11: 
+        content.title = <span style={{ color: '#000' }}>Compliance Target By 2030</span>; // CHANGE 1
+        content.body = (
+            <>
+                <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                    This card details the specific legal requirements you must meet by 2030.
+                </Typography>
+                <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                    <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
+                        <li style={{ marginTop: '8px' }}><b>Target:</b> {formatValue(data?.evidence?.metrics?.compliance_target)} MT. Your annual emissions must be at or below this level by 2030.</li>
+                        <li style={{ marginTop: '8px' }}><b>Jurisdiction:</b> {data?.evidence?.metrics?.compliance_jurisdiction}. This is the governing body (e.g., state, city) setting the mandate.</li>
+                        <li style={{ marginTop: '8px' }}><b>Required Reduction:</b> {formatValue(data?.evidence?.metrics?.required_reduction_pct, 'percent')}. This is the total reduction required from your baseline to meet the 2030 target.</li>
+                    </ul>
+                </Paper>
+            </>
+        );
+        break;
+    case 12: 
+        content.title = <span style={{ color: '#000' }}>Emission Compliance Energy Supply Configuration</span>; // CHANGE 1
+        content.body = (
+            <>
+                <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                    This card outlines the high-level benefits of adopting the CarbonCheckIQ+ recommended energy configuration.
+                </Typography>
+                <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                    <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
+                        <li style={{ marginTop: '8px' }}><b>Projected Emissions:</b> {formatValue(data?.evidence?.metrics?.bradley_solution)} MT. Your new annual emissions after implementing the solution.</li>
+                        <li style={{ marginTop: '8px' }}><b>Total Reduction:</b> {formatValue(data?.evidence?.metrics?.bradley_reduction_pct, 'percent')}. The percentage decrease from your current projected emissions.</li>
+                        <li style={{ marginTop: '8px' }}><b>Annual Savings:</b> {formatValue(data?.evidence?.metrics?.bradley_savings, 'currency')}. This is the estimated amount you will save *per year* by avoiding penalties.</li>
+                        <li style={{ marginTop: '8px' }}><b>ROI (Return on Investment):</b> {formatValue(data?.evidence?.metrics?.bradley_roi_years)} years. The estimated time it will take for the solution's savings to pay for its initial investment.</li>
+                    </ul>
+                </Paper>
+            </>
+        );
+        break;
+    default:
         return null;
 }
-
-
         return (
             <>
                 <IconButton onClick={handleCloseModal} sx={{position: 'absolute', top: 8, right: 8}}><Close /></IconButton>
+                {/* --- CHANGE 1 --- */}
+                {/* Title is rendered as a simple h6, which defaults to black */}
                 <Typography variant="h6" component="h2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold' }}>{content.title}</Typography>
                 <Box sx={{ fontFamily: 'Nunito Sans, sans-serif' }}>{content.body}</Box>
             </>
@@ -452,59 +592,53 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
     const utilizationPct = data?.verdict?.limit_utilization_pct ?? 0;
     const severity = data?.verdict?.severity || 'INFO';
     const status_banner = data?.verdict?.status_banner || 'Status not available';
-
     let complianceBannerBg: string;
     let complianceBannerBorder: string;
     let complianceBannerColor: string;
     let complianceIcon: string;
     let progressBarColor: string;
     let statusColor: string;
-    let statusIcon: string;
-
+    let statusIcon: ReactNode;
+    
     switch (severity) {
         case 'INFO':
-            complianceBannerBg = '#e8f5e9'; // Light Green
-            complianceBannerBorder = '#4caf50'; // Green
-            complianceBannerColor = '#1b5e20'; // Dark Green
+            complianceBannerBg = '#e8f5e9';
+            complianceBannerBorder = '#4caf50';
+            complianceBannerColor = '#1b5e20';
             complianceIcon = '✅';
-            progressBarColor = '#388E3C'; // Strong Green
-            statusColor = '#388E3C';
-            statusIcon = '🟢';
+            progressBarColor = '#388E3C';
+            statusColor = '#388E3C'; // Green
+            statusIcon = <CheckCircle sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
             break;
-        
         case 'WARNING':
-            complianceBannerBg = '#fffde7'; // Light Yellow
-            complianceBannerBorder = '#fdd835'; // Yellow
-            complianceBannerColor = '#f57f17'; // Dark Yellow
+            complianceBannerBg = '#fffde7';
+            complianceBannerBorder = '#fdd835';
+            complianceBannerColor = '#f57f17';
             complianceIcon = '⚠️';
-            progressBarColor = '#fdd835'; // Yellow
-            statusColor = '#f57f17';
-            statusIcon = '🟡';
+            progressBarColor = '#fdd835';
+            statusColor = '#f57f17'; // Yellow/Orange
+            statusIcon = <Warning sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
             break;
-
         case 'CRITICAL':
-            complianceBannerBg = '#fff3e0'; // Light Orange
-            complianceBannerBorder = '#ff9800'; // Orange
-            complianceBannerColor = '#e65100'; // Dark Orange
+            complianceBannerBg = '#fff3e0';
+            complianceBannerBorder = '#ff9800';
+            complianceBannerColor = '#e65100';
             complianceIcon = '❗';
-            progressBarColor = '#ff9800'; // Orange
-            statusColor = '#e65100';
-            statusIcon = '🟠';
+            progressBarColor = '#ff9800';
+            statusColor = '#e65100'; // Dark Orange
+            statusIcon = <Error sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
             break;
-
         case 'OVERLOAD':
         default:
-            complianceBannerBg = '#ffebee'; // Light Red
-            complianceBannerBorder = '#d32f2f'; // Red
-            complianceBannerColor = '#b71c1c'; // Dark Red
+            complianceBannerBg = '#ffebee';
+            complianceBannerBorder = '#d32f2f';
+            complianceBannerColor = '#b71c1c';
             complianceIcon = '☠️';
-            progressBarColor = '#d32f2f'; // Red
-            statusColor = '#d32f2f';
-            statusIcon = '🔴';
+            progressBarColor = '#d32f2f';
+            statusColor = '#d32f2f'; // Red
+            statusIcon = <Error sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
             break;
-    } 
-
-
+    }
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
             <style>{`
@@ -522,53 +656,64 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                 }
             `}</style>
             
-            <Modal open={modalOpen} onClose={handleCloseModal}><ModalBox>{renderModalContent()}</ModalBox></Modal>
+            <Modal 
+                open={modalOpen} 
+                onClose={handleCloseModal}
+            >
+                <ModalBox>{renderModalContent()}</ModalBox>
+            </Modal>
 
             <StyledTitle variant="h6">CarbonCheckIQ+ Emissions Dashboard</StyledTitle>
+            
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: { xs: '20px', md: '80px' } }}>
-                <Paper variant="outlined" sx={{ p: 2, position: 'relative' }}>
+                <Paper variant="outlined" sx={{ 
+                    p: 2, 
+                    position: 'relative', 
+                    borderRadius: 2, 
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                    animation: `${fadeIn} 0.5s ease-out`
+                }}>
                     <Box sx={{ position: 'absolute', top: 16, right: 24, display: 'flex', gap: 2 }}>
                         <FormControl size="small">
                             <Select
                                 value={selectedLocation}
                                 onChange={(e: SelectChangeEvent<string>) => onLocationChange(e.target.value)}
-                                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }} 
+                                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
                             >
-                                {availableLocations.map(loc => <MenuItem 
-                                    key={loc} 
-                                    value={loc} 
-                                    sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }} 
+                                {availableLocations.map(loc => <MenuItem
+                                    key={loc}
+                                    value={loc}
+                                    sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
                                 >
                                     {loc}
                                 </MenuItem>)}
                             </Select>
                         </FormControl>
-
                         <FormControl size="small">
                             <Select
                                 value={selectedSource}
                                 onChange={(e: SelectChangeEvent<string>) => onSourceChange(e.target.value)}
-                                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }} 
+                                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
                             >
-                                {availableSources.map(src => <MenuItem 
-                                    key={src} 
-                                    value={src} 
-                                    sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif'}} 
+                                {availableSources.map(src => <MenuItem
+                                    key={src}
+                                    value={src}
+                                    sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif'}}
                                 >
                                     {src.charAt(0).toUpperCase() + src.slice(1)}
                                 </MenuItem>)}
                             </Select>
                         </FormControl>
                         <FormControl size="small">
-                            <Select 
-                                value={selectedYear} 
+                            <Select
+                                value={selectedYear}
                                 onChange={(e: SelectChangeEvent<string | number>) => onYearChange(e.target.value)}
                                 sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
                             >
-                                {availableYears.map(year => <MenuItem 
-                                    key={year} 
-                                    value={year} 
-                                    sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }} 
+                                {availableYears.map(year => <MenuItem
+                                    key={year}
+                                    value={year}
+                                    sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
                                 >
                                     {year}
                                 </MenuItem>)}
@@ -577,18 +722,245 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                     </Box>
                     <Typography sx={{ textAlign: 'left', fontWeight: 'bold', fontSize: '1rem' }}>COMPLIANCE STATUS</Typography>
                     
-                    <Paper variant="outlined" sx={{ mt: 3, backgroundColor: complianceBannerBg, textAlign: 'center', p:1, borderColor: complianceBannerBorder }}>
-                        <Typography sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: complianceBannerColor }}>
-                            {complianceIcon} {status_banner}
+                    <Paper 
+    variant="outlined" 
+    sx={{ 
+        mt: 3, 
+        backgroundColor: complianceBannerBg, 
+        textAlign: 'center', 
+        p:1, 
+        borderColor: complianceBannerBorder,
+        borderRadius: '8px',
+        animation: (severity === 'OVERLOAD' || severity === 'CRITICAL') 
+            ? `${severity === 'OVERLOAD' ? pulseWarning : pulseCritical} 2s infinite` 
+            : 'none',
+        position: 'relative',
+    }}
+>
+    <Typography sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: complianceBannerColor, textAlign: 'left', pl: 1.5 }}>
+        {complianceIcon} {status_banner}
+    </Typography>
+    <Button
+        size="small"
+        variant="contained"
+        onClick={handleOpenQuickFix}
+        sx={{
+            position: 'absolute',
+            right: 6,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontFamily: 'Nunito Sans, sans-serif',
+            fontSize: '0.75rem',
+            bgcolor: severity === 'INFO' ? progressBarColor : 
+                     severity === 'WARNING' ? progressBarColor : 
+                     severity === 'CRITICAL' ? progressBarColor : 
+                     progressBarColor,
+            color: 'white',
+            fontWeight: 'bold',
+            px: 2,
+            py: 0.5,
+            '&:hover': {
+                bgcolor: severity === 'INFO' ? '#2e7d32' : 
+                         severity === 'WARNING' ? '#f9a825' : 
+                         severity === 'CRITICAL' ? '#f57c00' : 
+                         '#c62828',
+                // transform: 'translateY(-50%) scale(1)',
+            },
+            transition: 'all 0.3s ease',
+            boxShadow: `0 2px 8px ${
+                severity === 'INFO' ? 'rgba(56, 142, 60, 0.3)' : 
+                severity === 'WARNING' ? 'rgba(253, 216, 53, 0.3)' : 
+                severity === 'CRITICAL' ? 'rgba(255, 152, 0, 0.3)' : 
+                'rgba(211, 47, 47, 0.3)'
+            }`,
+            animation: (severity === 'OVERLOAD' || severity === 'CRITICAL') 
+                ? `${severity === 'OVERLOAD' ? pulseWarning : pulseCritical} 2s infinite 1s` 
+                : 'none',
+        }}
+        // startIcon={<span>💳</span>}
+    >
+        Purchase Credits
+    </Button>
+</Paper>
+
+<Modal 
+    open={quickFixModalOpen} 
+    onClose={handleCloseQuickFix}
+>
+    <ModalBox sx={{ 
+        width: 650, 
+        maxWidth: '90vw',
+        borderTop: `4px solid ${complianceBannerBorder}`,
+    }}>
+        <IconButton onClick={handleCloseQuickFix} sx={{position: 'absolute', top: 8, right: 8}}>
+            <Close />
+        </IconButton>
+        
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+            <Typography variant="h6" component="h2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', color: '#000' }}>
+                Purchase Solar Renewable Energy Credits (SRECs)
+            </Typography>
+        </Box>
+        
+        <Typography sx={{ fontSize: '0.85rem', color: '#666', mb: 3, fontFamily: 'Nunito Sans, sans-serif' }}>
+            Avoid {formatValue(data?.verdict?.penalty_risk_usd, 'currency')} penalty while you work on long-term solutions
+        </Typography>
+
+        <Paper 
+            variant="outlined" 
+            sx={{ 
+                p: 2, 
+                mb: 3, 
+                bgcolor: complianceBannerBg,
+                borderColor: complianceBannerBorder,
+                borderWidth: 2,
+            }}
+        >
+            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '0.9rem', mb: 1.5, color: complianceBannerColor }}>
+                💡 CREDITS NEEDED FOR COMPLIANCE:
+            </Typography>
+            
+            <Box sx={{ textAlign: 'center', py: 2 }}>
+                <Typography sx={{ fontSize: '0.85rem', fontFamily: 'Nunito Sans, sans-serif', color: '#666', mb: 1 }}>
+                    You need
+                </Typography>
+                <Typography sx={{ 
+                    fontSize: '2.5rem', 
+                    fontWeight: 'bold', 
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    color: complianceBannerColor,
+                    lineHeight: 1,
+                }}>
+                    {Math.ceil((data?.evidence?.metrics?.over_by || 0) / 0.433)}
+                </Typography>
+                <Typography sx={{ fontSize: '0.85rem', fontFamily: 'Nunito Sans, sans-serif', color: '#666', mt: 0.5 }}>
+                    SRECs to get back to compliance
+                </Typography>
+            </Box>
+            
+            <Box sx={{ mt: 2, p: 1.5, bgcolor: 'white', borderRadius: 1, border: `1px dashed ${complianceBannerBorder}` }}>
+                <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', textAlign: 'center', color: '#666' }}>
+                    <b>Calculation:</b> {formatValue(data?.evidence?.metrics?.over_by)} MT ÷ 0.433 MT per credit = {Math.ceil((data?.evidence?.metrics?.over_by || 0) / 0.433)} SRECs
+                </Typography>
+            </Box>
+        </Paper>
+
+        <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '0.9rem', mb: 1.5, display: 'flex', alignItems: 'center', gap: 0.5, color: '#000' }}>
+            <span>🛒</span> MARKETPLACE:
+        </Typography>
+
+        <Paper 
+            variant="outlined" 
+            sx={{ 
+                p: 2.5, 
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                border: `2px solid ${complianceBannerBorder}`,
+                bgcolor: 'white',
+                '&:hover': {
+                    borderColor: progressBarColor,
+                    boxShadow: `0 4px 12px ${complianceBannerBorder}40`,
+                    transform: 'translateY(-2px)',
+                }
+            }}
+            onClick={() => handleCreditSelection(Math.ceil((data?.evidence?.metrics?.over_by || 0) / 0.433))}
+        >
+            <Grid container alignItems="center" spacing={2}>
+                <Grid item xs={1}>
+                    <Box sx={{ fontSize: '2rem', textAlign: 'center' }}>☀️</Box>
+                </Grid>
+                <Grid item xs={3}>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '0.95rem' }}>
+                        Solar Renewable Energy Credits
+                    </Typography>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', color: '#666' }}>
+                        (SRECs)
+                    </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                    <Box>
+                        <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif', mb: 0.5 }}>Total Cost</Typography>
+                        <Typography sx={{ fontWeight: 'bold', fontSize: '1.1rem', fontFamily: 'Nunito Sans, sans-serif', color: complianceBannerColor }}>
+                            ${((Math.ceil((data?.evidence?.metrics?.over_by || 0) / 0.433) * 230) / 1000).toFixed(0)}k
                         </Typography>
-                    </Paper>
+                    </Box>
+                </Grid>
+                <Grid item xs={2}>
+                    <Box>
+                        <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif', mb: 0.5 }}>Emission Offset</Typography>
+                        <Typography sx={{ fontWeight: 'bold', fontSize: '1.1rem', fontFamily: 'Nunito Sans, sans-serif' }}>
+                            {formatValue((Math.ceil((data?.evidence?.metrics?.over_by || 0) / 0.433) * 0.433))} MT
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item xs={2}>
+                    <Box>
+                        <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif', mb: 0.5 }}>Result</Typography>
+                        <Typography sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#1b5e20', fontFamily: 'Nunito Sans, sans-serif' }}>
+                            {formatValue(data?.evidence?.metrics?.compliance_target)} MT
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item xs={2}>
+                    <Box>
+                        <Typography sx={{ fontSize: '0.75rem', color: '#1b5e20', fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600 }}>
+                            ✓ Meet Compliance
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif', mt: 0.3 }}>
+                            ✓ Weekly available
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif' }}>
+                            ✓ Regulator approved
+                        </Typography>
+                    </Box>
+                </Grid>
+            </Grid>
+        </Paper>
+
+        <Box sx={{ display: 'flex', gap: 2, mt: 3, justifyContent: 'flex-end' }}>
+            <Button 
+                variant="outlined" 
+                onClick={handleCloseQuickFix}
+                sx={{ 
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    borderColor: complianceBannerBorder,
+                    color: complianceBannerColor,
+                    '&:hover': {
+                        borderColor: progressBarColor,
+                        bgcolor: `${complianceBannerBg}80`,
+                    }
+                }}
+            >
+                Cancel
+            </Button>
+            <Button 
+                variant="contained" 
+                sx={{ 
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    bgcolor: progressBarColor,
+                    color: 'white',
+                    fontWeight: 'bold',
+                    '&:hover': { 
+                        bgcolor: severity === 'INFO' ? '#2e7d32' : 
+                                 severity === 'WARNING' ? '#f9a825' : 
+                                 severity === 'CRITICAL' ? '#f57c00' : 
+                                 '#c62828',
+                    }
+                }}
+            >
+                Purchase {Math.ceil((data?.evidence?.metrics?.over_by || 0) / 0.433)} SRECs
+            </Button>
+        </Box>
+    </ModalBox>
+</Modal>
 
                     <Box sx={{ position: 'relative', height: '20px', backgroundColor: '#e0e0e0', borderRadius: '10px', overflow: 'hidden', margin: '16px auto', maxWidth: '100%' }}>
-                        <Box sx={{ 
-                            width: `${utilizationPct > 100 ? 100 : utilizationPct}%`, 
-                            height: '100%', 
+                        <Box sx={{
+                            width: `${utilizationPct > 100 ? 100 : utilizationPct}%`,
+                            height: '100%',
                             backgroundColor: progressBarColor,
-                            transition: 'width 0.4s ease-in-out'
+                            transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                            animation: `${progressFill} 1s ease-out`
                         }} />
                         <Box sx={{
                             position: 'absolute',
@@ -601,7 +973,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                             justifyContent: 'center',
                         }}>
                             <Typography sx={{
-                                color: utilizationPct > 40 ? '#fff' : '#000', 
+                                color: utilizationPct > 40 ? '#fff' : '#000',
                                 textShadow: utilizationPct > 40 ? '0px 0px 3px rgba(0,0,0,0.5)' : 'none',
                                 fontFamily: 'Nunito Sans, sans-serif',
                                 fontWeight: 'bold',
@@ -614,14 +986,45 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                     </Box>
                     
                     <Grid container spacing={1} sx={{ textAlign: 'center' }}>
-                        <Grid item xs={4}><Typography sx={{fontSize: '0.8rem'}}>STATUS: <b style={{ color: statusColor }}>{statusIcon} {severity}</b></Typography></Grid>
-                        <Grid item xs={4}><Typography sx={{fontSize: '0.8rem'}}>PENALTY RISK: <b>{formatValue(data?.verdict?.penalty_risk_usd, 'currency')}</b></Typography></Grid>
-                        <Grid item xs={4}><Typography sx={{fontSize: '0.8rem'}}>TIME LEFT: <b>{data?.verdict?.time_left_months} MONTHS</b></Typography></Grid>
+                        <Grid item xs={4} sx={{ animation: `${fadeIn} 0.6s ease-out`}}>
+                            <Typography sx={{fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5}}>
+                                STATUS: <b style={{ color: statusColor, display: 'flex', alignItems: 'center', gap: '4px' }}>{statusIcon} {severity}</b>
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={4} sx={{ animation: `${fadeIn} 0.7s ease-out`}}>
+                            <Typography sx={{fontSize: '0.8rem'}}>PENALTY RISK: <b>{formatValue(data?.verdict?.penalty_risk_usd, 'currency')}</b></Typography>
+                        </Grid>
+                        <Grid item xs={4} sx={{ animation: `${fadeIn} 0.8s ease-out`}}>
+                            <Typography sx={{fontSize: '0.8rem'}}>TIME LEFT: <b>{data?.verdict?.time_left_months} MONTHS</b></Typography>
+                        </Grid>
                     </Grid>
                 </Paper>
-                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 1 }}>{evidenceCards.map((benefit, index) => <EnhancedBenefitCard key={index} benefit={benefit} />)}</Box>
-                <Paper elevation={0} sx={{ width: '100%', mt: 4, backgroundColor: 'transparent' }}>
-                    <Box sx={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #e0e0e0', backgroundColor: 'white' }}>
+
+                <Box sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    gap: 2, 
+                    mt: 1,
+                }}>
+                    {evidenceCards.map((benefit, index) => (
+                        <Box key={index} sx={{ flex: 1, animation: `${fadeInDown} 0.5s ease-out ${0.6 + index * 0.1}s backwards`, opacity: 0, animationFillMode: 'forwards' }}>
+                            <EnhancedBenefitCard 
+                                benefit={benefit} 
+                                onClick={() => handleOpenModal(10 + index)}
+                                // Pass statusColor to first card and green to third card (index 2)
+                                valueColor={index === 0 ? statusColor : index === 2 ? '#388E3C' : undefined}
+                            />
+                        </Box>
+                    ))}
+                </Box>
+
+                <Paper elevation={0} sx={{ 
+                    width: '100%', 
+                    mt: 4, 
+                    backgroundColor: 'transparent',
+                    animation: `${fadeIn} 0.8s ease-out`
+                }}>
+                    <Box sx={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #e0e0e0', backgroundColor: 'white', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
                         <Tabs
                             value={tabValue}
                             onChange={handleTabChange}
@@ -629,8 +1032,17 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                             sx={{
                                 borderBottom: 1,
                                 borderColor: 'divider',
-                                // --- FIX: Reverted to original styling ---
-                                '& .MuiTab-root': { fontFamily: 'Nunito Sans, sans-serif', margin: '0 18px', textTransform: 'none' },
+                                '& .MuiTab-root': { 
+                                    fontFamily: 'Nunito Sans, sans-serif', 
+                                    margin: '0 18px', 
+                                    textTransform: 'none',
+                                    transition: 'all 0.2s ease',
+                                    borderRadius: '4px 4px 0 0',
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(25, 118, 210, 0.04)',
+                                        transform: 'translateY(-2px)'
+                                    }
+                                },
                             }}
                         >
                             <Tab label={<span>Interactive Emission<br />Modelling Dashboard</span>} />
@@ -638,13 +1050,12 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                             <Tab label={<span>Immediate Emission<br />Compliance Configuration</span>} />
                             <Tab label={<span>Energy Conservation &<br />Reduction Measures</span>} />
                         </Tabs>
-
                         
                         <TabPanel value={tabValue} index={0}>
-                            <StyledTabPanelBox>
+                            <StyledTabPanelBox> 
                                 <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
                                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>VISUALIZE YOUR FUTURE ENERGY SUPPLY AND EMISSIONS</Typography>
-                                    <IconButton size="small" onClick={() => handleOpenModal(0)}><HelpOutline sx={{fontSize: '1.1rem'}} /></IconButton>
+                                    <HelpButton onClick={() => handleOpenModal(0)} />
                                 </Box>
                                 <TableContainer component={Paper} variant="outlined">
                                     <Table size="small">
@@ -656,14 +1067,49 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                                 <TableCell align="right" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold' }}>Impact (MT)</TableCell>
                                             </TableRow>
                                         </TableHead>
-                                        <TableBody>{derOrder.map(name => {
+                                        <TableBody>{derOrder.map((name, idx) => {
                                             const backendKey = Object.keys(derNameMapping).find(key => derNameMapping[key] === name) || '';
                                             const recMix = data?.der_control_panel?.recommended_mix_pct;
                                             const impactValue = data?.der_control_panel?.impact_by_der?.[backendKey] ?? 0;
                                             const bradleyValue = recMix?.[backendKey] ?? 0;
                                             const userValue = (userDerAllocation as any)[name] ?? 0;
-                                            const isPlant = name === 'PLANT';
-                                            return (<TableRow key={name} sx={{ backgroundColor: isPlant ? '#f5f5f5' : '#fff' }}><TableCell sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600 }}>{name}</TableCell><TableCell align="center" sx={{ fontFamily: 'Nunito Sans, sans-serif' }}>{formatValue(bradleyValue, 'percent')}</TableCell><TableCell><Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}><Slider value={userValue} onChange={(_, v) => handleSliderChange(name, v as number)} disabled={isPlant} /><Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', width: '40px' }}>{formatValue(userValue, 'percent')}</Typography></Box></TableCell><TableCell align="right"><Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', color: impactValue < 0 ? '#34c759' : '#ff3b30' }}>{formatValue(impactValue)}</Typography></TableCell></TableRow>);
+                                            const isPlant = name === 'GRID';
+                                            return (
+                                                <StyledTableRow 
+                                                    key={name} 
+                                                    className="animated-row"
+                                                    style={{ animationDelay: `${idx * 50}ms` }}
+                                                    sx={{ backgroundColor: isPlant ? '#f5f5f5' : '#fff' }}
+                                                >
+                                                    <TableCell sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600 }}>{name}</TableCell>
+                                                    <TableCell align="center" sx={{ fontFamily: 'Nunito Sans, sans-serif' }}>{formatValue(bradleyValue, 'percent')}</TableCell>
+                                                    <TableCell><Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                        <Slider 
+                                                            value={userValue} 
+                                                            onChange={(_, v) => handleSliderChange(name, v as number)} 
+                                                            disabled={isPlant} 
+                                                            sx={{ '& .MuiSlider-thumb': { transition: 'all 0.1s ease'/* , '&:hover': { transform: 'scale(1.3)' } */}}}
+                                                        />
+                                                        <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', width: '40px' }}>{formatValue(userValue, 'percent')}</Typography>
+                                                    </Box></TableCell>
+                                                    <TableCell align="right">
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+                                                            {impactValue < 0 ? <TrendingDown sx={{ fontSize: '1rem', color: 'success.main' }} /> : (impactValue > 0 ? <TrendingUp sx={{ fontSize: '1rem', color: 'error.main' }} /> : null)}
+                                                            <Typography 
+                                                                sx={{ 
+                                                                    fontFamily: 'Nunito Sans, sans-serif', 
+                                                                    fontWeight: 'bold', 
+                                                                    // --- CHANGE 2 ---
+                                                                    // All non-negative numbers (0 and >0) are red
+                                                                    color: impactValue < 0 ? 'success.main' : 'error.main' 
+                                                                }}
+                                                            >
+                                                                {formatValue(impactValue)}
+                                                            </Typography>
+                                                        </Box>
+                                                    </TableCell>
+                                                </StyledTableRow>
+                                            );
                                         })}</TableBody>
                                     </Table>
                                 </TableContainer>
@@ -674,24 +1120,25 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                 </Box>
                             </StyledTabPanelBox>
                         </TabPanel>
-
                         <TabPanel value={tabValue} index={1}>
                             <StyledTabPanelBox>
                                 <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
                                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>MONTHLY PERFORMANCE & FORECASTING</Typography>
-                                    <IconButton size="small" onClick={() => handleOpenModal(1)}><HelpOutline sx={{fontSize: '1.1rem'}} /></IconButton>
+                                    <HelpButton onClick={() => handleOpenModal(1)} />
                                 </Box>
                                 <Box sx={{ height: 350 }}>
                                     <ResponsiveContainer width="100%" height="100%">
                                         <BarChart data={filteredAndSortedChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                             <CartesianGrid strokeDasharray="3 3" />
                                             <XAxis dataKey="month" tick={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem' }} />
-                                            <YAxis 
-                                                tick={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem' }} 
+                                            <YAxis
+                                                tick={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem' }}
                                                 domain={[0, yAxisMax]}
                                             />
-                                            <Tooltip cursor={{fill: 'rgba(230, 230, 230, 0.4)'}} contentStyle={{ fontFamily: 'Nunito Sans, sans-serif' }}/>
-                                            
+                                            <Tooltip 
+                                                cursor={{fill: 'rgba(230, 230, 230, 0.4)'}} 
+                                                contentStyle={{ fontFamily: 'Nunito Sans, sans-serif', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                            />
                                             <Legend
                                                 wrapperStyle={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
                                                 payload={[
@@ -701,16 +1148,14 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                                     { value: 'With CarbonCheckIQ+', type: 'line', color: colorPalette.withBradley },
                                                 ]}
                                             />
-                                            
-                                            <Bar dataKey="emissions" name="Emissions">
+                                            <Bar dataKey="emissions" name="Emissions" animationDuration={800}>
                                                 {filteredAndSortedChartData.map((entry, index) => (
                                                     <Cell key={`cell-${index}`} fill={entry.fill} />
                                                 ))}
                                             </Bar>
-                                            
-                                            { (data?.monthly_tracking?.target_per_month !== null && 
+                                            { (data?.monthly_tracking?.target_per_month !== null &&
                                                data?.monthly_tracking?.target_per_month !== undefined &&
-                                               data?.monthly_tracking?.target_per_month !== '' && 
+                                               data?.monthly_tracking?.target_per_month !== '' &&
                                                isFinite(Number(data.monthly_tracking.target_per_month))) &&
                                                 <ReferenceLine
                                                     ifOverflow="extendDomain"
@@ -724,14 +1169,14 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                                         fill: colorPalette.target,
                                                         fontFamily: 'Nunito Sans, sans-serif',
                                                         fontSize: 12,
+                                                        fontWeight: 'bold'
                                                     }}
                                                     className="ref-line-target"
                                                 />
                                             }
-                                            
-                                            { (data?.monthly_tracking?.with_bradley_der_per_month !== null && 
+                                            { (data?.monthly_tracking?.with_bradley_der_per_month !== null &&
                                                data?.monthly_tracking?.with_bradley_der_per_month !== undefined &&
-                                               data?.monthly_tracking?.with_bradley_der_per_month !== '' && 
+                                               data?.monthly_tracking?.with_bradley_der_per_month !== '' &&
                                                isFinite(Number(data.monthly_tracking.with_bradley_der_per_month))) &&
                                                 <ReferenceLine
                                                     ifOverflow="extendDomain"
@@ -745,6 +1190,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                                         fill: colorPalette.withBradley,
                                                         fontFamily: 'Nunito Sans, sans-serif',
                                                         fontSize: 12,
+                                                        fontWeight: 'bold'
                                                     }}
                                                     className="ref-line-bradley"
                                                 />
@@ -754,187 +1200,350 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                 </Box>
                             </StyledTabPanelBox>
                         </TabPanel>
-
                         <TabPanel value={tabValue} index={2}>
-                            <StyledTabPanelBox sx={{minHeight: 360}}>
-                                <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
-                                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif',  textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>YOUR ACTION PLAN</Typography>
-                                    <IconButton size="small" onClick={() => handleOpenModal(2)}><HelpOutline sx={{fontSize: '1.1rem'}} /></IconButton>
-                                </Box>
-                                <Grid container spacing={3} alignItems="stretch">
-                                    <Grid item xs={12} md={7}>
-                                        <Paper variant="outlined" sx={{ p: 2.5, height: '87%', display: 'flex', flexDirection: 'column' }}>
-                                            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1rem', mb: 1.5 }}>RECOMMENDED SOLUTION</Typography>
-                                            <Card variant="outlined" sx={{ flexGrow: 1 }}>
-                                                <CardContent sx={{display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between'}}>
-                                                    <div>
-                                                        <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold' }}>📋 {data?.action_center?.recommended_solution?.title}</Typography>
-                                                        <ul style={{ fontSize: '0.9rem', margin: '12px 0', paddingLeft: '20px' }}>
-                                                            {data?.action_center?.recommended_solution?.components?.map(c => <li key={c.type}>{`${c.size} ${derNameMapping[c.type] || c.type}`}</li>)}
-                                                        </ul>
-                                                        <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif' }}><b>Investment:</b> {formatValue(data?.action_center?.recommended_solution?.investment_usd, 'currency')} | <b>Payback:</b> {data?.action_center?.recommended_solution?.payback_years} years</Typography>
-                                                    
-                                                        <Box sx={{ mt: 2, display: 'flex', gap: 1 }}><Button sx={{fontFamily: 'Nunito Sans, sans-serif'}} variant="contained" size="small">Schedule Consultation</Button><Button sx={{fontFamily: 'Nunito Sans, sans-serif'}} variant="outlined" size="small">Email Proposal</Button></Box>
-                                                </div></CardContent>
-                                            </Card>
-                                        </Paper>
-                                    </Grid>
-                                    <Grid item xs={12} md={5}>
-                                        <Paper variant="outlined" sx={{ p: 2.5, height: '87%', display: 'flex', flexDirection: 'column' }}>
-                                            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1rem', mb: 1.5 }}>ALTERNATIVE OPTIONS</Typography>
-                                            <Stack spacing={2}>
-                                                {data?.action_center?.alternatives?.map(alt => (
-                                                    <Card key={alt.title} variant="outlined">
-                                                        <CardContent sx={{py: 1.5, '&:last-child': { pb: 1.5 }}}>
-                                                            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold' }}>{alt.title.includes("Quick") || alt.title.includes("Solar") ? '💡' : '🚀'} {alt.title}</Typography>
-                                                            <Typography sx={{fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem'}}><b>Investment:</b> {formatValue(alt.investment_usd, 'currency')}<br /><b>Reduction:</b> {formatValue(alt.reduction_pct, 'percent')}</Typography>
-                                                            {alt.estimated_penalties_remaining_usd_per_year != null && <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '0.85rem', color: alt.estimated_penalties_remaining_usd_per_year > 0 ? '#ff3b30' : '#34c759' }}>Penalties: {formatValue(alt.estimated_penalties_remaining_usd_per_year, 'currency')}/yr</Typography>}
-                                                            {alt.carbon_negative_by_year != null && <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.85rem' }}><b>Carbon -ve by year:</b> {alt.carbon_negative_by_year}</Typography>}
+                                <StyledTabPanelBox sx={{minHeight: 360}}>
+                                    <Box sx={{
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center', 
+                                        pb: 2
+                                    }}>
+                                        <Typography sx={{ 
+                                            fontFamily: 'Nunito Sans, sans-serif',  
+                                            textAlign: 'center', 
+                                            fontWeight: 'bold', 
+                                            fontSize: '0.9rem' 
+                                        }}>
+                                            YOUR ACTION PLAN
+                                        </Typography>
+                                        <IconButton 
+                                            size="small" 
+                                            onClick={() => handleOpenModal(2)}
+                                            sx={{
+                                                transition: 'all 0.3s ease',
+                                                '&:hover': {
+                                                    transform: 'scale(1.2) rotate(15deg)',
+                                                    color: '#1976d2'
+                                                }
+                                            }}
+                                        >
+                                            <HelpOutline sx={{fontSize: '1.1rem'}} />
+                                        </IconButton>
+                                    </Box>
+                                    <Grid container spacing={3} alignItems="stretch">
+                                        <Grid item xs={12} md={7}>
+                                            <Grow in timeout={800}>
+                                                <Paper variant="outlined" sx={{ 
+                                                    p: 2.5, 
+                                                    height: '87%', 
+                                                    display: 'flex', 
+                                                    flexDirection: 'column',
+                                                    transition: 'all 0.3s ease',
+                                                    '&:hover': {
+                                                        boxShadow: '0 6px 16px rgba(0,0,0,0.1)',
+                                                        transform: 'translateY(-2px)'
+                                                    }
+                                                }}>
+                                                    <Typography sx={{ 
+                                                        fontFamily: 'Nunito Sans, sans-serif', 
+                                                        fontWeight: 'bold', 
+                                                        fontSize: '1rem', 
+                                                        mb: 1.5 
+                                                    }}>
+                                                        RECOMMENDED SOLUTION
+                                                    </Typography>
+                                                    <Card variant="outlined" sx={{ 
+                                                        flexGrow: 1,
+                                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                        color: 'white'
+                                                    }}>
+                                                        <CardContent sx={{
+                                                            display: 'flex', 
+                                                            flexDirection: 'column', 
+                                                            height: '100%', 
+                                                            justifyContent: 'space-between'
+                                                        }}>
+                                                            <div>
+                                                                <Typography sx={{ 
+                                                                    fontFamily: 'Nunito Sans, sans-serif', 
+                                                                    fontWeight: 'bold',
+                                                                    color: 'white',
+                                                                    fontSize: '1.1rem'
+                                                                }}>
+                                                                    📋 {data?.action_center?.recommended_solution?.title}
+                                                                </Typography>
+                                                                <ul style={{ 
+                                                                    fontSize: '0.9rem', 
+                                                                    margin: '12px 0', 
+                                                                    paddingLeft: '20px',
+                                                                    color: 'rgba(255,255,255,0.95)'
+                                                                }}>
+                                                                    {data?.action_center?.recommended_solution?.components?.map(c => (
+                                                                        <li key={c.type}>
+                                                                            {`${c.size} ${derNameMapping[c.type] || c.type}`}
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                                <Typography sx={{ 
+                                                                    fontFamily: 'Nunito Sans, sans-serif',
+                                                                    color: 'rgba(255,255,255,0.95)'
+                                                                }}>
+                                                                    <b>Investment:</b> {formatValue(data?.action_center?.recommended_solution?.investment_usd, 'currency')} | <b>Payback:</b> {data?.action_center?.recommended_solution?.payback_years} years
+                                                                </Typography>
+                                                            
+                                                                <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+                                                                    <Button 
+                                                                        sx={{
+                                                                            fontFamily: 'Nunito Sans, sans-serif',
+                                                                            bgcolor: 'white',
+                                                                            color: '#667eea',
+                                                                            '&:hover': {
+                                                                                bgcolor: 'rgba(255,255,255,0.9)',
+                                                                                transform: 'scale(1.05)'
+                                                                            },
+                                                                            transition: 'all 0.3s ease'
+                                                                        }} 
+                                                                        variant="contained" 
+                                                                        size="small"
+                                                                    >
+                                                                        Schedule Consultation
+                                                                    </Button>
+                                                                    <Button 
+                                                                        sx={{
+                                                                            fontFamily: 'Nunito Sans, sans-serif',
+                                                                            borderColor: 'white',
+                                                                            color: 'white',
+                                                                            '&:hover': {
+                                                                                borderColor: 'white',
+                                                                                bgcolor: 'rgba(255,255,255,0.1)',
+                                                                                transform: 'scale(1.05)'
+                                                                            },
+                                                                            transition: 'all 0.3s ease'
+                                                                        }} 
+                                                                        variant="outlined" 
+                                                                        size="small"
+                                                                    >
+                                                                        Email Proposal
+                                                                    </Button>
+                                                                </Box>
+                                                            </div>
                                                         </CardContent>
                                                     </Card>
-                                                ))}
-                                            </Stack>
-                                        </Paper>
+                                                </Paper>
+                                            </Grow>
+                                        </Grid>
+                                        <Grid item xs={12} md={5}>
+                                            <Grow in timeout={1000}>
+                                                <Paper variant="outlined" sx={{ 
+                                                    p: 2.5, 
+                                                    height: '87%', 
+                                                    display: 'flex', 
+                                                    flexDirection: 'column',
+                                                    transition: 'all 0.3s ease',
+                                                    '&:hover': {
+                                                        boxShadow: '0 6px 16px rgba(0,0,0,0.1)',
+                                                        transform: 'translateY(-2px)'
+                                                    }
+                                                }}>
+                                                    <Typography sx={{ 
+                                                        fontFamily: 'Nunito Sans, sans-serif', 
+                                                        fontWeight: 'bold', 
+                                                        fontSize: '1rem', 
+                                                        mb: 1.5 
+                                                    }}>
+                                                        ALTERNATIVE OPTIONS
+                                                    </Typography>
+                                                    <Stack spacing={2}>
+                                                        {data?.action_center?.alternatives?.map((alt, idx) => (
+                                                            <Zoom in timeout={600 + idx * 200} key={alt.title}>
+                                                                <Card 
+                                                                    variant="outlined"
+                                                                    sx={{
+                                                                        transition: 'all 0.3s ease',
+                                                                        '&:hover': {
+                                                                            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                                                            transform: 'scale(1.03)',
+                                                                            borderColor: '#1976d2'
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <CardContent sx={{py: 1.5, '&:last-child': { pb: 1.5 }}}>
+                                                                        <Typography sx={{ 
+                                                                            fontFamily: 'Nunito Sans, sans-serif', 
+                                                                            fontWeight: 'bold' 
+                                                                        }}>
+                                                                            {alt.title.includes("Quick") || alt.title.includes("Solar") ? '💡' : '🚀'} {alt.title}
+                                                                        </Typography>
+                                                                        <Typography sx={{
+                                                                            fontFamily: 'Nunito Sans, sans-serif', 
+                                                                            fontSize: '0.85rem'
+                                                                        }}>
+                                                                            <b>Investment:</b> {formatValue(alt.investment_usd, 'currency')}<br />
+                                                                            <b>Reduction:</b> {formatValue(alt.reduction_pct, 'percent')}
+                                                                        </Typography>
+                                                                        {alt.estimated_penalties_remaining_usd_per_year != null && (
+                                                                            <Typography sx={{ 
+                                                                                fontFamily: 'Nunito Sans, sans-serif', 
+                                                                                fontWeight: 'bold', 
+                                                                                fontSize: '0.85rem', 
+                                                                                color: alt.estimated_penalties_remaining_usd_per_year > 0 ? '#ff3b30' : '#34c759' 
+                                                                            }}>
+                                                                                Penalties: {formatValue(alt.estimated_penalties_remaining_usd_per_year, 'currency')}/yr
+                                                                            </Typography>
+                                                                        )}
+                                                                        {alt.carbon_negative_by_year != null && (
+                                                                            <Typography sx={{ 
+                                                                                fontFamily: 'Nunito Sans, sans-serif', 
+                                                                                fontSize: '0.85rem' 
+                                                                            }}>
+                                                                                <b>Carbon -ve by year:</b> {alt.carbon_negative_by_year}
+                                                                            </Typography>
+                                                                        )}
+                                                                    </CardContent>
+                                                                </Card>
+                                                            </Zoom>
+                                                        ))}
+                                                    </Stack>
+                                                </Paper>
+                                            </Grow>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
-                            </StyledTabPanelBox>
-                        </TabPanel>
-
-                        {/* --- UPDATED: Tab Panel 4 (Restored original UI and uses props) --- */}
+                                </StyledTabPanelBox>
+                            </TabPanel>
                         <TabPanel value={tabValue} index={3}>
-                            <StyledTabPanelBox sx={{minHeight: 360, fontFamily: 'Nunito Sans, sans-serif'}}>
-                                
-                                {/* Table 1: Emission Reduction Projects */}
-                                <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
-                                <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif',  textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>EMISSION REDUCTION PROJECTS</Typography>
-                                <IconButton size="small" onClick={() => handleOpenModal(3)}><HelpOutline sx={{fontSize: '1.1rem'}} /></IconButton></Box>
-                                <TableContainer component={Paper} variant="outlined" sx={{ mb: 4 }}>
-                                    <Table size="small">
-                                        <TableHead sx={{ backgroundColor: '#fafafa' }}>
-                                            <TableRow>
-                                                <TableCell sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold' }}>Emission Reduction Projects</TableCell>
-                                                <TableCell align="right" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold' }}>Estimated Reduction (MT)</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {Object.entries(staticProjectKeys).map(([formattedKey, backendKey]) => {
-                                                const isSelected = !!projectSelections[formattedKey];
-                                                return (
-                                                    <TableRow 
-                                                        key={formattedKey} 
-                                                        hover 
-                                                        onClick={() => onProjectSelectChange(formattedKey)} // Use prop handler
-                                                        sx={{ 
-                                                            cursor: 'pointer',
-                                                            backgroundColor: isSelected ? 'rgba(25, 118, 210, 0.08)' : 'inherit',
-                                                        }}
-                                                    >
-                                                        <TableCell sx={{ 
-                                                            fontFamily: 'Nunito Sans, sans-serif',
-                                                            fontWeight: isSelected ? 700 : 400,
-                                                        }}>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                                <Checkbox 
-                                                                    checked={isSelected}
-                                                                    size="small"
-                                                                    sx={{ mr: 1, p: 0.5 }}
-                                                                />
-                                                                {formattedKey}
-                                                            </Box>
-                                                        </TableCell>
-                                                        <TableCell align="right" sx={{ 
-                                                            fontFamily: 'Nunito Sans, sans-serif',
-                                                            fontWeight: isSelected ? 700 : 400,
-                                                            color: isSelected ? '#1976d2' : 'inherit',
-                                                        }}>
-                                                            {formatValue(data?.emission_reduction_projects?.[backendKey])} MT
-                                                        </TableCell>
-                                                    </TableRow>
-                                                );
-                                            })}
-                                        </TableBody>
-                                        <TableFooter sx={{ backgroundColor: cumulativeReduction > 0 ? '#e8f5e9' : '#ffebee', borderTop: '2px solid', borderColor: cumulativeReduction > 0 ? '#1b5e20' : '#d32f2f' }}>
-                                            <TableRow sx={{ height: '40px' }}>
-                                                <TableCell colSpan={2} align="right" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '1rem' }}>
-                                                    <span style={{ fontWeight: 700, marginRight: 8 }}>Cumulative Reduction:</span>
-                                                    <span style={{ fontWeight: 700, color: cumulativeReduction > 0 ? '#1b5e20' : '#d32f2f' }}>{formatValue(cumulativeReduction)} MT</span>
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableFooter>
-                                    </Table>
-                                </TableContainer>
+    {/* --- Box 1: Emission Reduction Projects --- */}
+    <StyledTabPanelBox sx={{maxHeight: 410, fontFamily: 'Nunito Sans, sans-serif', mb: 2}}> {/* Added mb: 2 for spacing */}
+        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
+        <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif',  textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>EMISSION REDUCTION PROJECTS</Typography>
+        <HelpButton onClick={() => handleOpenModal(3)} /></Box>
+        <TableContainer component={Paper} variant="outlined" sx={{ mb: 4 }}>
+            <Table size="small">
+                <TableHead sx={{ backgroundColor: '#fafafa' }}>
+                    <TableRow>
+                        <TableCell sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold' }}>Emission Reduction Projects</TableCell>
+                        <TableCell align="right" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold' }}>Estimated Reduction (MT)</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {Object.entries(staticProjectKeys).map(([formattedKey, backendKey], idx) => {
+                        const isSelected = !!projectSelections[formattedKey];
+                        return (
+                            <StyledTableRow
+                                key={formattedKey}
+                                hover
+                                onClick={() => onProjectSelectChange(formattedKey)}
+                                className="animated-row"
+                                style={{ animationDelay: `${idx * 50}ms` }}
+                                sx={{
+                                    cursor: 'pointer',
+                                    backgroundColor: isSelected ? 'rgba(25, 118, 210, 0.08)' : 'inherit',
+                                }}
+                            >
+                                <TableCell sx={{
+                                    fontFamily: 'Nunito Sans, sans-serif',
+                                    fontWeight: isSelected ? 700 : 400,
+                                }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Checkbox
+                                            checked={isSelected}
+                                            size="small"
+                                            sx={{ mr: 1, p: 0.5 }}
+                                        />
+                                        {formattedKey}
+                                    </Box>
+                                </TableCell>
+                                <TableCell align="right" sx={{
+                                    fontFamily: 'Nunito Sans, sans-serif',
+                                    fontWeight: isSelected ? 700 : 400,
+                                    color: isSelected ? '#1976d2' : 'inherit',
+                                }}>
+                                    {formatValue(data?.emission_reduction_projects?.[backendKey])} MT
+                                </TableCell>
+                            </StyledTableRow>
+                        );
+                    })}
+                </TableBody>
+                <TableFooter sx={{ backgroundColor: cumulativeReduction > 0 ? '#e8f5e9' : '#ffebee', borderTop: '2px solid', borderColor: cumulativeReduction > 0 ? '#1b5e20' : '#d32f2f', transition: 'all 0.3s ease' }}>
+                    <TableRow sx={{ height: '40px' }}>
+                        <TableCell colSpan={2} align="right" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '1rem' }}>
+                            <span style={{ fontWeight: 700, marginRight: 8 }}>Cumulative Reduction:</span>
+                            <span style={{ fontWeight: 700, color: cumulativeReduction > 0 ? '#1b5e20' : '#d32f2f' }}>{formatValue(cumulativeReduction)} MT</span>
+                        </TableCell>
+                    </TableRow>
+                </TableFooter>
+            </Table>
+        </TableContainer>
+    </StyledTabPanelBox>
 
-                                {/* Table 2: Renewable Energy Credits */}
-                                <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
-                                <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif',  textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                                    Renewable Energy Credits (RECs)
+    {/* --- Box 2: Renewable Energy Credits --- */}
+    <StyledTabPanelBox sx={{/* minHeight: 360, */ fontFamily: 'Nunito Sans, sans-serif'}}>
+        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
+        <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif',  textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>
+            Renewable Energy Credits (RECs)
+        </Typography>
+        <HelpButton onClick={() => handleOpenModal(4)} /></Box>
+        <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
+            <Table size="small">
+                <TableHead sx={{ backgroundColor: '#fafafa' }}>
+                    <TableRow>
+                        <TableCell sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold' }}>Renewable Energy Credits</TableCell>
+                        <TableCell align="right" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', width: '60%' }}>Purchase Percentage</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    <StyledTableRow>
+                        <TableCell sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600 }}>Solar RECs</TableCell>
+                        <TableCell align="right">
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, px: 1 }}>
+                                <Slider
+                                    value={srecPercentage}
+                                    onChange={(_, newValue) => onSrecPercentageChange(newValue as number)}
+                                    onChangeCommitted={(_, newValue) => onSrecChangeCommitted(newValue as number)}
+                                    aria-labelledby="srec-slider"
+                                    sx={{ '& .MuiSlider-thumb': { transition: 'all 0.1s ease', /* '&:hover': { transform: 'scale(1.3)' } */}}}
+                                />
+                                <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', width: '50px' }}>
+                                    {srecPercentage}%
                                 </Typography>
-                                <IconButton size="small" onClick={() => handleOpenModal(4)}><HelpOutline sx={{fontSize: '1.1rem'}} /></IconButton></Box>
-                                <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
-                                    <Table size="small">
-                                        <TableHead sx={{ backgroundColor: '#fafafa' }}>
-                                            <TableRow>
-                                                <TableCell sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold' }}>Renewable Energy Credits</TableCell>
-                                                <TableCell align="right" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', width: '60%' }}>Purchase Percentage</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            <TableRow>
-                                                <TableCell sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600 }}>Solar RECs</TableCell>
-                                                <TableCell align="right">
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, px: 1 }}>
-                                                        <Slider
-                                                            value={srecPercentage}
-                                                            onChange={(_, newValue) => onSrecPercentageChange(newValue as number)} // Visual update
-                                                            onChangeCommitted={(_, newValue) => onSrecChangeCommitted(newValue as number)} // API call
-                                                            aria-labelledby="srec-slider"
-                                                        />
-                                                        <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', width: '50px' }}>
-                                                            {srecPercentage}%
-                                                        </Typography>
-                                                    </Box>
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                                
-                                {/* SREC Metrics: Read from calculatedSrecMetrics prop (and check if null) */}
-                                <Grid container spacing={2} justifyContent="center">
-                                    <Grid item xs={12} md={4}>
-                                        <Paper variant="outlined" sx={{ p: 2, textAlign: 'center', backgroundColor: 'white' }}>
-                                            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 600, color: 'grey.700' }}>Reduced Emissions (MT/yr)</Typography>
-                                            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', color: '#1b5e20' }}>
-                                                {formatValue(calculatedSrecMetrics?.reduced_emissions_mtpy) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.reduced_emissions_mtpy)}
-                                            </Typography>
-                                        </Paper>
-                                    </Grid>
-                                    <Grid item xs={12} md={4}>
-                                        <Paper variant="outlined" sx={{ p: 2, textAlign: 'center', backgroundColor: 'white' }}>
-                                            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 600, color: 'grey.700' }}>SREC Needed (MWh)</Typography>
-                                            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1.25rem' }}>
-                                                {formatValue(calculatedSrecMetrics?.srec_needed_mwh) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.srec_needed_mwh)}
-                                            </Typography>
-                                        </Paper>
-                                    </Grid>
-                                    <Grid item xs={12} md={4}>
-                                        <Paper variant="outlined" sx={{ p: 2, textAlign: 'center', backgroundColor: 'white' }}>
-                                            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 600, color: 'grey.700' }}>Total SREC Cost (USD)</Typography>
-                                            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1.25rem' }}>
-                                                {formatValue(calculatedSrecMetrics?.total_srec_cost_usd, 'currency') === 'N/A' ? '$0.00' : formatValue(calculatedSrecMetrics?.total_srec_cost_usd, 'currency')}
-                                            </Typography>
-                                        </Paper>
-                                    </Grid>
-                                </Grid>
-                            </StyledTabPanelBox>
-                        </TabPanel>
-                        {/* --- END TAB 4 UI --- */}
+                            </Box>
+                        </TableCell>
+                    </StyledTableRow>
+                </TableBody>
+            </Table>
+        </TableContainer>
+        
+        <Grid container spacing={2} justifyContent="center">
+            <Grid item xs={12} md={4} sx={{ animation: `${fadeIn} 0.5s ease-out 0.2s backwards`, opacity: 0, animationFillMode: 'forwards'}}>
+                <Paper variant="outlined" sx={{ p: 2, textAlign: 'center', backgroundColor: 'white', transition: 'all 0.3s ease', '&:hover': {transform: 'translateY(-4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)'}}}>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 600, color: 'grey.700' }}>Reduced Emissions (MT/yr)</Typography>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', color: '#1b5e20' }}>
+                        {formatValue(calculatedSrecMetrics?.reduced_emissions_mtpy) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.reduced_emissions_mtpy)}
+                    </Typography>
+                </Paper>
+            </Grid>
+            <Grid item xs={12} md={4} sx={{ animation: `${fadeIn} 0.5s ease-out 0.3s backwards`, opacity: 0, animationFillMode: 'forwards'}}>
+                <Paper variant="outlined" sx={{ p: 2, textAlign: 'center', backgroundColor: 'white', transition: 'all 0.3s ease', '&:hover': {transform: 'translateY(-4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)'}}}>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 600, color: 'grey.700' }}>SREC Needed (MWh)</Typography>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1.25rem' }}>
+                        {formatValue(calculatedSrecMetrics?.srec_needed_mwh) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.srec_needed_mwh)}
+                    </Typography>
+                </Paper>
+            </Grid>
+            <Grid item xs={12} md={4} sx={{ animation: `${fadeIn} 0.5s ease-out 0.4s backwards`, opacity: 0, animationFillMode: 'forwards'}}>
+                <Paper variant="outlined" sx={{ p: 2, textAlign: 'center', backgroundColor: 'white', transition: 'all 0.3s ease', '&:hover': {transform: 'translateY(-4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)'}}}>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 600, color: 'grey.700' }}>Total SREC Cost (USD)</Typography>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1.25rem' }}>
+                        {formatValue(calculatedSrecMetrics?.total_srec_cost_usd, 'currency') === 'N/A' ? '$0.00' : formatValue(calculatedSrecMetrics?.total_srec_cost_usd, 'currency')}
+                    </Typography>
+                </Paper>
+            </Grid>
+        </Grid>
+    </StyledTabPanelBox>
+</TabPanel>
                     </Box>
                 </Paper>
             </Box>
         </Box>
     );
 };
-
 export default EmissionsDashboard;
-
