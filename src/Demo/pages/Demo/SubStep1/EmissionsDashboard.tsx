@@ -657,7 +657,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
 
     useEffect(() => {
         if (data?.srec_metrics?.percentage_needed && srecPercentage === 0) {
-            const optimal = Math.round(data.srec_metrics.percentage_needed);
+            const optimal = data.srec_metrics.percentage_needed;
             onSrecPercentageChange(optimal);
             // onSrecChangeCommitted(optimal); 
         }
@@ -914,7 +914,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                         size="small"
                         variant="contained"
                         onClick={() => {
-                            const percentage = Math.round(data?.srec_metrics?.percentage_needed || 0);
+                            const percentage = data?.srec_metrics?.percentage_needed || 0;
                             onSrecPercentageChange(percentage);
                             onSrecChangeCommitted(percentage);
                         }}
@@ -929,7 +929,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                             }
                         }}
                     >
-                        Optimal {Math.round(data?.srec_metrics?.percentage_needed || 0)}%
+                        Optimal {data?.srec_metrics?.percentage_needed || 0}%
                     </Button>
                 </Box>
             </Box>
