@@ -388,7 +388,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
     }, [data, filteredAndSortedChartData]);
 
     const evidenceCards: BenefitData[] = [
-        { value: `${formatValue(data?.evidence?.metrics?.full_year_projection)} MT`, title: (<>Annual Emissions<br />(YTD + Projected)</>), description: <>YTD: <b>{formatValue(data?.evidence?.metrics?.actual_emissions)} MT</b><br />Projected: <b>{formatValue(data?.evidence?.metrics?.projected_emissions)} MT</b><br/><b>+{formatValue(data?.evidence?.metrics?.actual_yoy_pct, 'percent')}</b> YoY | Over by: <b>{formatValue(data?.evidence?.metrics?.over_by)} MT</b><br/></>, watermark: '🔥' },
+        { value: `${formatValue(data?.evidence?.metrics?.full_year_projection)} MT`, title: (<>Annual Emissions<br />(YTD + Projected)</>), description: <>YTD: <b>{formatValue(data?.evidence?.metrics?.actual_emissions)} MT</b><br />Projected: <b>{formatValue(data?.evidence?.metrics?.projected_emissions)} MT</b><br/><b>{formatValue(data?.evidence?.metrics?.actual_yoy_pct, 'percent')}</b> YoY | Over by: <b>{formatValue(data?.evidence?.metrics?.over_by)} MT</b><br/></>, watermark: '🔥' },
         { value: `${formatValue(data?.evidence?.metrics?.compliance_target)} MT`, title: (<>Compliance Target<br />by 2030</>), description: <>State: <b>{data?.evidence?.metrics?.compliance_jurisdiction}</b><br/>Required by law<br/><b>{formatValue(data?.evidence?.metrics?.required_reduction_pct, 'percent')}</b> reduction</>, watermark: '⚖️' },
         { value: `${formatValue(data?.evidence?.metrics?.bradley_solution)} MT`, title: 'Emission Compliance Energy Supply Configuration', description: <><b>{formatValue(data?.evidence?.metrics?.bradley_reduction_pct, 'percent')}</b> Reduction<br/>Saves: <b>{formatValue(data?.evidence?.metrics?.bradley_savings, 'currency')}/yr</b><br/>ROI: <b>{formatValue(data?.evidence?.metrics?.bradley_roi_years)} years</b></>, watermark: '💡' },
     ];
@@ -544,7 +544,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                         <li style={{ marginTop: '8px' }}><b>YTD (Year-to-Date):</b> {formatValue(data?.evidence?.metrics?.actual_emissions)} MT. This is your actual, recorded emissions so far.</li>
                         <li style={{ marginTop: '8px' }}><b>Projected:</b> {formatValue(data?.evidence?.metrics?.projected_emissions)} MT. This is our AI-forecast for the rest of the year.</li>
                         <li style={{ marginTop: '8px' }}><b>Full Projection:</b> {formatValue(data?.evidence?.metrics?.full_year_projection)} MT. This is the (YTD + Projected) total.</li>
-                        <li style={{ marginTop: '8px' }}><b>YoY (Year-over-Year):</b> +{formatValue(data?.evidence?.metrics?.actual_yoy_pct, 'percent')}. Your emissions are tracking this much higher than the previous year.</li>
+                        <li style={{ marginTop: '8px' }}><b>YoY (Year-over-Year):</b> {formatValue(data?.evidence?.metrics?.actual_yoy_pct, 'percent')}. Your emissions are tracking this much higher than the previous year.</li>
                         <li style={{ marginTop: '8px' }}><b>Over By:</b> {formatValue(data?.evidence?.metrics?.over_by)} MT. This is how much your full projection exceeds your annual compliance target.</li>
                     </ul>
                 </Paper>
