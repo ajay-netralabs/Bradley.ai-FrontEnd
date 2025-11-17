@@ -155,21 +155,28 @@ const SubStep2: React.FC = () => {
                             <FormControl sx={{ width: '180px' }} size="small">
                                 <InputLabel sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>Address</InputLabel>
                                 <Select
-                                    value={bill.addressId || ''}
-                                    onChange={(e) => assignAddressToBill(bill.id, e.target.value as string)}
-                                    label="Address"
-                                    sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
-                                >
-                                    {addresses.map(address => (
-                                    <MenuItem  
-                                        key={address.id}  
-                                        value={address.id}  
-                                        sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
-                                    >
-                                        {address.address}
-                                    </MenuItem>
-                                    ))}
-                                </Select>
+  value={bill.addressId || ''}
+  onChange={(e) => assignAddressToBill(bill.id, e.target.value as string)}
+  label="Address"
+  sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
+>
+  {addresses.map(address => {
+    const isAssignedToOtherBill = gasBills.some(
+      b => b.id !== bill.id && b.addressId === address.id
+    );
+    
+    return (
+      <MenuItem  
+        key={address.id}  
+        value={address.id}  
+        disabled={isAssignedToOtherBill}
+        sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
+      >
+        {address.address}
+      </MenuItem>
+    );
+  })}
+</Select>
                             </FormControl>
                             
                             <FormControl sx={{ width: '180px' }} size="small">
