@@ -18,7 +18,7 @@ const SubStep3: React.FC = () => {
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, p: '10px' }}>
           <Box sx={{ width: 'calc(100% - 300px)', marginLeft: 'auto', marginRight: 'auto', display: 'flex', flexDirection: 'column', gap: 2, textAlign: 'justify', lineHeight: 1.5 }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>
-              Upon full completion of this section, CarbonCheckIQ+ shall be enabled to prepare a comprehensive balance-sheet estimate for the optimized DER solution, including calculation of Internal Rate of Return (IRR), Net Operating Income (NOI), Simple Payback Period, Net Present Value (NPV), and projected cost-savings under an ownership model. Accurate entry of all required data inputs is a condition precedent to delivery of empirically validated financial forecasts for each DER concept over its anticipated service life.
+              Upon full completion of this section, {window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'} shall be enabled to prepare a comprehensive balance-sheet estimate for the optimized DER solution, including calculation of Internal Rate of Return (IRR), Net Operating Income (NOI), Simple Payback Period, Net Present Value (NPV), and projected cost-savings under an ownership model. Accurate entry of all required data inputs is a condition precedent to delivery of empirically validated financial forecasts for each DER concept over its anticipated service life.
             </Typography>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>
               This will take you less than 10 minutes to complete.
@@ -44,7 +44,7 @@ const SubStep3: React.FC = () => {
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}>
-              <b>Desired Minimally Acceptable IRR:</b><br />(Hint: CarbonCheckIQ+ auto-sets the IRR to 10%.)
+              <b>Desired Minimally Acceptable IRR:</b><br />(Hint: {window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'} auto-sets the IRR to 10%.)
             </Typography>
             <TextField variant="outlined" size="small" type="number" placeholder='Input' value={acceptableIRR} onChange={(e) => updateField('acceptableIRR', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
           </Box>

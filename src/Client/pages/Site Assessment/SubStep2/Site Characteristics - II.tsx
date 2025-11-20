@@ -123,7 +123,7 @@ const SubStep2: React.FC = () => {
             </Box>
             {hvacOperation === "Seasonal Switchover" && (
               <i style={{ fontSize: '0.65rem', marginTop: 6, marginLeft: 450, textAlign: 'right', color: '#666' }}>
-                CarbonCheckIQ+ assumes a Fall switchover in Mid-October and a Spring<br />switchover in the last week of March for its energy calculations
+                {window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'} assumes a Fall switchover in Mid-October and a Spring<br />switchover in the last week of March for its energy calculations
               </i>
             )}
           </Box>

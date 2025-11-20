@@ -107,12 +107,12 @@ const stepSubStepMapping: StepSubStepMapping = {
   },
   6: {
     0: {
-      0: lazy(() => import('./pages/Onboarding/SubStep1/DER Analysis By CarbonCheckIQ+ Is Underway!')),
+      0: lazy(() => import('./pages/Onboarding/SubStep1/DER Analysis By Bradley.ai Is Underway!')),
     },
   },
   7: {
     0: {
-      0: lazy(() => import("./pages/Onboarding/SubStep1/CarbonCheckIQ+'s Recommendation For User")),
+      0: lazy(() => import("./pages/Onboarding/SubStep1/Bradley.ai's Recommendation For User")),
     },
   },
 };

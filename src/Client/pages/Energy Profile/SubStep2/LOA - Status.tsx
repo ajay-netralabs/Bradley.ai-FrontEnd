@@ -34,9 +34,9 @@ const SubStep3: React.FC = () => {
     const company = utilityCompanyName || 'your regulated Utility Co.';
     switch (status) {
       case 'Approved':
-        return `Congratulations! Your Letter of Authorization has been approved by ${company}. CarbonCheckIQ+ now has access to your interval data.`;
+        return `Congratulations! Your Letter of Authorization has been approved by ${company}. ${window.location.pathname.includes('/demo') ? 'EmissionCheckIQ+' : 'Bradley.ai'} now has access to your interval data.`;
       case 'Awaiting Approval':
-        return `Your Letter of Authorization has been signed and sent. It is now pending a response from ${company}. You will be notified via email confirmation once the interval data has been received by CarbonCheckIQ+.`;
+        return `Your Letter of Authorization has been signed and sent. It is now pending a response from ${company}. You will be notified via email confirmation once the interval data has been received by ${window.location.pathname.includes('/demo') ? 'EmissionCheckIQ+' : 'Bradley.ai'}.`;
       case 'Declined':
         return `Unfortunately, your Letter of Authorization was declined by ${company}. Please review the LOA details and resubmit, or contact support for assistance.`;
       case 'LOA Not Signed':

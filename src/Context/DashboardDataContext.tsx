@@ -128,6 +128,10 @@ interface DashboardDataContextType {
     setDashboardData: React.Dispatch<React.SetStateAction<DashboardData | null>>;
     isLoading: boolean;
     setIsLoading: (loading: boolean) => void;
+    viewMode: 'individual' | 'aggregate';
+    setViewMode: React.Dispatch<React.SetStateAction<'individual' | 'aggregate'>>;
+    aggregatedData: DashboardDataObject | null;
+    setAggregatedData: React.Dispatch<React.SetStateAction<DashboardDataObject | null>>;
 }
 
 const DashboardDataContext = createContext<DashboardDataContextType | undefined>(undefined);
@@ -135,9 +139,11 @@ const DashboardDataContext = createContext<DashboardDataContextType | undefined>
 export const DashboardDataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [viewMode, setViewMode] = useState<'individual' | 'aggregate'>('individual');
+    const [aggregatedData, setAggregatedData] = useState<DashboardDataObject | null>(null);
     
     return (
-        <DashboardDataContext.Provider value={{ dashboardData, setDashboardData, isLoading, setIsLoading }}>
+        <DashboardDataContext.Provider value={{ dashboardData, setDashboardData, isLoading, setIsLoading, viewMode, setViewMode, aggregatedData, setAggregatedData }}>
             {children}
         </DashboardDataContext.Provider>
     );

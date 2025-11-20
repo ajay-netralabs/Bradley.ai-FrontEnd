@@ -66,7 +66,7 @@ export const BillAddressProvider = ({ children, appPrefix }: BillAddressProvider
   }, [addresses, appPrefix]);
 
   const addBill = (bill: Omit<Bill, 'id' | 'dateRange' | 'addressId'>) => {
-    const newBill: Bill = { ...bill, id: `bill_${Date.now()}`, dateRange: { start: '', end: '' } };
+    const newBill: Bill = { ...bill, id: `bill_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, dateRange: { start: '', end: '' } };
     setBills(prev => [...prev, newBill]);
   };
 

@@ -176,7 +176,7 @@ const Login: React.FC = () => {
               fontFamily: '"Nunito Sans", sans-serif',
             }}
           >
-            <h3 style={{ fontFamily: '"Nunito Sans", sans-serif' }}>Sign in to CarbonCheckIQ+</h3>
+            <h3 style={{ fontFamily: '"Nunito Sans", sans-serif' }}>Sign in to EmissionCheckIQ+</h3>
           </Typography>
 
           <Box sx={{ width: '90%', marginBottom: 2 }}>

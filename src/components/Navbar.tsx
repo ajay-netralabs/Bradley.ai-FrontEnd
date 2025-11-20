@@ -28,13 +28,17 @@ const Navbar: React.FC = () => {
     <AppBar position="fixed" sx={{ bgcolor: 'white', color: 'black', zIndex: 1000, boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)' }}>
       <Toolbar>
         {/* <Typography variant="h4" component="div" sx={{ flexGrow: 1, fontFamily: 'Roboto Condensed, sans-serif', display: 'inline-flex', alignItems: 'center' }}>
-          CarbonCheckIQ+
+          {window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'}
           <Typography variant="h6" component="span" sx={{ ml: 0.5, position: 'relative', top: '-3px' }}>
             <sup>®</sup>
           </Typography>
         </Typography> */}
         <Box sx={{ flexGrow: 1, display: 'inline-flex', alignItems: 'center' }}>
-          <img src="/bradley_dynamic_horizontal.svg" alt="Logo" style={{ height: '64px', marginRight: '4px', marginLeft: '-6px' }} />
+          <img 
+            src={window.location.pathname === '/demo' ? '/EmissionCheckIQ+_navbar_logo.png' : '/Bradley.AI_navbar_logo.png'} 
+            alt="Logo" 
+            style={{ height: '50px', marginRight: '4px', marginLeft: '-11.5px' }} 
+          />
         </Box>
 
         

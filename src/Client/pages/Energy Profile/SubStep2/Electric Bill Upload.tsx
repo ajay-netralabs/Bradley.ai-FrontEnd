@@ -65,7 +65,7 @@ const SubStep2: React.FC = () => {
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
-          <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', mb: 0, textAlign: 'center' }}><b>CarbonCheckIQ+ will extract the data needed to compute the site specific GHG emissions from your utility bills and properly size alternate sources of power.</b></Typography>
+          <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', mb: 0, textAlign: 'center' }}><b>{window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'} will extract the data needed to compute the site specific GHG emissions from your utility bills and properly size alternate sources of power.</b></Typography>
           
           <input
             type="file"
@@ -127,19 +127,29 @@ const SubStep2: React.FC = () => {
                       
                       {/* Top section for File Info. */}
                       <Box sx={{ 
-                        height: '40px', 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        justifyContent: 'center', 
-                        mb: 1.5 /* This should match the gap on the right side */ 
-                      }}>
-                        <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600, wordBreak: 'break-all' }}>
-                          {bill.name}
-                        </Typography>
-                        <Typography sx={{ fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif', color: 'text.secondary' }}>
-                          {bill.size}
-                        </Typography>
-                      </Box>
+  height: '40px', 
+  display: 'flex', 
+  flexDirection: 'column', 
+  justifyContent: 'center', 
+  mb: 1.5 
+}}>
+  <Tooltip title={bill.name} placement="top-start" arrow>
+    <Typography sx={{ 
+      fontSize: '0.8rem', 
+      fontFamily: 'Nunito Sans, sans-serif', 
+      fontWeight: 600,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      maxWidth: '250px'
+    }}>
+      {bill.name}
+    </Typography>
+  </Tooltip>
+  <Typography sx={{ fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif', color: 'text.secondary' }}>
+    {bill.size}
+  </Typography>
+</Box>
                     
                       {/* Bottom section for the Date Range Label. */}
                       <Box sx={{ height: '40px', display: 'flex', alignItems: 'center' }}>
@@ -162,6 +172,9 @@ const SubStep2: React.FC = () => {
   label="Address"
   sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
 >
+  <MenuItem value="" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontStyle: 'italic', color: 'text.secondary' }}>
+    Select
+  </MenuItem>
   {addresses.map(address => {
     const isAssignedToOtherBill = electricBills.some(
       b => b.id !== bill.id && b.addressId === address.id
@@ -243,7 +256,7 @@ const SubStep2: React.FC = () => {
             </Paper>
           )}
 
-          <Typography sx={{ mt: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 1 }}><i><b>*</b><b>CarbonCheckIQ+</b> prefers to gain direct access to the Utility profile usage of your utility meter. The <b>LOA</b> enables <b>CarbonCheckIQ+</b> to pull data directly from the utility to instantly update your <b>GHG</b> emission profile.</i></Typography>
+          <Typography sx={{ mt: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 1 }}><i><b>*</b><b>{window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'}</b> prefers to gain direct access to the Utility profile usage of your utility meter. The <b>LOA</b> enables <b>{window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'}</b> to pull data directly from the utility to instantly update your <b>GHG</b> emission profile.</i></Typography>
         </Box>
       </Box>
     </Box>

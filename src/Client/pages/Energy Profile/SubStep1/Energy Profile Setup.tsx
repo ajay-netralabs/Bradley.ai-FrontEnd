@@ -82,7 +82,7 @@ const SubStep1: React.FC = () => {
           }}
         >
           Provide details about your facility's energy consumption and usage patterns. <br />
-          This information will help CarbonCheckIQ+ create the most accurate and effective DER concepts for you.
+          This information will help {window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'} create the most accurate and effective DER concepts for you.
         </Typography>
         <Typography
           sx={{

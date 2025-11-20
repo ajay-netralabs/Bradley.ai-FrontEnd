@@ -86,7 +86,7 @@ const SubStep2: React.FC = () => {
                                           flex: 1,
                                         }}
                                       >
-                                        <i><b>Hint: </b>CarbonCheckIQ+ has direct access to submit requests and receive responses from the Utility. Once the Utility provides the files CarbonCheckIQ+ can complete its analysis. However Utility companies historically respond between 1 and 3 business days.</i><br />
+                                        <i><b>Hint: </b>{window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'} has direct access to submit requests and receive responses from the Utility. Once the Utility provides the files {window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'} can complete its analysis. However Utility companies historically respond between 1 and 3 business days.</i><br />
                                       </Typography>
                                     </Box></Box></Box>
 
