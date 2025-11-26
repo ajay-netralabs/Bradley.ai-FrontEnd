@@ -25,6 +25,9 @@ city: string;
 state: string;
 zipCode: string;
 organizationId: string;
+areaSqFt: string;
+operationalStart: string;
+operationalEnd: string;
 }
 
 export interface BillMetadata {

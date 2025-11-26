@@ -121,7 +121,7 @@ const SubStep2 = () => {
           return;
         }
         const newAddressId = addAddress({
-          streetAddress: '', city: '', state: '', zipCode: '', position
+          streetAddress: '', city: '', state: '', zipCode: '', areaSqFt: '', operationalStart: '', operationalEnd: '', position
         });
         handleFetchAddress(newAddressId, position);
       })
@@ -136,6 +136,9 @@ const SubStep2 = () => {
         updateAddressField(addressId, 'city', data.address.city || data.address.town || '');
         updateAddressField(addressId, 'state', data.address.state || '');
         updateAddressField(addressId, 'zipCode', data.address.postcode || '');
+        updateAddressField(addressId, 'areaSqFt', '');
+        updateAddressField(addressId, 'operationalStart', '');
+        updateAddressField(addressId, 'operationalEnd', '');
       })
       .catch(error => console.error('Error fetching address:', error));
   };
@@ -285,33 +288,102 @@ const SubStep2 = () => {
                       </Box>
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      {[
-                        { label: "Street Address:", key: "streetAddress", placeholder: "Enter street address" },
-                        { label: "City:", key: "city", placeholder: "Enter city name" },
-                        { label: "State:", key: "state", placeholder: "Enter state" },
-                        { label: "Zip Code:", key: "zipCode", placeholder: "Enter zip code" }
-                      ].map(({ label, key, placeholder }) => (
-                        <Box key={key} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                          <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                            {label}
-                          </Typography>
-                          <TextField
-                            variant="outlined"
-                            size="small"
-                            type="text"
-                            value={address[key as keyof typeof address]}
-                            onChange={(e) => { e.stopPropagation(); updateAddressField(address.id, key as any, e.target.value); }}
-                            placeholder={placeholder}
-                            onClick={(e) => e.stopPropagation()}
-                            sx={{
-                              fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif',
-                              '& .MuiInputBase-root': { height: '28px', padding: '0 6px' },
-                              '& input': { padding: 0, fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' }
-                            }}
-                          />
-                        </Box>
-                      ))}
+                    {[
+                      { label: "Street Address:", key: "streetAddress", placeholder: "Enter street address" },
+                      { label: "City:", key: "city", placeholder: "Enter city name" },
+                      { label: "State:", key: "state", placeholder: "Enter state" },
+                      { label: "Zip Code:", key: "zipCode", placeholder: "Enter zip code" },
+                      { label: "Area (in sq ft):", key: "areaSqFt", placeholder: "Enter area in sq ft" },
+                    ].map(({ label, key, placeholder }) => (
+                      <Box key={key} sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                          {label}
+                        </Typography>
+                        <TextField
+                          variant="outlined"
+                          size="small"
+                          type="text"
+                          value={address[key as keyof typeof address] || ""}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            updateAddressField(address.id, key as any, e.target.value);
+                          }}
+                          placeholder={placeholder}
+                          onClick={(e) => e.stopPropagation()}
+                          sx={{
+                            fontSize: '0.7rem',
+                            fontFamily: 'Nunito Sans, sans-serif',
+                            '& .MuiInputBase-root': { height: '28px', padding: '0 6px' },
+                            '& input': { padding: 0, fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' }
+                          }}
+                        />
+                      </Box>
+                    ))}
+
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                      <Typography
+                        sx={{
+                          fontFamily: 'Nunito Sans, sans-serif',
+                          fontSize: '0.7rem',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        Operational Hours:
+                      </Typography>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <TextField
+                          variant="outlined"
+                          size="small"
+                          type="time"
+                          value={address.operationalStart || ""}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            updateAddressField(address.id, "operationalStart", e.target.value);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          sx={{
+                            width: "50%",
+                            fontSize: '0.7rem',
+                            fontFamily: 'Nunito Sans, sans-serif',
+                            '& .MuiInputBase-root': { height: '28px', padding: '0 6px' },
+                            '& input': { padding: 0, fontSize: '0.75rem' }
+                          }}
+                        />
+
+                        <Typography
+                          sx={{
+                            fontFamily: 'Nunito Sans, sans-serif',
+                            fontSize: '0.75rem',
+                            color: '#444'
+                          }}
+                        >
+                          to
+                        </Typography>
+                        
+                        <TextField
+                          variant="outlined"
+                          size="small"
+                          type="time"
+                          value={address.operationalEnd || ""}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            updateAddressField(address.id, "operationalEnd", e.target.value);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          sx={{
+                            width: "50%",
+                            fontSize: '0.7rem',
+                            fontFamily: 'Nunito Sans, sans-serif',
+                            '& .MuiInputBase-root': { height: '28px', padding: '0 6px' },
+                            '& input': { padding: 0, fontSize: '0.75rem' }
+                          }}
+                        />
+                      </Box>
                     </Box>
+                        
+                  </Box>
+
                     <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid #e0e0e0' }}>
                       <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.65rem', color: '#666' }}>
                         Coordinates: {address.position.lat.toFixed(6)}, {address.position.lng.toFixed(6)}
