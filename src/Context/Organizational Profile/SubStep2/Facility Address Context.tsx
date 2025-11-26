@@ -3,33 +3,30 @@ import Cookies from 'js-cookie';
 import L from 'leaflet';
 import { v4 as uuidv4 } from 'uuid';
 
-/**
- * Interface defining the address fields.
- */
 interface Address {
   streetAddress: string;
   city: string;
   state: string;
   zipCode: string;
+  areaSqFt: string;
   // otherAddress: string;
+  operationalStart: string;
+  operationalEnd: string;
 }
 
-/**
- * Interface for individual address data with position and unique ID.
- */
 interface AddressData {
   id: string;
   streetAddress: string;
   city: string;
   state: string;
   zipCode: string;
+  areaSqFt: string;
   // otherAddress: string;
+  operationalStart: string;
+  operationalEnd: string;
   position: L.LatLng;
 }
 
-/**
- * Interface for the entire state managed by this context.
- */
 interface FacilityAddressState {
   addresses: AddressData[];
   selectedAddressId: string | null;
@@ -73,18 +70,16 @@ export const FacilityAddressProvider: React.FC<FacilityAddressProviderProps> = (
     if (savedState) {
       try {
         const parsedState = JSON.parse(savedState);
-        // Validate that the parsed state has the expected structure
         if (parsedState && 
             typeof parsedState === 'object' && 
             Array.isArray(parsedState.addresses)) {
           
-          // Re-hydrate the LatLng objects from the plain objects stored in the cookie.
           const rehydratedAddresses = parsedState.addresses
             .map((addr: any) => ({
               ...addr,
               position: addr.position ? new L.LatLng(addr.position.lat, addr.position.lng) : null,
             }))
-            .filter((addr: any) => addr.position !== null); // Filter out invalid addresses
+            .filter((addr: any) => addr.position !== null);
 
           return {
             addresses: rehydratedAddresses,
@@ -99,13 +94,11 @@ export const FacilityAddressProvider: React.FC<FacilityAddressProviderProps> = (
   });
 
   useEffect(() => {
-    // Add safety check to ensure addresses exists and is an array
     if (!facilityAddressState.addresses || !Array.isArray(facilityAddressState.addresses)) {
       console.warn('facilityAddress.addresses is not an array, skipping save to cookies');
       return;
     }
 
-    // De-hydrate the LatLng objects to plain objects for JSON serialization.
     const stateToSave = {
       ...facilityAddressState,
       addresses: facilityAddressState.addresses.map(addr => ({
@@ -135,7 +128,7 @@ export const FacilityAddressProvider: React.FC<FacilityAddressProviderProps> = (
     setFacilityAddressState((prevState) => ({
       ...prevState,
       addresses: [...(prevState.addresses || []), newAddress],
-      selectedAddressId: newId, // Auto-select the newly added address
+      selectedAddressId: newId,
     }));
 
     return newId;

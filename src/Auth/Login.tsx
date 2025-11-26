@@ -176,7 +176,7 @@ const Login: React.FC = () => {
               fontFamily: '"Nunito Sans", sans-serif',
             }}
           >
-            <h3 style={{ fontFamily: '"Nunito Sans", sans-serif' }}>Sign in to EmissionCheckIQ+</h3>
+            <h3 style={{ fontFamily: '"Nunito Sans", sans-serif' }}>Sign in to {/* EmissionCheckIQ+ */}your account</h3>
           </Typography>
 
           <Box sx={{ width: '90%', marginBottom: 2 }}>
@@ -244,43 +244,43 @@ const Login: React.FC = () => {
             />
           </Box>
 
-            <Box sx={{ display: 'flex', width: '90%', gap: 2, marginTop: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', width: '90%', gap: 2, marginTop: 3 }}>
               <Button
                 variant="contained"
                 sx={{
-                backgroundColor: '#FF6B00',
-                color: 'white',
-                borderRadius: 2,
-                paddingX: 3.5,
-                '&:hover': { backgroundColor: '#ff8533' },
-                width: '50%',
-                height: '45px',
-                fontFamily: '"Nunito Sans", sans-serif',
-                }}
-                onClick={() => {
-                setUser({ email: '', role: 'demo' });
-                navigate('/demo');
-                }}
-              >
-                <FaPlay size={14} style={{ marginRight: 8 }} />
-                DEMO
-              </Button>
-              <Button
-                variant="contained"
-                sx={{
-                backgroundColor: '#0e0c22',
-                color: 'white',
-                borderRadius: 2,
-                paddingX: 3.5,
-                '&:hover': { backgroundColor: '#1c1b2e' },
-                width: '50%',
-                height: '45px',
-                fontFamily: '"Nunito Sans", sans-serif',
+                  backgroundColor: '#0e0c22',
+                  color: 'white',
+                  borderRadius: 2,
+                  paddingX: 3.5,
+                  '&:hover': { backgroundColor: '#1c1b2e' },
+                  width: '100%',
+                  height: '45px',
+                  fontFamily: '"Nunito Sans", sans-serif',
                 }}
                 onClick={handleLogin}
               >
                 <IoIosLogIn size={20} style={{ marginRight: 8 }} />
                 LOG IN
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: '#FF6B00',
+                  color: 'white',
+                  borderRadius: 2,
+                  paddingX: 3.5,
+                  '&:hover': { backgroundColor: '#ff8533' },
+                  width: '100%',
+                  height: '45px',
+                  fontFamily: '"Nunito Sans", sans-serif',
+                }}
+                onClick={() => {
+                  setUser({ email: '', role: 'demo' });
+                  navigate('/demo');
+                }}
+              >
+                <FaPlay size={14} style={{ marginRight: 8 }} />
+                TRY EmissionCheckIQ+
               </Button>
             </Box>
 
