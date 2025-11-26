@@ -95,7 +95,10 @@ const SubStep2 = () => {
 
   const handleAddLocation = (position: L.LatLng) => {
     const newAddressId = addAddress({
-      streetAddress: '', city: '', state: '', zipCode: '', position
+      streetAddress: '', city: '', state: '', zipCode: '', position,
+      areaSqFt: '',
+      operationalStart: '',
+      operationalEnd: ''
     });
     handleFetchAddress(newAddressId, position);
   };
