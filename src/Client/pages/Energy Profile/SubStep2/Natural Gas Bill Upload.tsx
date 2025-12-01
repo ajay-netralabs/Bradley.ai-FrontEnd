@@ -173,22 +173,15 @@ const SubStep2: React.FC = () => {
   <MenuItem value="" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontStyle: 'italic', color: 'text.secondary' }}>
       Select
     </MenuItem>
-  {addresses.map(address => {
-    const isAssignedToOtherBill = gasBills.some(
-      b => b.id !== bill.id && b.addressId === address.id
-    );
-    
-    return (
-      <MenuItem  
-        key={address.id}  
-        value={address.id}  
-        disabled={isAssignedToOtherBill}
-        sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
-      >
-        {address.address}
-      </MenuItem>
-    );
-  })}
+  {addresses.map(address => (
+    <MenuItem  
+      key={address.id}  
+      value={address.id}
+      sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
+    >
+      {address.address}
+    </MenuItem>
+  ))}
 </Select>
                             </FormControl>
                             

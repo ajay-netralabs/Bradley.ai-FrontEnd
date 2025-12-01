@@ -395,6 +395,13 @@ const EmissionsDashboardWrapper: React.FC = () => {
                 setHasUnsavedChanges={setHasUnsavedChanges}
                 selectedLocation={selectedLocation}
                 onLocationChange={setSelectedLocation}
+                selectedLocations={uniqueLocations}
+                onLocationsChange={(locations: string[]) => {
+                    // If the current selected location is not in the new list, reset it
+                    if (!locations.includes(selectedLocation)) {
+                        setSelectedLocation(locations[0] || '');
+                    }
+                }}
                 selectedSource={selectedSource}
                 onSourceChange={handleSourceChange}
                 selectedYear={selectedYear}

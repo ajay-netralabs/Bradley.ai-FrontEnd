@@ -22,6 +22,8 @@ interface DashboardDataObject {
     file_id: string;
     source: string;
     location: string;
+    area_sq_ft: number;
+    energy_usage_intensity: number | null;
     verdict: { /* compliance_status: string; */ status_banner: string; severity: string; penalty_risk_usd: number; time_left_months: number; limit_utilization_pct: number; };
     evidence: { metrics: { actual_emissions: number; projected_emissions: number; full_year_projection: number; actual_yoy_pct: number | string; compliance_target: number; compliance_jurisdiction: string; required_reduction_pct: number; bradley_solution?: number; bradley_reduction_pct?: number; over_by: number; bradley_savings?: number; bradley_roi_years?: number; } };
     emission_reduction_projects: {
@@ -71,9 +73,9 @@ const zoomIn = keyframes`
   to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 `;
 
-const progressFill = keyframes`
-  from { width: 0; }
-`;
+// const progressFill = keyframes`
+//   from { width: 0; }
+// `;
 
 const pulseWarning = keyframes`
   0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.4); }
@@ -210,6 +212,8 @@ interface EmissionsDashboardProps {
     setHasUnsavedChanges: (changed: boolean) => void;
     selectedLocation: string;
     onLocationChange: (location: string) => void;
+    selectedLocations: string[];
+    onLocationsChange: (locations: string[]) => void;
     selectedSource: string;
     onSourceChange: (source: string) => void;
     selectedYear: number | string;
@@ -224,7 +228,7 @@ interface EmissionsDashboardProps {
 }
 const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
     allData, onConfirmChanges, setHasUnsavedChanges,
-    selectedLocation, onLocationChange,
+    selectedLocation, /* onLocationChange, */
     selectedSource, onSourceChange,
     selectedYear, onYearChange,
     projectSelections,
@@ -260,9 +264,22 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         ));
     }, [allData, selectedLocation]);
 
+    const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+
+    const filteredDataByLocations = useMemo(() => {
+    if (!allData) return [];
+    return allData.filter(d => 
+        selectedLocations.includes(d.location)
+        // && d.source === selectedSource
+    );
+}, [allData, selectedLocations/* , selectedSource */]);
+
     const data = useMemo(() => {
+        if (filteredDataByLocations.length === 1) {
+        return filteredDataByLocations[0];
+    }
         return allData?.find(d => d.location === selectedLocation && d.source === selectedSource);
-    }, [allData, selectedLocation, selectedSource]);
+}, [filteredDataByLocations, allData, selectedLocation, selectedSource]);
 
     useEffect(() => {
         setFrozenDerInsights(data?.der_control_panel?.insights);
@@ -286,8 +303,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
 
     const isChanged = useMemo(() => JSON.stringify(userDerAllocation) !== JSON.stringify(initialState), [userDerAllocation, initialState]);
 
-    const handleOpenQuickFix = () => setQuickFixModalOpen(true);
-    const handleCloseQuickFix = () => setQuickFixModalOpen(false);
+    // const handleOpenQuickFix = () => setQuickFixModalOpen(true);
+    // const handleCloseQuickFix = () => setQuickFixModalOpen(false);
 
     // const handleCreditSelection = (amount: number) => {
     //     setSelectedCreditAmount(amount);
@@ -600,70 +617,205 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         );
     };
 
-    const utilizationPct = data?.verdict?.limit_utilization_pct ?? 0;
-    const severity = data?.verdict?.severity || 'INFO';
-    const status_banner = data?.verdict?.status_banner || 'Status not available';
-    let complianceBannerBg: string;
-    let complianceBannerBorder: string;
-    let complianceBannerColor: string;
-    let complianceIcon: string;
-    let progressBarColor: string;
-    let statusColor: string;
-    let statusIcon: ReactNode;
+    // const utilizationPct = data?.verdict?.limit_utilization_pct ?? 0;
+    // const severity = data?.verdict?.severity || 'INFO';
+    // const status_banner = data?.verdict?.status_banner || 'Status not available';
+    // let complianceBannerBg: string;
+    // let complianceBannerBorder: string;
+    // let complianceBannerColor: string;
+    // let complianceIcon: string;
+    // let progressBarColor: string;
+    // let statusColor: string;
+    // let statusIcon: ReactNode;
     
-    switch (severity) {
-        case 'INFO':
-            complianceBannerBg = '#e8f5e9';
-            complianceBannerBorder = '#4caf50';
-            complianceBannerColor = '#1b5e20';
-            complianceIcon = '✅';
-            progressBarColor = '#388E3C';
-            statusColor = '#388E3C'; // Green
-            statusIcon = <CheckCircle sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
-            break;
-        case 'WARNING':
-            complianceBannerBg = '#fffde7';
-            complianceBannerBorder = '#fdd835';
-            complianceBannerColor = '#f57f17';
-            complianceIcon = '⚠️';
-            progressBarColor = '#fdd835';
-            statusColor = '#f57f17'; // Yellow/Orange
-            statusIcon = <Warning sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
-            break;
-        case 'CRITICAL':
-            complianceBannerBg = '#fff3e0';
-            complianceBannerBorder = '#ff9800';
-            complianceBannerColor = '#e65100';
-            complianceIcon = '❗';
-            progressBarColor = '#ff9800';
-            statusColor = '#e65100'; // Dark Orange
-            statusIcon = <Error sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
-            break;
-        case 'OVERLOAD':
-        default:
-            complianceBannerBg = '#ffebee';
-            complianceBannerBorder = '#d32f2f';
-            complianceBannerColor = '#b71c1c';
-            complianceIcon = '☠️';
-            progressBarColor = '#d32f2f';
-            statusColor = '#d32f2f'; // Red
-            statusIcon = <Error sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
-            break;
-    }
+    // switch (severity) {
+    //     case 'INFO':
+    //         complianceBannerBg = '#e8f5e9';
+    //         complianceBannerBorder = '#4caf50';
+    //         complianceBannerColor = '#1b5e20';
+    //         complianceIcon = '✅';
+    //         progressBarColor = '#388E3C';
+    //         statusColor = '#388E3C'; // Green
+    //         statusIcon = <CheckCircle sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
+    //         break;
+    //     case 'WARNING':
+    //         complianceBannerBg = '#fffde7';
+    //         complianceBannerBorder = '#fdd835';
+    //         complianceBannerColor = '#f57f17';
+    //         complianceIcon = '⚠️';
+    //         progressBarColor = '#fdd835';
+    //         statusColor = '#f57f17'; // Yellow/Orange
+    //         statusIcon = <Warning sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
+    //         break;
+    //     case 'CRITICAL':
+    //         complianceBannerBg = '#fff3e0';
+    //         complianceBannerBorder = '#ff9800';
+    //         complianceBannerColor = '#e65100';
+    //         complianceIcon = '❗';
+    //         progressBarColor = '#ff9800';
+    //         statusColor = '#e65100'; // Dark Orange
+    //         statusIcon = <Error sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
+    //         break;
+    //     case 'OVERLOAD':
+    //     default:
+    //         complianceBannerBg = '#ffebee';
+    //         complianceBannerBorder = '#d32f2f';
+    //         complianceBannerColor = '#b71c1c';
+    //         complianceIcon = '☠️';
+    //         progressBarColor = '#d32f2f';
+    //         statusColor = '#d32f2f'; // Red
+    //         statusIcon = <Error sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />;
+    //         break;
+    // }
 
-    const initialEmissionFactor = data?.srec_metrics?.emission_factor_constant || 0.433;
-    const initialReducedEmissions = data?.srec_metrics?.reduced_emissions_mtpy || 0;
-    const initialCreditsNeeded = data?.srec_metrics?.srec_needed_mwh || 0;
+    // const initialEmissionFactor = data?.srec_metrics?.emission_factor_constant || 0.433;
+    // const initialReducedEmissions = data?.srec_metrics?.reduced_emissions_mtpy || 0;
+    // const initialCreditsNeeded = data?.srec_metrics?.srec_needed_mwh || 0;
+
+    // useEffect(() => {
+    //     if (data?.srec_metrics?.percentage_needed && srecPercentage === 0) {
+    //         const optimal = data.srec_metrics.percentage_needed;
+    //         onSrecPercentageChange(optimal);
+    //         // onSrecChangeCommitted(optimal); 
+    //     }
+    // }, [data, srecPercentage, onSrecPercentageChange]);
+
+    // const currentMetrics = calculatedSrecMetrics || data?.srec_metrics;
+
+    
 
     useEffect(() => {
-        if (data?.srec_metrics?.percentage_needed && srecPercentage === 0) {
-            const optimal = data.srec_metrics.percentage_needed;
-            onSrecPercentageChange(optimal);
-            // onSrecChangeCommitted(optimal); 
-        }
-    }, [data, srecPercentage, onSrecPercentageChange]);
+    if (availableLocations.length > 0 && selectedLocations.length === 0) {
+        setSelectedLocations(availableLocations); // Select all by default
+    }
+}, [availableLocations]);
 
-    const currentMetrics = calculatedSrecMetrics || data?.srec_metrics;
+
+
+const isMultiLocation = selectedLocations.length > 1;
+
+const getSeverityColors = (severity: string) => {
+    switch (severity) {
+        case 'INFO':
+            return {
+                bg: '#e8f5e9',
+                border: '#4caf50',
+                color: '#1b5e20',
+                icon: '✅',
+                progressBar: '#388E3C',
+                statusColor: '#388E3C',
+                statusIcon: <CheckCircle sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />
+            };
+        case 'WARNING':
+            return {
+                bg: '#fffde7',
+                border: '#fdd835',
+                color: '#f57f17',
+                icon: '⚠️',
+                progressBar: '#fdd835',
+                statusColor: '#f57f17',
+                statusIcon: <Warning sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />
+            };
+        case 'CRITICAL':
+            return {
+                bg: '#fff3e0',
+                border: '#ff9800',
+                color: '#e65100',
+                icon: '❗',
+                progressBar: '#ff9800',
+                statusColor: '#e65100',
+                statusIcon: <Error sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />
+            };
+        case 'OVERLOAD':
+        default:
+            return {
+                bg: '#ffebee',
+                border: '#d32f2f',
+                color: '#b71c1c',
+                icon: '☠️',
+                progressBar: '#d32f2f',
+                statusColor: '#d32f2f',
+                statusIcon: <Error sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />
+            };
+    }
+};
+
+// Get colors based on current view
+const distinctSeverities = useMemo(() => {
+    return new Set(filteredDataByLocations.map(d => d.verdict?.severity || 'INFO'));
+}, [filteredDataByLocations]);
+
+const isUniformStatus = distinctSeverities.size === 1;
+const uniformSeverity = isUniformStatus ? Array.from(distinctSeverities)[0] : null;
+
+// 2. Determine the "Effective" severity for the main container styling
+// If mixed, we use a custom 'MIXED' flag to trigger neutral styling
+const effectiveSeverity = isUniformStatus ? uniformSeverity : 'MIXED';
+
+// 3. Get colors based on the effective severity
+const getContainerColors = (sev: string | null) => {
+    if (sev === 'MIXED' || !sev) {
+        return {
+            bg: '#f8f9fa',       // Neutral Grey Background
+            border: '#e0e0e0',   // Neutral Grey Border
+            color: '#424242',
+            icon: '',            // No icon for mixed container
+            progressBar: '#9e9e9e',
+            statusColor: '#757575',
+            statusIcon: null
+        };
+    }
+    return getSeverityColors(sev);
+};
+
+const containerColors = getContainerColors(effectiveSeverity);
+
+// 4. Determine Animation
+// Only animate if Uniform AND (Critical OR Overload)
+const containerAnimation = (isUniformStatus && (effectiveSeverity === 'CRITICAL' || effectiveSeverity === 'OVERLOAD'))
+    ? `${effectiveSeverity === 'OVERLOAD' ? pulseWarning : pulseCritical} 2s infinite`
+    : 'none';
+
+// Use these for the Main Table Container
+const complianceBannerBg = containerColors.bg;
+const complianceBannerBorder = containerColors.border;
+// const complianceBannerColor = containerColors.color;
+const statusColor = containerColors.statusColor;
+
+// Severity for the status banner text
+// const severity = isUniformStatus ? uniformSeverity : 'Mixed Statuses';
+
+// Use these throughout the component
+// const complianceBannerBg = severityColors.bg;
+// const complianceBannerBorder = severityColors.border;
+// const complianceBannerColor = severityColors.color;
+// const complianceIcon = severityColors.icon;
+// const progressBarColor = severityColors.progressBar;
+// const statusColor = severityColors.statusColor;
+// const statusIcon = severityColors.statusIcon;
+// const severity = currentSeverity;
+
+const [quickFixData, setQuickFixData] = useState<DashboardDataObject | null>(null);
+
+const handleOpenQuickFix = (rowData: DashboardDataObject) => {
+        setQuickFixData(rowData);
+        setQuickFixModalOpen(true);
+    };
+
+    const handleCloseQuickFix = () => {
+        setQuickFixModalOpen(false);
+        setQuickFixData(null);
+    };
+
+    // const [expandedLocations, setExpandedLocations] = useState<string[]>([]);
+
+    // const handleToggleLocation = (location: string) => {
+    //     setExpandedLocations(prev => 
+    //         prev.includes(location) 
+    //             ? prev.filter(l => l !== location) 
+    //             : [...prev, location]
+    //     );
+    // };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
@@ -689,7 +841,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                 <ModalBox>{renderModalContent()}</ModalBox>
             </Modal>
 
-            <StyledTitle variant="h6">CarbonCheckIQ+ Emissions Dashboard</StyledTitle>
+            <StyledTitle variant="h6">EmissionCheckIQ+ Dashboard</StyledTitle>
             
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', px: { xs: '20px', md: '80px' } }}>
                 <Paper variant="outlined" sx={{ 
@@ -701,21 +853,79 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                 }}>
                     <Box sx={{ position: 'absolute', top: 16, right: 24, display: 'flex', gap: 2 }}>
                         <FormControl size="small">
-                            <Select
-                                value={selectedLocation}
-                                onChange={(e: SelectChangeEvent<string>) => onLocationChange(e.target.value)}
-                                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
-                            >
-                                {availableLocations.map(loc => <MenuItem
-                                    key={loc}
-                                    value={loc}
-                                    sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
-                                >
-                                    {loc}
-                                </MenuItem>)}
-                            </Select>
-                        </FormControl>
-                        <FormControl size="small">
+    <Select
+        multiple
+        value={selectedLocations}
+        onChange={(e: SelectChangeEvent<string[]>) => {
+            const value = e.target.value;
+            if (typeof value === 'string') return;
+            
+            // Handle "Select All" logic
+            if (value.includes('SELECT_ALL')) {
+                if (selectedLocations.length === availableLocations.length) {
+                    setSelectedLocations([]);
+                } else {
+                    setSelectedLocations(availableLocations);
+                }
+            } else {
+                setSelectedLocations(value);
+            }
+        }}
+        renderValue={(selected) => 
+            selected.length === availableLocations.length 
+                ? 'All Locations' 
+                : selected.length === 1
+                ? selected[0]
+                : `${selected.length} Locations`
+        }
+        sx={{ 
+            fontSize: '0.8rem', 
+            fontFamily: 'Nunito Sans, sans-serif',
+            '& .MuiSelect-select': {
+                fontSize: '0.8rem',
+                fontFamily: 'Nunito Sans, sans-serif'
+            }
+        }}
+        MenuProps={{
+            PaperProps: {
+                sx: {
+                    '& .MuiMenuItem-root': {
+                        fontSize: '0.8rem',
+                        fontFamily: 'Nunito Sans, sans-serif',
+                        py: 0.5
+                    }
+                }
+            }
+        }}
+    >
+        <MenuItem value="SELECT_ALL" sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
+            <Checkbox 
+                checked={selectedLocations.length === availableLocations.length}
+                indeterminate={selectedLocations.length > 0 && selectedLocations.length < availableLocations.length}
+                size="small"
+            />
+            <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
+                Select All
+            </Typography>
+        </MenuItem>
+        {availableLocations.map(loc => (
+            <MenuItem 
+                key={loc} 
+                value={loc}
+                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
+            >
+                <Checkbox 
+                    checked={selectedLocations.indexOf(loc) > -1}
+                    size="small"
+                />
+                <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
+                    {loc}
+                </Typography>
+            </MenuItem>
+        ))}
+    </Select>
+</FormControl>
+                        {/* <FormControl size="small">
                             <Select
                                 value={selectedSource}
                                 onChange={(e: SelectChangeEvent<string>) => onSourceChange(e.target.value)}
@@ -744,7 +954,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                     {year}
                                 </MenuItem>)}
                             </Select>
-                        </FormControl>
+                        </FormControl> */}
                     </Box>
                     <Typography sx={{ textAlign: 'left', fontWeight: 'bold', fontSize: '1rem' }}>COMPLIANCE STATUS</Typography>
                     
@@ -752,61 +962,127 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
     variant="outlined" 
     sx={{ 
         mt: 3, 
-        backgroundColor: complianceBannerBg, 
+        backgroundColor: complianceBannerBg, // Uses neutral if mixed, specific color if uniform
         textAlign: 'center', 
-        p:1, 
+        p: 1, 
         borderColor: complianceBannerBorder,
         borderRadius: '8px',
-        animation: (severity === 'OVERLOAD' || severity === 'CRITICAL') 
-            ? `${severity === 'OVERLOAD' ? pulseWarning : pulseCritical} 2s infinite` 
-            : 'none',
+        // Apply animation only if uniform AND critical/overload
+        animation: containerAnimation,
         position: 'relative',
+        transition: 'all 0.3s ease'
     }}
 >
-    <Typography sx={{ fontWeight: 'bold', fontSize: '1.1rem', color: complianceBannerColor, textAlign: 'left', pl: 1.5 }}>
-        {complianceIcon} {status_banner}
-    </Typography>
-    <Button
-        size="small"
-        variant="contained"
-        onClick={handleOpenQuickFix}
-        sx={{
-            position: 'absolute',
-            right: 6,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            fontFamily: 'Nunito Sans, sans-serif',
-            fontSize: '0.75rem',
-            bgcolor: severity === 'INFO' ? progressBarColor : 
-                     severity === 'WARNING' ? progressBarColor : 
-                     severity === 'CRITICAL' ? progressBarColor : 
-                     progressBarColor,
-            color: 'white',
-            fontWeight: 'bold',
-            px: 2,
-            py: 0.5,
-            '&:hover': {
-                bgcolor: severity === 'INFO' ? '#2e7d32' : 
-                         severity === 'WARNING' ? '#f9a825' : 
-                         severity === 'CRITICAL' ? '#f57c00' : 
-                         '#c62828',
-                // transform: 'translateY(-50%) scale(1)',
-            },
-            transition: 'all 0.3s ease',
-            boxShadow: `0 2px 8px ${
-                severity === 'INFO' ? 'rgba(56, 142, 60, 0.3)' : 
-                severity === 'WARNING' ? 'rgba(253, 216, 53, 0.3)' : 
-                severity === 'CRITICAL' ? 'rgba(255, 152, 0, 0.3)' : 
-                'rgba(211, 47, 47, 0.3)'
-            }`,
-            animation: (severity === 'OVERLOAD' || severity === 'CRITICAL') 
-                ? `${severity === 'OVERLOAD' ? pulseWarning : pulseCritical} 2s infinite 1s` 
-                : 'none',
-        }}
-        // startIcon={<span>💳</span>}
-    >
-        Purchase Credits
-    </Button>
+    <TableContainer>
+        <Table size="small">
+            <TableHead>
+                <TableRow>
+                    <TableCell><strong>Location</strong></TableCell>
+                    <TableCell><strong>Source</strong></TableCell>
+                    <TableCell><strong>Status</strong></TableCell>
+                    <TableCell><strong>Utilization</strong></TableCell>
+                    <TableCell><strong>Area (sq ft)</strong></TableCell>
+                    <TableCell><strong>Emissions (MT)</strong></TableCell>
+                    <TableCell><strong>EUI</strong></TableCell>
+                    <TableCell><strong>Limit (MT)</strong></TableCell>
+                    <TableCell><strong>Action</strong></TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+    {[...filteredDataByLocations]
+  .sort((a, b) => {
+    const nameA = (a.location || '').toString().toLowerCase();
+    const nameB = (b.location || '').toString().toLowerCase();
+    return nameA.localeCompare(nameB);
+  })
+  .map((locationData) => {
+        const locationSeverity = locationData.verdict?.severity || 'INFO';
+        
+        // Calculate specific colors for this ROW only
+        const rowColors = getSeverityColors(locationSeverity);
+        const isRowCritical = locationSeverity === 'CRITICAL' || locationSeverity === 'OVERLOAD';
+        
+        return (
+            <TableRow 
+                key={locationData.file_id || `${locationData.location}-${locationData.source}`}
+                sx={{
+                    // Light background for the specific row based on its status
+                    backgroundColor: locationSeverity === 'INFO' ? 'rgba(56, 142, 60, 0.05)' :
+                                     locationSeverity === 'WARNING' ? 'rgba(245, 127, 23, 0.05)' :
+                                     'rgba(211, 47, 47, 0.05)', // Red tint for critical
+                    borderLeft: `4px solid ${rowColors.statusColor}`,
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                        backgroundColor: 'white',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                    }
+                }}
+            >
+                <TableCell>
+                    <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                        {typeof locationData.location === 'string'
+                            ? (locationData.location.length > 30 ? `${locationData.location.slice(0, 27)}...` : locationData.location)
+                            : locationData.location}
+                    </Typography>
+                </TableCell>
+                <TableCell>
+                    <Typography variant="caption">
+                        {locationData.source}
+                    </Typography>
+                </TableCell>
+                <TableCell>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: rowColors.statusColor }}>
+                        {rowColors.statusIcon}
+                        <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                            {locationSeverity}
+                        </Typography>
+                    </Box>
+                </TableCell>
+                <TableCell>
+                    <Typography variant="caption" sx={{ fontWeight: 600, color: rowColors.statusColor }}>
+                        {formatValue(locationData.verdict?.limit_utilization_pct, 'percent')}
+                    </Typography>
+                </TableCell>
+                <TableCell>
+                    <Typography variant="caption">{formatValue(locationData.area_sq_ft)}</Typography>
+                </TableCell>
+                <TableCell>
+                    <Typography variant="caption">{formatValue(locationData.evidence?.metrics?.full_year_projection)}</Typography>
+                </TableCell>
+                <TableCell>
+                    <Typography variant="caption">{formatValue(locationData.energy_usage_intensity)}</Typography>
+                </TableCell>
+                <TableCell>
+                    <Typography variant="caption">{formatValue(locationData.evidence?.metrics?.compliance_target)}</Typography>
+                </TableCell>
+                <TableCell>
+                    <Button 
+                        size="small" 
+                        variant="contained"
+                        onClick={() => handleOpenQuickFix(locationData)}
+                        sx={{ 
+                            fontSize: '0.7rem',
+                            bgcolor: rowColors.statusColor,
+                            color: 'white',
+                            fontWeight: 600,
+                            // If this specific row is critical, give the button a subtle glow/pulse
+                            animation: isRowCritical ? `${pulseCritical} 2s infinite` : 'none',
+                            boxShadow: isRowCritical ? '0 0 8px rgba(211, 47, 47, 0.5)' : 'none',
+                            '&:hover': {
+                                bgcolor: rowColors.statusColor,
+                                filter: 'brightness(0.9)',
+                            }
+                        }}
+                    >
+                        Purchase Credits
+                    </Button>
+                </TableCell>
+            </TableRow>
+        );
+    })}
+</TableBody>
+        </Table>
+    </TableContainer>
 </Paper>
 
 <Modal 
@@ -816,202 +1092,230 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
     <ModalBox sx={{ 
         width: 650, 
         maxWidth: '90vw',
-        borderTop: `4px solid ${complianceBannerBorder}`,
-        borderBottom: `4px solid ${complianceBannerBorder}`,
+        // Use quickFixData for styling, fallback to defaults if null
+        borderTop: `4px solid ${quickFixData ? getSeverityColors(quickFixData.verdict?.severity).border : complianceBannerBorder}`,
+        borderBottom: `4px solid ${quickFixData ? getSeverityColors(quickFixData.verdict?.severity).border : complianceBannerBorder}`,
     }}>
         <IconButton onClick={handleCloseQuickFix} sx={{position: 'absolute', top: 8, right: 8}}>
             <Close />
         </IconButton>
         
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-            <Typography variant="h6" component="h2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', color: '#000' }}>
-                Purchase Solar Renewable Energy Credits (SRECs)
-            </Typography>
-        </Box>
-        
-        <Typography sx={{ fontSize: '0.85rem', color: '#666', mb: 3, fontFamily: 'Nunito Sans, sans-serif' }}>
-            Avoid {formatValue(data?.verdict?.penalty_risk_usd, 'currency')} penalty while you work on long-term solutions
-        </Typography>
-
-        <Paper 
-            variant="outlined" 
-            sx={{ 
-                p: 2, 
-                mb: 3, 
-                bgcolor: complianceBannerBg,
-                borderColor: complianceBannerBorder,
-                borderWidth: 2,
-            }}
-        >
-            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '0.9rem', mb: 1.5, color: complianceBannerColor }}>
-                💡 CREDITS NEEDED FOR COMPLIANCE:
-            </Typography>
+        {/* Derive colors specifically for this modal instance */}
+        {(() => {
+            const activeData = quickFixData || data; // Fallback to global data if quickFix is null
+            const activeSeverity = activeData?.verdict?.severity || 'INFO';
+            const activeColors = getSeverityColors(activeSeverity);
             
-            <Box sx={{ textAlign: 'center', py: 2 }}>
-                <Typography sx={{ fontSize: '0.85rem', fontFamily: 'Nunito Sans, sans-serif', color: '#666', mb: 1 }}>
-                    You need
-                </Typography>
-                <Typography sx={{ 
-                    fontSize: '2.5rem', 
-                    fontWeight: 'bold', 
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    color: complianceBannerColor,
-                    lineHeight: 1,
-                }}>
-                    {/* {Math.ceil((data?.evidence?.metrics?.over_by || 0) / (data?.srec_metrics?.emission_factor_constant || 0.433))} */}
-                    {/* {formatValue(calculatedSrecMetrics?.srec_needed_mwh) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.srec_needed_mwh)} */}
-                    {formatValue(initialCreditsNeeded)}
-                </Typography>
-                <Typography sx={{ fontSize: '0.85rem', fontFamily: 'Nunito Sans, sans-serif', color: '#666', mt: 0.5 }}>
-                    SRECs to get back to compliance
-                </Typography>
-            </Box>
-            
-            {<Box sx={{ mt: 2, p: 1.5, bgcolor: 'white', borderRadius: 1, border: `1px dashed ${complianceBannerBorder}` }}>
-                <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', textAlign: 'center', color: '#666' }}>
-                    {/* <b>Calculation:</b> {formatValue(calculatedSrecMetrics?.reduced_emissions_mtpy) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.reduced_emissions_mtpy)} MT/yr ÷ {data?.srec_metrics?.emission_factor_constant} = {Math.ceil((data?.evidence?.metrics?.over_by || 0) / (data?.srec_metrics?.emission_factor_constant))} {formatValue(calculatedSrecMetrics?.srec_needed_mwh) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.srec_needed_mwh)} MWh SRECs */}
-                    <b>Calculation:</b> {formatValue(initialReducedEmissions)} MT/yr ÷ {initialEmissionFactor} = {formatValue(initialCreditsNeeded)} SRECs
-                </Typography>
-            </Box>}
-        </Paper>
+            // Local metrics for this specific row
+            const activeMetrics = activeData?.srec_metrics;
+            // const activeEvidence = activeData?.evidence?.metrics;
 
-        <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '0.9rem', mb: 1.5, display: 'flex', alignItems: 'center', gap: 0.5, color: '#000' }}>
-            <span>🛒</span> CONFIGURE YOUR PURCHASE:
-        </Typography>
+            const creditsNeeded = activeMetrics?.srec_needed_mwh || 0;
+            const reducedEmissions = activeMetrics?.reduced_emissions_mtpy || 0;
+            const emissionFactor = activeMetrics?.emission_factor_constant || 0.433;
 
-        <Paper 
-            variant="outlined" 
-            sx={{ 
-                p: 2.5,
-                transition: 'all 0.3s ease',
-                border: `2px solid ${complianceBannerBorder}`,
-                bgcolor: 'white',
-            }}
-        >
-            {/* Slider Section */}
-            <Box sx={{ mb: 2.5 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1.1rem' }}>
-                        ☀️ Solar RECs - Purchase Percentage
+            return (
+                <>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                        <Typography variant="h6" component="h2" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', color: '#000' }}>
+                            Purchase Solar Renewable Energy Credits (SRECs)
+                        </Typography>
+                        {/* <Box sx={{ 
+                            bgcolor: activeColors.bg, 
+                            color: activeColors.color, 
+                            border: `1px solid ${activeColors.border}`,
+                            px: 1, py: 0.5, borderRadius: 1, fontSize: '0.7rem', fontWeight: 'bold' 
+                        }}>
+                            {activeData?.location}
+                        </Box> */}
+                    </Box>
+                    
+                    <Typography sx={{ fontSize: '0.85rem', color: '#666', mb: 3, fontFamily: 'Nunito Sans, sans-serif' }}>
+                        Avoid {formatValue(data?.verdict?.penalty_risk_usd, 'currency')} penalty while you work on long-term solutions
                     </Typography>
-                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1.1rem', color: complianceBannerColor }}>
-                        {srecPercentage}%
-                    </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Slider
-                        value={srecPercentage}
-                        onChange={(_, newValue) => onSrecPercentageChange(newValue as number)}
-                        onChangeCommitted={(_, newValue) => onSrecChangeCommitted(newValue as number)}
+
+                    <Paper 
+                        variant="outlined" 
                         sx={{ 
-                            flex: 1,
-                            '& .MuiSlider-thumb': { 
-                                transition: 'all 0.1s ease'
-                            }
-                        }}
-                    />
-                    <Button
-                        size="small"
-                        variant="contained"
-                        onClick={() => {
-                            const percentage = data?.srec_metrics?.percentage_needed || 0;
-                            onSrecPercentageChange(percentage);
-                            onSrecChangeCommitted(percentage);
-                        }}
-                        sx={{
-                            fontFamily: 'Nunito Sans, sans-serif',
-                            fontSize: '0.7rem',
-                            whiteSpace: 'nowrap',
-                            minWidth: '115px',
-                            bgcolor: complianceBannerColor,
-                            '&:hover': {
-                                bgcolor: progressBarColor,
-                            }
+                            p: 2, 
+                            mb: 3, 
+                            bgcolor: activeColors.bg,
+                            borderColor: activeColors.border,
+                            borderWidth: 2,
                         }}
                     >
-                        Optimal {data?.srec_metrics?.percentage_needed || 0}%
-                    </Button>
-                </Box>
-            </Box>
+                        <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '0.9rem', mb: 1.5, color: activeColors.color }}>
+                            💡 CREDITS NEEDED FOR COMPLIANCE:
+                        </Typography>
+                        
+                        <Box sx={{ textAlign: 'center', py: 2 }}>
+                            <Typography sx={{ fontSize: '0.85rem', fontFamily: 'Nunito Sans, sans-serif', color: '#666', mb: 1 }}>
+                                You need
+                            </Typography>
+                            <Typography sx={{ 
+                                fontSize: '2.5rem', 
+                                fontWeight: 'bold', 
+                                fontFamily: 'Nunito Sans, sans-serif',
+                                color: activeColors.color,
+                                lineHeight: 1,
+                            }}>
+                                {/* {Math.ceil((data?.evidence?.metrics?.over_by || 0) / (data?.srec_metrics?.emission_factor_constant || 0.433))} */}
+                                {/* {formatValue(calculatedSrecMetrics?.srec_needed_mwh) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.srec_needed_mwh)} */}
+                                {formatValue(creditsNeeded)}
+                            </Typography>
+                            <Typography sx={{ fontSize: '0.85rem', fontFamily: 'Nunito Sans, sans-serif', color: '#666', mt: 0.5 }}>
+                                SRECs to get back to compliance
+                            </Typography>
+                        </Box>
+                        
+                        <Box sx={{ mt: 2, p: 1.5, bgcolor: 'white', borderRadius: 1, border: `1px dashed ${activeColors.border}` }}>
+                            <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', textAlign: 'center', color: '#666' }}>
+                                {/* <b>Calculation:</b> {formatValue(calculatedSrecMetrics?.reduced_emissions_mtpy) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.reduced_emissions_mtpy)} MT/yr ÷ {data?.srec_metrics?.emission_factor_constant} = {Math.ceil((data?.evidence?.metrics?.over_by || 0) / (data?.srec_metrics?.emission_factor_constant))} {formatValue(calculatedSrecMetrics?.srec_needed_mwh) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.srec_needed_mwh)} MWh SRECs */}
+                                <b>Calculation:</b> {formatValue(reducedEmissions)} MT/yr ÷ {emissionFactor} = {formatValue(creditsNeeded)} SRECs
+                            </Typography>
+                        </Box>
+                    </Paper>
 
-            {/* Metrics Grid - Balanced */}
-            <Grid container spacing={2}>
-                <Grid item xs={4}>
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif', mb: 0.5 }}>
-                            Total Cost (USD)
-                        </Typography>
-                        <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Nunito Sans, sans-serif', color: complianceBannerColor }}>
-                            {/* Use currentMetrics instead of calculatedSrecMetrics */}
-                            {formatValue(currentMetrics?.total_srec_cost_usd, 'currency') === 'N/A' ? '$0.00' : formatValue(currentMetrics?.total_srec_cost_usd, 'currency')}
-                        </Typography>
-                    </Box>
-                </Grid>
-                <Grid item xs={4}>
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif', mb: 0.5 }}>
-                            Emission Offset
-                        </Typography>
-                        <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Nunito Sans, sans-serif', color: '#1b5e20' }}>
-                            {/* Use currentMetrics instead of calculatedSrecMetrics */}
-                            {formatValue(currentMetrics?.reduced_emissions_mtpy) === 'N/A' ? '0' : formatValue(currentMetrics?.reduced_emissions_mtpy)} MT/yr
-                        </Typography>
-                    </Box>
-                </Grid>
-                <Grid item xs={4}>
-                    <Box sx={{ textAlign: 'center' }}>
-                        <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif', mb: 0.5 }}>
-                            SRECs Needed
-                        </Typography>
-                        <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Nunito Sans, sans-serif' }}>
-                            {/* Use currentMetrics instead of calculatedSrecMetrics */}
-                            {formatValue(currentMetrics?.srec_needed_mwh) === 'N/A' ? '0' : formatValue(currentMetrics?.srec_needed_mwh)}
-                        </Typography>
-                    </Box>
-                </Grid>
-            </Grid>
-        </Paper>
+                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '0.9rem', mb: 1.5, display: 'flex', alignItems: 'center', gap: 0.5, color: '#000' }}>
+                        <span>🛒</span> CONFIGURE YOUR PURCHASE:
+                    </Typography>
 
-        <Box sx={{ display: 'flex', gap: 2, mt: 3, justifyContent: 'flex-end' }}>
-            <Button 
-                variant="outlined" 
-                size="small"
-                onClick={handleCloseQuickFix}
-                sx={{ 
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    borderColor: complianceBannerBorder,
-                    color: complianceBannerColor,
-                    '&:hover': {
-                        borderColor: progressBarColor,
-                        bgcolor: `${complianceBannerBg}80`,
-                    }
-                }}
-            >
-                Cancel
-            </Button>
-            <Button 
-                variant="contained" 
-                size="small"
-                sx={{ 
-                    fontFamily: 'Nunito Sans, sans-serif',
-                    bgcolor: progressBarColor,
-                    color: 'white',
-                    fontWeight: 'bold',
-                    '&:hover': { 
-                        bgcolor: severity === 'INFO' ? '#2e7d32' : 
-                                 severity === 'WARNING' ? '#f9a825' : 
-                                 severity === 'CRITICAL' ? '#f57c00' : 
-                                 '#c62828',
-                    }
-                }}
-            >
-                Purchase SRECs
-            </Button>
-        </Box>
+                    <Paper 
+                        variant="outlined" 
+                        sx={{ 
+                            p: 2.5,
+                            transition: 'all 0.3s ease',
+                            border: `2px solid ${activeColors.border}`,
+                            bgcolor: 'white',
+                        }}
+                    >
+                        {/* Slider Section */}
+                        <Box sx={{ mb: 2.5 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                                <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                                    ☀️ Solar RECs - Purchase Percentage
+                                </Typography>
+                                <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 'bold', fontSize: '1.1rem', color: activeColors.color }}>
+                                    {srecPercentage}%
+                                </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <Slider
+                                    value={srecPercentage}
+                                    onChange={(_, newValue) => onSrecPercentageChange(newValue as number)}
+                                    onChangeCommitted={(_, newValue) => onSrecChangeCommitted(newValue as number)}
+                                    sx={{ 
+                                        flex: 1,
+                                        color: activeColors.progressBar, // Dynamic slider color
+                                        '& .MuiSlider-thumb': { 
+                                            transition: 'all 0.1s ease',
+                                            backgroundColor: activeColors.statusColor
+                                        },
+                                        '& .MuiSlider-track': {
+                                            backgroundColor: activeColors.progressBar
+                                        }
+                                    }}
+                                />
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => {
+                                        const percentage = activeMetrics?.percentage_needed || 0;
+                                        onSrecPercentageChange(percentage);
+                                        onSrecChangeCommitted(percentage);
+                                    }}
+                                    sx={{
+                                        fontFamily: 'Nunito Sans, sans-serif',
+                                        fontSize: '0.7rem',
+                                        whiteSpace: 'nowrap',
+                                        minWidth: '115px',
+                                        bgcolor: activeColors.color,
+                                        '&:hover': {
+                                            bgcolor: activeColors.statusColor,
+                                        }
+                                    }}
+                                >
+                                    Optimal {activeMetrics?.percentage_needed || 0}%
+                                </Button>
+                            </Box>
+                        </Box>
+
+                        {/* Metrics Grid */}
+                        <Grid container spacing={2}>
+                            <Grid item xs={4}>
+                                <Box sx={{ textAlign: 'center' }}>
+                                    <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif', mb: 0.5 }}>
+                                        Total Cost (USD)
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Nunito Sans, sans-serif', color: activeColors.color }}>
+                                        {/* Note: using currentMetrics global calculation, or fallback to row static if needed */}
+                                        {formatValue(calculatedSrecMetrics ? calculatedSrecMetrics.total_srec_cost_usd : activeMetrics?.total_srec_cost_usd, 'currency')}
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Box sx={{ textAlign: 'center' }}>
+                                    <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif', mb: 0.5 }}>
+                                        Emission Offset
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Nunito Sans, sans-serif', color: '#1b5e20' }}>
+                                        {formatValue(calculatedSrecMetrics ? calculatedSrecMetrics.reduced_emissions_mtpy : activeMetrics?.reduced_emissions_mtpy)} MT/yr
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Box sx={{ textAlign: 'center' }}>
+                                    <Typography sx={{ fontSize: '0.7rem', color: '#666', fontFamily: 'Nunito Sans, sans-serif', mb: 0.5 }}>
+                                        SRECs Needed
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Nunito Sans, sans-serif' }}>
+                                        {formatValue(calculatedSrecMetrics ? calculatedSrecMetrics.srec_needed_mwh : activeMetrics?.srec_needed_mwh)}
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                    </Paper>
+
+                    <Box sx={{ display: 'flex', gap: 2, mt: 3, justifyContent: 'flex-end' }}>
+                        <Button 
+                            variant="outlined" 
+                            size="small"
+                            onClick={handleCloseQuickFix}
+                            sx={{ 
+                                fontFamily: 'Nunito Sans, sans-serif',
+                                borderColor: activeColors.border,
+                                color: activeColors.color,
+                                '&:hover': {
+                                    borderColor: activeColors.statusColor,
+                                    bgcolor: `${activeColors.bg}80`,
+                                }
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button 
+                            variant="contained" 
+                            size="small"
+                            sx={{ 
+                                fontFamily: 'Nunito Sans, sans-serif',
+                                bgcolor: activeColors.progressBar,
+                                color: 'white',
+                                fontWeight: 'bold',
+                                '&:hover': { 
+                                    bgcolor: activeColors.statusColor,
+                                }
+                            }}
+                        >
+                            Purchase SRECs
+                        </Button>
+                    </Box>
+                </>
+            );
+        })()}
     </ModalBox>
 </Modal>
 
-                    <Box sx={{ position: 'relative', height: '20px', backgroundColor: '#e0e0e0', borderRadius: '10px', overflow: 'hidden', margin: '16px auto', maxWidth: '100%' }}>
+                    {/* <Box sx={{ position: 'relative', height: '20px', backgroundColor: '#e0e0e0', borderRadius: '10px', overflow: 'hidden', margin: '16px auto', maxWidth: '100%' }}>
                         <Box sx={{
                             width: `${utilizationPct > 100 ? 100 : utilizationPct}%`,
                             height: '100%',
@@ -1054,7 +1358,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                         <Grid item xs={4} sx={{ animation: `${fadeIn} 0.8s ease-out`}}>
                             <Typography sx={{fontSize: '0.8rem'}}>TIME LEFT: <b>{data?.verdict?.time_left_months} MONTHS</b></Typography>
                         </Grid>
-                    </Grid>
+                    </Grid> */}
                 </Paper>
 
                 <Box sx={{ 
@@ -1083,7 +1387,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                 }}>
                     <Box sx={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #e0e0e0', backgroundColor: 'white', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
                         <Tabs
-                            value={tabValue}
+                            value={isMultiLocation ? 1 : tabValue}
                             onChange={handleTabChange}
                             centered
                             sx={{
@@ -1102,13 +1406,13 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                 },
                             }}
                         >
-                            <Tab label={<span>Interactive Emission<br />Modelling Dashboard</span>} />
+                            <Tab disabled={isMultiLocation} label={<span>Interactive Emission<br />Modelling Dashboard</span>} />
                             <Tab label={<span>Simulated Emissions from<br />Alternate Energy Source(s)</span>} />
-                            <Tab label={<span>Immediate Emission<br />Compliance Configuration</span>} />
-                            <Tab label={<span>Energy Conservation &<br />Reduction Measures</span>} />
+                            <Tab disabled={isMultiLocation} label={<span>Immediate Emission<br />Compliance Configuration</span>} />
+                            <Tab disabled={isMultiLocation} label={<span>Energy Conservation &<br />Reduction Measures</span>} />
                         </Tabs>
                         
-                        <TabPanel value={tabValue} index={0}>
+                        <TabPanel value={isMultiLocation ? 1 : tabValue} index={0}>
                             <StyledTabPanelBox> 
                                 <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
                                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>VISUALIZE YOUR FUTURE ENERGY SUPPLY AND EMISSIONS</Typography>
@@ -1177,12 +1481,73 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                 </Box>
                             </StyledTabPanelBox>
                         </TabPanel>
-                        <TabPanel value={tabValue} index={1}>
+                        <TabPanel value={isMultiLocation ? 1 : tabValue} index={1}>
                             <StyledTabPanelBox>
-                                <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>
-                                    <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>MONTHLY PERFORMANCE & FORECASTING</Typography>
-                                    <HelpButton onClick={() => handleOpenModal(1)} />
-                                </Box>
+                                <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', pb: 2 }}>
+
+  {/* Center Title */}
+  <Typography 
+    sx={{ 
+      fontFamily: 'Nunito Sans, sans-serif', 
+      textAlign: 'center', 
+      fontWeight: 'bold', 
+      fontSize: '0.9rem'
+    }}
+  >
+    MONTHLY PERFORMANCE & FORECASTING
+  </Typography>
+
+  {/* Help Button right beside title (still centered) */}
+  <HelpButton onClick={() => handleOpenModal(1)} />
+
+  {/* Right-side filters container */}
+  <Box
+    sx={{
+      position: 'absolute',
+      right: 19,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 1
+    }}
+  >
+    <FormControl size="small">
+      <Select
+        value={selectedSource}
+        onChange={(e: SelectChangeEvent<string>) => onSourceChange(e.target.value)}
+        sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
+      >
+        {availableSources.map(src => (
+          <MenuItem
+            key={src}
+            value={src}
+            sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
+          >
+            {src.charAt(0).toUpperCase() + src.slice(1)}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+
+    <FormControl size="small">
+      <Select
+        value={selectedYear}
+        onChange={(e: SelectChangeEvent<string | number>) => onYearChange(e.target.value)}
+        sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
+      >
+        {availableYears.map(year => (
+          <MenuItem
+            key={year}
+            value={year}
+            sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
+          >
+            {year}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  </Box>
+</Box>
+
                                 <Box sx={{ height: 350 }}>
                                     <ResponsiveContainer width="100%" height="100%">
                                         <BarChart data={filteredAndSortedChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
@@ -1257,7 +1622,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                 </Box>
                             </StyledTabPanelBox>
                         </TabPanel>
-                        <TabPanel value={tabValue} index={2}>
+                        <TabPanel value={isMultiLocation ? 1 : tabValue} index={2}>
                                 <StyledTabPanelBox sx={{minHeight: 360}}>
                                     <Box sx={{
                                         display: 'flex', 
@@ -1479,7 +1844,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
                                     </Grid>
                                 </StyledTabPanelBox>
                             </TabPanel>
-                        <TabPanel value={tabValue} index={3}>
+                        <TabPanel value={isMultiLocation ? 1 : tabValue} index={3}>
     {/* --- Box 1: Emission Reduction Projects --- */}
     <StyledTabPanelBox sx={{maxHeight: 410, fontFamily: 'Nunito Sans, sans-serif', mb: 2}}> {/* Added mb: 2 for spacing */}
         <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', pb: 2}}>

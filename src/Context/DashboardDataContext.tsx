@@ -111,6 +111,8 @@ export interface DashboardDataObject {
     source: string;
     zipcode: string;
     location: string;
+    area_sq_ft: number;
+    energy_usage_intensity: number | null;
     verdict: Verdict;
     evidence: Evidence;
     emission_reduction_projects: EmissionReductionProjects;
