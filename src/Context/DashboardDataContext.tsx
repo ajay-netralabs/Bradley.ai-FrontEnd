@@ -124,6 +124,7 @@ export interface DashboardDataObject {
     evidence: Evidence;
     emission_reduction_projects: EmissionReductionProjects;
     srec_metrics: SRECMetrics;
+    emission_id: string;
     der_control_panel: DERControlPanel;
     monthly_tracking: MonthlyTracking;
     action_center: ActionCenter;

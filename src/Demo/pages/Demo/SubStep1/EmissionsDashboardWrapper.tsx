@@ -252,7 +252,7 @@ const EmissionsDashboardWrapper: React.FC = () => {
                 // source: dataForPayload.source,
                 zipcode: dataForPayload.zipcode, 
                 location: dataForPayload.location,
-                _id: String(dataForPayload._id),
+                _id: String(dataForPayload.emission_id),
                 current_mix_pct: newUserMix
             };
             console.log("Sending PID request payload:", requestPayload);
@@ -283,7 +283,7 @@ const EmissionsDashboardWrapper: React.FC = () => {
                 // source: activeData.source,
                 zipcode: dataContext?.zipcode,
                 location: dataContext?.location,
-                _id: String(dataContext?._id),
+                _id: String(dataContext?.emission_id),
                 percentage_selected: percentage
             };
             console.log("Sending SREC calculation request:", requestPayload);
