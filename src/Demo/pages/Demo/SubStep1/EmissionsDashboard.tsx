@@ -337,7 +337,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         
         return foundData;
     }, [filteredDataByLocations, allData, selectedLocation, calculatedDer]);
-
+//random commit
     // NEW: Aggregated Data for Stacked Chart (Tab 2)
     const stackedChartData = useMemo(() => {
     // Only proceed if we have valid data and a selected year
