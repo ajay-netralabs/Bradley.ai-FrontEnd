@@ -16,6 +16,8 @@ const EmissionsDashboardWrapper: React.FC = () => {
     const socketRef = useRef<WebSocket | null>(null);
     const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+    const activeIdRef = useRef<string>('');
+
     const [isUpdating, setIsUpdating] = useState(false);
     const [isFiltering, setIsFiltering] = useState(false); 
     const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
@@ -31,6 +33,8 @@ const EmissionsDashboardWrapper: React.FC = () => {
     const [projectSelections, setProjectSelections] = useState<{ [locationSourceKey: string]: { [key: string]: boolean } }>({});
     const [srecPercentages, setSrecPercentages] = useState<{ [locationSourceKey: string]: number }>({});
     const [srecMetricsMap, setSrecMetricsMap] = useState<{ [locationSourceKey: string]: SRECMetrics | null }>({});
+
+    const [derMetricsMap, setDerMetricsMap] = useState<{ [id: string]: any }>({});
     
     const currentDataKey = useMemo(() => {
         if (!activeData) return 'default';
@@ -73,6 +77,12 @@ const EmissionsDashboardWrapper: React.FC = () => {
             setSelectedLocation(uniqueLocations[0]);
         }
     }, [uniqueLocations, selectedLocation]);
+
+    useEffect(() => {
+        if (activeData && activeData._id) {
+            activeIdRef.current = activeData._id;
+        }
+    }, [activeData]);
 
     // useEffect(() => {
     //     if (selectedLocation) {
@@ -180,7 +190,28 @@ const EmissionsDashboardWrapper: React.FC = () => {
                     // }
 
                     if (receivedData.type) {
-                        const payloadId = receivedData.payload?.file_id || receivedData.payload?._id;
+                        const payloadId = receivedData.payload?.file_id || receivedData.payload?._id || activeIdRef.current;
+
+                        console.log(`WS Received ${receivedData.type} for ID: ${payloadId}`); // Debug log
+
+                        if (!payloadId) return;
+
+                        // Handle SREC separately (It updates a local map, not the main data immediately)
+                        if (receivedData.type === "srec_result") {
+                             setSrecMetricsMap(prev => ({ 
+                                 ...prev, 
+                                 [payloadId]: receivedData.payload 
+                             }));
+                             return; // Done for SREC
+                        }
+
+                        if (receivedData.type === "pid_result") {
+                            setDerMetricsMap(prev => ({
+                                ...prev,
+                                [payloadId]: receivedData.payload.der_control_panel
+                            }));
+                            return; // Done for PID
+                        }
                         
                         setDashboardData((prevDashboardData) => {
                             if (!prevDashboardData) return null;
@@ -199,6 +230,11 @@ const EmissionsDashboardWrapper: React.FC = () => {
                             
                             const newList = [...prevDashboardData];
                             newList[index] = newItem;
+
+                            if (String(activeIdRef.current) === String(payloadId)) {
+                                setActiveData(newItem);
+                            }
+
                             return newList;
                         });
                     }
@@ -316,7 +352,8 @@ const EmissionsDashboardWrapper: React.FC = () => {
     if (!dashboardData || dashboardData.length === 0) return <Box display="flex" justifyContent="center" alignItems="center" height="80vh" flexDirection="column"><Typography variant="h6" color="textSecondary">No dashboard data available.</Typography></Box>;
     if (!activeData) return <Box display="flex" justifyContent="center" alignItems="center" height="80vh" flexDirection="column" gap={2}><CircularProgress /><Typography variant="h6" color="textSecondary">Loading dashboard...</Typography></Box>;
 
-    const currentSrecMetrics = srecMetricsMap[currentDataKey] || activeData.srec_metrics;
+    const currentSrecMetrics = srecMetricsMap[currentDataKey] || activeData?.srec_metrics || null;
+    const currentDerMetrics = derMetricsMap[currentDataKey] || null;
 
     return (
         <Box>
@@ -347,6 +384,7 @@ const EmissionsDashboardWrapper: React.FC = () => {
                 onSrecPercentageChange={handleSrecPercentageChange} 
                 onSrecChangeCommitted={handleSrecChangeCommitted} 
                 calculatedSrecMetrics={currentSrecMetrics} 
+                calculatedDer={currentDerMetrics}
             />
         </Box>
     );

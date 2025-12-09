@@ -218,6 +218,8 @@ interface EmissionsDashboardProps {
     onSrecPercentageChange: (value: number) => void;
     onSrecChangeCommitted: (value: number, targetData?: DashboardDataObject | null) => void;
     calculatedSrecMetrics: SRECMetrics | null;
+
+    calculatedDer: DashboardDataObject['der_control_panel'] | null;
 }
 
 const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
@@ -231,7 +233,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
     srecPercentage,
     onSrecPercentageChange,
     onSrecChangeCommitted,
-    calculatedSrecMetrics
+    calculatedSrecMetrics,
+    calculatedDer
 }) => {
     const [tabValue, setTabValue] = useState(0);
     const [userDerAllocation, setUserDerAllocation] = useState({});
@@ -317,11 +320,23 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
 
     // "Active" data for single-source logic (Tabs 1, 3, 4)
     const data = useMemo(() => {
+        let foundData: DashboardDataObject | undefined;
+
         if (filteredDataByLocations.length === 1) {
-            return filteredDataByLocations[0];
+            foundData = filteredDataByLocations[0];
+        } else {
+            foundData = allData?.find(d => d.location === selectedLocation);
         }
-        return allData?.find(d => d.location === selectedLocation);
-    }, [filteredDataByLocations, allData, selectedLocation]);
+
+        if (foundData && calculatedDer) {
+            return {
+                ...foundData,
+                der_control_panel: calculatedDer
+            };
+        }
+        
+        return foundData;
+    }, [filteredDataByLocations, allData, selectedLocation, calculatedDer]);
 
     // NEW: Aggregated Data for Stacked Chart (Tab 2)
     const stackedChartData = useMemo(() => {
