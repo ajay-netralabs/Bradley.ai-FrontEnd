@@ -981,6 +981,18 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
         .sort((a: any, b: any) => b.current - a.current);
     }, [allData, selectedLocations, selectedYear]);
 
+useEffect(() => {
+    if (availableYears.length > 0) {
+        onYearChange(availableYears[0]);
+    }
+}, [availableYears]);
+
+useEffect(() => {
+    if (availableSources.length > 0) {
+        setGraphSources(availableSources);
+    }
+}, [availableSources]);
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
             <style>{`
@@ -1656,51 +1668,93 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
                                     <Box sx={{ position: 'absolute', right: 19, display: 'flex', alignItems: 'center', gap: 1 }}>
                                         {/* Multi-Select Source Filter */}
                                         <FormControl size="small">
-                                            <Select
-                                                multiple
-                                                value={graphSources}
-                                                onChange={(e: SelectChangeEvent<string[]>) => {
-                                                    const value = e.target.value;
-                                                    if (typeof value === 'string') return;
-                                                    if (value.includes('SELECT_ALL')) {
-                                                        if (graphSources.length === availableSources.length) {
-                                                            setGraphSources([]);
-                                                        } else {
-                                                            setGraphSources(availableSources);
-                                                        }
-                                                    } else {
-                                                        setGraphSources(value);
-                                                    }
-                                                }}
-                                                renderValue={(selected) => 
-                                                    selected.length === availableSources.length 
-                                                        ? 'All Sources' 
-                                                        : selected.length === 1
-                                                        ? selected[0]
-                                                        : `${selected.length} Sources`
-                                                }
-                                                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif', minWidth: 140 }}
-                                                MenuProps={{ PaperProps: { sx: { '& .MuiMenuItem-root': { fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif', py: 0.5 } } } }}
-                                            >
-                                                <MenuItem value="SELECT_ALL" sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
-                                                    <Checkbox checked={graphSources.length === availableSources.length && availableSources.length > 0} indeterminate={graphSources.length > 0 && graphSources.length < availableSources.length} size="small" />
-                                                    <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>Select All</Typography>
-                                                </MenuItem>
-                                                {availableSources.map(src => (
-                                                    <MenuItem key={src} value={src} sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
-                                                        <Checkbox checked={graphSources.indexOf(src) > -1} size="small" />
-                                                        <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>{src}</Typography>
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
+    <Select
+        multiple
+        value={graphSources}
+        onChange={(e: SelectChangeEvent<string[]>) => {
+            const value = e.target.value;
+            if (typeof value === 'string') return;
 
-                                        <FormControl size="small">
-                                            <Select value={selectedYear} onChange={(e: SelectChangeEvent<string | number>) => onYearChange(e.target.value)} sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
-                                                {availableYears.map(year => <MenuItem key={year} value={year} sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>{year}</MenuItem>)}
-                                                <>{console.log(availableYears)}</>
-                                            </Select>
-                                        </FormControl>
+            if (value.includes('SELECT_ALL')) {
+                if (graphSources.length === availableSources.length) {
+                    setGraphSources([]);
+                } else {
+                    setGraphSources(availableSources);
+                }
+            } else {
+                setGraphSources(value);
+            }
+        }}
+        renderValue={(selected) =>
+            selected.length === availableSources.length
+                ? 'All Sources'
+                : selected.length === 1
+                ? selected[0]
+                : `${selected.length} Sources`
+        }
+        sx={{
+            fontSize: '0.8rem',
+            fontFamily: 'Nunito Sans, sans-serif',
+            minWidth: 140
+        }}
+        MenuProps={{
+            PaperProps: {
+                sx: {
+                    '& .MuiMenuItem-root': {
+                        fontSize: '0.8rem',
+                        fontFamily: 'Nunito Sans, sans-serif',
+                        py: 0.5
+                    }
+                }
+            }
+        }}
+    >
+        <MenuItem value="SELECT_ALL">
+            <Checkbox
+                checked={
+                    graphSources.length === availableSources.length &&
+                    availableSources.length > 0
+                }
+                indeterminate={
+                    graphSources.length > 0 &&
+                    graphSources.length < availableSources.length
+                }
+                size="small"
+            />
+            <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
+                Select All
+            </Typography>
+        </MenuItem>
+
+        {availableSources.map((src) => (
+            <MenuItem key={src} value={src}>
+                <Checkbox checked={graphSources.includes(src)} size="small" />
+                <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
+                    {src}
+                </Typography>
+            </MenuItem>
+        ))}
+    </Select>
+</FormControl>
+
+<FormControl size="small">
+    <Select
+        value={selectedYear}
+        onChange={(e: SelectChangeEvent<string | number>) => onYearChange(e.target.value)}
+        sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
+    >
+        {availableYears.map((year) => (
+            <MenuItem
+                key={year}
+                value={year}
+                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
+            >
+                {year}
+            </MenuItem>
+        ))}
+    </Select>
+</FormControl>
+
                                     </Box>
                                 </Box>
 
