@@ -322,7 +322,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             compliance_jurisdiction: new Set(filteredDataByLocations.map(d => d.evidence?.metrics?.compliance_jurisdiction)).size > 1 
                 ? 'Multiple Jurisdictions' 
                 : filteredDataByLocations[0]?.evidence?.metrics?.compliance_jurisdiction,
-            actual_yoy_pct: acc.yoy_count > 0 ? (acc.yoy_sum / acc.yoy_count) : '0'
+            actual_yoy_pct: acc.yoy_count > 0 ? (acc.yoy_sum / acc.yoy_count) : 'N/A'
         };
     }, [filteredDataByLocations]);
 
@@ -521,7 +521,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         { 
             value: `${formatValue(aggregatedMetrics?.full_year_projection)} MT`, 
             title: (<>Annual Emissions<br />(YTD + Projected)</>), 
-            description: <>YTD: <b>{formatValue(aggregatedMetrics?.actual_emissions)} MT</b><br />Projected: <b>{formatValue(aggregatedMetrics?.projected_emissions)} MT</b><br/><b>{aggregatedMetrics?.actual_yoy_pct === '—' ? '—' : formatValue(aggregatedMetrics?.actual_yoy_pct, 'percent')}</b> YoY | Over by: <b>{formatValue(aggregatedMetrics?.over_by)} MT</b><br/></>, 
+            description: <>YTD: <b>{formatValue(aggregatedMetrics?.actual_emissions)} MT</b><br />Projected: <b>{formatValue(aggregatedMetrics?.projected_emissions)} MT</b><br/>YoY: <b>{aggregatedMetrics?.actual_yoy_pct === 'N/A' ? 'N/A' : formatValue(aggregatedMetrics?.actual_yoy_pct, 'percent')}</b> | Over by: <b>{formatValue(aggregatedMetrics?.over_by)} MT</b><br/></>, 
             watermark: '🔥' 
         },
         { 
