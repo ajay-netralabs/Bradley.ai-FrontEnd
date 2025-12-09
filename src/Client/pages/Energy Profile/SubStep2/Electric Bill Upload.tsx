@@ -9,14 +9,14 @@ import { useBillAddress } from '../../../../Context/Energy Profile/BillAddressCo
 const SubStep2: React.FC = () => {
   const { addFiles, removeFile } = useElectricBillUpload();
   const { bills, addBill, removeBill: removeBillFromContext, addresses, assignAddressToBill, updateBillDateRange } = useBillAddress();
-  const electricBills = bills.filter(b => b.type === 'electric');
+  const electricBills = bills.filter(b => b.type === 'grid');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = event.target.files;
     if (newFiles) {
       Array.from(newFiles).forEach(file => {
-        addBill({ name: file.name, size: formatFileSize(file.size), type: 'electric' });
+        addBill({ name: file.name, size: formatFileSize(file.size), type: 'grid' });
       });
       addFiles(Array.from(newFiles));
     }
@@ -31,7 +31,7 @@ const SubStep2: React.FC = () => {
     const newFiles = event.dataTransfer.files;
     if (newFiles) {
       Array.from(newFiles).forEach(file => {
-        addBill({ name: file.name, size: formatFileSize(file.size), type: 'electric' });
+        addBill({ name: file.name, size: formatFileSize(file.size), type: 'grid' });
       });
       addFiles(Array.from(newFiles));
     }

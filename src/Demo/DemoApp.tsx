@@ -193,14 +193,14 @@ const AppContent: React.FC = () => {
         // Step 0: Bill Uploads
         if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6) {
             const billsWithAddress = bills.filter(bill => bill.addressId);
-            const electricBillMetadataList: BillMetadata[] = billsWithAddress.filter(bill => bill.type === 'electric').map(bill => ({ ...bill, size: bill.size.toString(), addressId: bill.addressId! }));
+            const electricBillMetadataList: BillMetadata[] = billsWithAddress.filter(bill => bill.type === 'grid').map(bill => ({ ...bill, size: bill.size.toString(), addressId: bill.addressId! }));
             const gasBillMetadataList: BillMetadata[] = billsWithAddress.filter(bill => bill.type === 'gas').map(bill => ({ ...bill, size: bill.size.toString(), addressId: bill.addressId! }));
             const electricBillNames = new Set(electricBillMetadataList.map(bill => bill.name));
             const electricFiles = electricBillUploadState.files.filter(file => electricBillNames.has(file.name));
             const gasBillNames = new Set(gasBillMetadataList.map(bill => bill.name));
             const gasFiles = naturalGasBillUploadState.files.filter(file => gasBillNames.has(file.name));
             const Files = [...electricFiles, ...gasFiles];
-            const sources = [...electricFiles.map(() => 'electric'), ...gasFiles.map(() => 'gas')];
+            const sources = [...electricFiles.map(() => 'grid'), ...gasFiles.map(() => 'gas')];
             const allBillMetadata = [...electricBillMetadataList, ...gasBillMetadataList];
             const fileToMetadataMap = new Map<string, BillMetadata>();
             allBillMetadata.forEach(meta => fileToMetadataMap.set(meta.name, meta));

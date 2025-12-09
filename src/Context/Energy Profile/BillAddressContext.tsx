@@ -5,7 +5,7 @@ interface Bill {
   id: string;
   name: string;
   size: string;
-  type: 'electric' | 'gas';
+  type: 'grid' | 'gas';
   dateRange: { start: string; end: string };
   addressId?: string; // addressId is now part of the bill
 }

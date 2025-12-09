@@ -489,8 +489,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         const sources = new Set<string>();
         const emissions = activeData.monthly_tracking.monthly_emissions;
 
-        // Check if ANY entry has non-null electric values
-        const hasElectric = emissions.some(e => e.electric_actual !== null || e.electric_projected !== null);
+        // Check if ANY entry has non-null grid values
+        const hasElectric = emissions.some(e => e.grid_actual !== null || e.grid_projected !== null);
         if (hasElectric) sources.add('Electric');
 
         // Check if ANY entry has non-null gas values
@@ -954,8 +954,8 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
             const monthlyData = locData.monthly_tracking?.monthly_emissions?.filter(em => em.year == selectedYear) || [];
 
             monthlyData.forEach(em => {
-                electric_actual += em.electric_actual || 0;
-                electric_projected += em.electric_projected || 0;
+                electric_actual += em.grid_actual || 0;
+                electric_projected += em.grid_projected || 0;
                 gas_actual += em.gas_actual || 0;
                 gas_projected += em.gas_projected || 0;
             });

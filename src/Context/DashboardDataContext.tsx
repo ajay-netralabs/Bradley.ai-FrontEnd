@@ -40,8 +40,8 @@ export interface MonthlyEmission {
     month: number; 
     year: number | string;
 
-    electric_actual?: number | null;
-    electric_projected?: number | null;
+    grid_actual?: number | null;
+    grid_projected?: number | null;
     gas_actual?: number | null;
     gas_projected?: number | null;
 
