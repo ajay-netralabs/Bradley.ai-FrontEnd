@@ -1336,7 +1336,7 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
                         <Box sx={{ mt: 2, p: 1.5, bgcolor: 'white', borderRadius: 1, border: `1px dashed ${activeColors.border}` }}>
                             <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', textAlign: 'center', color: '#666' }}>
                                 {/* <b>Calculation:</b> {formatValue(calculatedSrecMetrics?.reduced_emissions_mtpy) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.reduced_emissions_mtpy)} MT/yr ÷ {data?.srec_metrics?.emission_factor_constant} = {Math.ceil((data?.evidence?.metrics?.over_by || 0) / (data?.srec_metrics?.emission_factor_constant))} {formatValue(calculatedSrecMetrics?.srec_needed_mwh) === 'N/A' ? '0' : formatValue(calculatedSrecMetrics?.srec_needed_mwh)} MWh SRECs */}
-                                <b>Calculation:</b> {formatValue(reducedEmissions)} MT/yr ÷ {emissionFactor} = {formatValue(creditsNeeded)} SRECs
+                                <b>Calculation:</b> {formatValue(reducedEmissions)} MT/yr ÷ {emissionFactor * 1000} = {formatValue(creditsNeeded)} SRECs
                             </Typography>
                         </Box>
                     </Paper>
@@ -1414,7 +1414,7 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
                                     </Typography>
                                     <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Nunito Sans, sans-serif', color: activeColors.color }}>
                                         {/* Note: using currentMetrics global calculation, or fallback to row static if needed */}
-                                        {formatValue(calculatedSrecMetrics ? calculatedSrecMetrics.total_srec_cost_usd : activeMetrics?.total_srec_cost_usd, 'currency')}
+                                        {formatValue(srecPercentage === 0 ? 0 : (calculatedSrecMetrics ? calculatedSrecMetrics.total_srec_cost_usd : activeMetrics?.total_srec_cost_usd), 'currency')}
                                     </Typography>
                                 </Box>
                             </Grid>
@@ -1424,7 +1424,7 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
                                         Emission Offset
                                     </Typography>
                                     <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Nunito Sans, sans-serif', color: '#1b5e20' }}>
-                                        {formatValue(calculatedSrecMetrics ? calculatedSrecMetrics.reduced_emissions_mtpy : activeMetrics?.reduced_emissions_mtpy)} MT/yr
+                                        {formatValue(srecPercentage === 0 ? 0 : (calculatedSrecMetrics ? calculatedSrecMetrics.reduced_emissions_mtpy : activeMetrics?.reduced_emissions_mtpy))} MT/yr
                                     </Typography>
                                 </Box>
                             </Grid>
@@ -1434,7 +1434,7 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
                                         SRECs Needed
                                     </Typography>
                                     <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Nunito Sans, sans-serif' }}>
-                                        {formatValue(calculatedSrecMetrics ? calculatedSrecMetrics.srec_needed_mwh : activeMetrics?.srec_needed_mwh)}
+                                        {formatValue(srecPercentage === 0 ? 0 : (calculatedSrecMetrics ? calculatedSrecMetrics.srec_needed_mwh : activeMetrics?.srec_needed_mwh))}
                                     </Typography>
                                 </Box>
                             </Grid>

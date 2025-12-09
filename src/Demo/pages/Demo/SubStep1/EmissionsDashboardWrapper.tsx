@@ -114,7 +114,7 @@ const EmissionsDashboardWrapper: React.FC = () => {
             }));
             setSrecPercentages(prev => ({
                 ...prev,
-                [key]: prev[key] || 0 
+                [key]: 0 
             }));
             setSrecMetricsMap(prev => ({
                 ...prev,
