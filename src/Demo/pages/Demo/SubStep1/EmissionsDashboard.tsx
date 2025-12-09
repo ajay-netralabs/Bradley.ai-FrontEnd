@@ -35,7 +35,7 @@ import { SRECMetrics, DashboardDataObject } from '../../../../Context/DashboardD
 //         impact_by_der: { [key: string]: number };
 //         insights?: string[];
 //     };
-//     monthly_tracking: { target_per_month: number | string | null; with_bradley_der_per_month: number | string | null; monthly_emissions: { month: string | number; year: number | string; electric_actual: number | null; electric_projected: number | null; gas_actual: number | null; gas_projected: number | null; actual: number | null; projected: number | null; }[]; };
+//     monthly_tracking: { target_per_month: number | string | null; with_bradley_der_per_month: number | string | null; monthly_emissions: { month: string | number; year: number | string; grid_actual: number | null; grid_projected: number | null; gas_actual: number | null; gas_projected: number | null; actual: number | null; projected: number | null; }[]; };
 //     action_center: {
 //         recommended_solution: { title: string; components: { type: string; size: string; }[]; investment_usd: number; payback_years: number; eliminates_penalties: boolean; };
 //         alternatives?: { title: string; investment_usd: number; reduction_pct: number; estimated_penalties_remaining_usd_per_year?: number; carbon_negative_by_year?: number; }[];
@@ -49,8 +49,8 @@ const colorPalette = {
     withBradley: '#388E3C', // Clear Green
     
     // Electric (Grid) Colors
-    electricActual: '#264653',    // Deep Teal
-    electricProjected: '#86A3B3', // Light Teal
+    gridActual: '#264653',    // Deep Teal
+    gridProjected: '#86A3B3', // Light Teal
     
     // Gas (Natural Gas) Colors
     gasActual: '#8D6E63',     // Warm Brown
@@ -66,8 +66,8 @@ const colorPalette = {
 };
 
 // const sourceColorPalette: { [key: string]: string } = {
-//     'electric_actual': colorPalette.electricActual,
-//     'electric_projected': colorPalette.electricProjected,
+//     'grid_actual': colorPalette.gridActual,
+//     'grid_projected': colorPalette.gridProjected,
 //     'gas_actual': colorPalette.gasActual,
 //     'gas_projected': colorPalette.gasProjected,
 // };
@@ -77,7 +77,7 @@ const getColorForSource = (source: string, type: 'actual' | 'projected') => {
     const name = source.toLowerCase();
     
     if (name.includes('grid') || name.includes('electric') || name.includes('solar')) {
-        return type === 'actual' ? colorPalette.electricActual : colorPalette.electricProjected;
+        return type === 'actual' ? colorPalette.gridActual : colorPalette.gridProjected;
     }
     if (name.includes('gas') || name.includes('diesel') || name.includes('fuel')) {
         return type === 'actual' ? colorPalette.gasActual : colorPalette.gasProjected;
@@ -175,8 +175,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 // --- HELPER FUNCTIONS ---
 const formatValue = (value?: number | string | null, type: 'number' | 'currency' | 'percent' = 'number'): string => { if (value === null || value === undefined || value === "") return 'N/A'; const num = typeof value === 'string' ? parseFloat(value) : value; if (isNaN(num)) return 'N/A'; const options: Intl.NumberFormatOptions = { maximumFractionDigits: 2 }; if (type === 'currency') { options.style = 'currency'; options.currency = 'USD'; options.minimumFractionDigits = 2; } if (type === 'percent') { return `${num.toFixed(1)}%`; } return new Intl.NumberFormat('en-US', options).format(num); };
-const derOrder = ['Solar PV', 'Battery Storage', 'CHP', 'Fuel Cells', 'Simple Turbines', 'Linear Generation', 'GRID', 'NATURAL GAS'];
-const derNameMapping: {[key: string]: string} = { solar_pv: 'Solar PV', battery_storage: 'Battery Storage', chp: 'CHP', fuel_cells: 'Fuel Cells', simple_turbines: 'Simple Turbines', linear_generation: 'Linear Generation', grid: 'GRID', gas: 'NATURAL GAS', efficiency_retrofit: 'Efficiency Retrofit' };
+const derOrder = ['Solar PV', 'Battery Storage', 'CHP', 'Fuel Cells', 'Simple Turbines', 'Linear Generation', 'NATURAL GAS', 'GRID'];
+const derNameMapping: {[key: string]: string} = { solar_pv: 'Solar PV', battery_storage: 'Battery Storage', chp: 'CHP', fuel_cells: 'Fuel Cells', simple_turbines: 'Simple Turbines', linear_generation: 'Linear Generation', gas: 'NATURAL GAS', grid: 'GRID', efficiency_retrofit: 'Efficiency Retrofit' };
 
 // --- CHILD COMPONENTS ---
 interface BenefitData { value: string; title: ReactNode; description: ReactNode; watermark: string; }
@@ -189,10 +189,10 @@ interface EnhancedBenefitCardProps {
 const EnhancedBenefitCard: React.FC<EnhancedBenefitCardProps> = ({ benefit, onClick, valueColor }) => (
     <StyledBenefitCard onClick={onClick}>
         <WatermarkIcon className="watermark-icon">{benefit.watermark}</WatermarkIcon>
-        <CardContent sx={{ position: 'relative', zIndex: 2, py: 0.1, display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
-            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600, fontSize: '1rem', mb: 0.5 }}>{benefit.title}</Typography>
-            <AbsoluteValue sx={{ color: valueColor ?? '#333' }}>{benefit.value}</AbsoluteValue>
-            <BenefitDescription>{benefit.description}</BenefitDescription>
+        <CardContent sx={{ position: 'relative', zIndex: 2, py: 2.1, display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+            <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600, fontSize: '0.9rem', mb: 0.5 }}>{benefit.title}</Typography>
+            <AbsoluteValue sx={{ fontSize:'1.6rem', color: valueColor ?? '#333' }}>{benefit.value}</AbsoluteValue>
+            <BenefitDescription sx={{ fontSize: '0.8rem' }}>{benefit.description}</BenefitDescription>
         </CardContent>
     </StyledBenefitCard>
 );
@@ -276,6 +276,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             bradley_savings: 0,
             // Weighted avg helpers
             total_roi_investment: 0, // For ROI approx
+            yoy_sum: 0,
+            yoy_count: 0
         };
 
         filteredDataByLocations.forEach(d => {
@@ -289,6 +291,12 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             acc.over_by += m.over_by || 0;
             acc.bradley_savings += m.bradley_savings || 0;
             acc.total_roi_investment += (m.bradley_savings || 0) * (m.bradley_roi_years || 0);
+
+            const yoyVal = parseFloat(String(m.actual_yoy_pct));
+            if (!isNaN(yoyVal)) {
+                acc.yoy_sum += yoyVal;
+                acc.yoy_count += 1;
+            }
         });
 
         // Recalculate percentages based on new totals
@@ -314,7 +322,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             compliance_jurisdiction: new Set(filteredDataByLocations.map(d => d.evidence?.metrics?.compliance_jurisdiction)).size > 1 
                 ? 'Multiple Jurisdictions' 
                 : filteredDataByLocations[0]?.evidence?.metrics?.compliance_jurisdiction,
-            actual_yoy_pct: '—' // YOY is difficult to sum without raw previous year data
+            actual_yoy_pct: acc.yoy_count > 0 ? (acc.yoy_sum / acc.yoy_count) : '0'
         };
     }, [filteredDataByLocations]);
 
@@ -357,7 +365,7 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         }
 
         return {
-            ...em, // This includes electric_actual, gas_projected, etc.
+            ...em, // This includes grid_actual, gas_projected, etc.
             month: monthName
         };
     }).sort((a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month));
@@ -371,8 +379,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
     stackedChartData.forEach((row: any) => {
         let rowSum = 0;
         // Sum up selected sources dynamically
-        if (graphSources.includes('Electric')) {
-            rowSum += (row.electric_actual || 0) + (row.electric_projected || 0);
+        if (graphSources.includes('Grid')) {
+            rowSum += (row.grid_actual || 0) + (row.grid_projected || 0);
         }
         if (graphSources.includes('Gas')) {
             rowSum += (row.gas_actual || 0) + (row.gas_projected || 0);
@@ -490,8 +498,8 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         const emissions = activeData.monthly_tracking.monthly_emissions;
 
         // Check if ANY entry has non-null grid values
-        const hasElectric = emissions.some(e => e.grid_actual !== null || e.grid_projected !== null);
-        if (hasElectric) sources.add('Electric');
+        const hasGrid = emissions.some(e => e.grid_actual !== null || e.grid_projected !== null);
+        if (hasGrid) sources.add('Grid');
 
         // Check if ANY entry has non-null gas values
         const hasGas = emissions.some(e => e.gas_actual !== null || e.gas_projected !== null);
@@ -880,8 +888,8 @@ const getContainerColors = (sev: string | null) => {
             border: '#e0e0e0',   // Neutral Grey Border
             color: '#424242',
             icon: '',            // No icon for mixed container
-            progressBar: '#9e9e9e',
-            statusColor: '#757575',
+            // progressBar: '#9e9e9e',
+            statusColor: 'black',
             statusIcon: null
         };
     }
@@ -946,29 +954,29 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
             if (!locData) return null;
 
             // Calculate Granular Totals based on Selected Year
-            let electric_actual = 0;
-            let electric_projected = 0;
+            let grid_actual = 0;
+            let grid_projected = 0;
             let gas_actual = 0;
             let gas_projected = 0;
 
             const monthlyData = locData.monthly_tracking?.monthly_emissions?.filter(em => em.year == selectedYear) || [];
 
             monthlyData.forEach(em => {
-                electric_actual += em.grid_actual || 0;
-                electric_projected += em.grid_projected || 0;
+                grid_actual += em.grid_actual || 0;
+                grid_projected += em.grid_projected || 0;
                 gas_actual += em.gas_actual || 0;
                 gas_projected += em.gas_projected || 0;
             });
 
             // Calculate total for sorting
-            const currentTotal = electric_actual + electric_projected + gas_actual + gas_projected;
+            const currentTotal = grid_actual + grid_projected + gas_actual + gas_projected;
 
             return {
                 location: loc.length > 15 ? loc.substring(0, 15) + '...' : loc,
                 fullName: loc,
                 // Granular values for stacking
-                electric_actual,
-                electric_projected,
+                grid_actual,
+                grid_projected,
                 gas_actual,
                 gas_projected,
                 // Totals for comparison
@@ -980,6 +988,18 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
         .filter(Boolean)
         .sort((a: any, b: any) => b.current - a.current);
     }, [allData, selectedLocations, selectedYear]);
+
+useEffect(() => {
+    if (availableYears.length > 0) {
+        onYearChange(availableYears[0]);
+    }
+}, [availableYears]);
+
+useEffect(() => {
+    if (availableSources.length > 0) {
+        setGraphSources(availableSources);
+    }
+}, [availableSources]);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
@@ -1538,7 +1558,7 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
                                 benefit={benefit} 
                                 onClick={() => handleOpenModal(10 + index)}
                                 // Pass statusColor to first card and green to third card (index 2)
-                                valueColor={index === 0 ? statusColor : index === 2 ? '#388E3C' : undefined}
+                                valueColor={index === 0 ? statusColor : index === 2 ? '#388E3C' : 'black'}
                             />
                         </Box>
                     ))}
@@ -1656,51 +1676,93 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
                                     <Box sx={{ position: 'absolute', right: 19, display: 'flex', alignItems: 'center', gap: 1 }}>
                                         {/* Multi-Select Source Filter */}
                                         <FormControl size="small">
-                                            <Select
-                                                multiple
-                                                value={graphSources}
-                                                onChange={(e: SelectChangeEvent<string[]>) => {
-                                                    const value = e.target.value;
-                                                    if (typeof value === 'string') return;
-                                                    if (value.includes('SELECT_ALL')) {
-                                                        if (graphSources.length === availableSources.length) {
-                                                            setGraphSources([]);
-                                                        } else {
-                                                            setGraphSources(availableSources);
-                                                        }
-                                                    } else {
-                                                        setGraphSources(value);
-                                                    }
-                                                }}
-                                                renderValue={(selected) => 
-                                                    selected.length === availableSources.length 
-                                                        ? 'All Sources' 
-                                                        : selected.length === 1
-                                                        ? selected[0]
-                                                        : `${selected.length} Sources`
-                                                }
-                                                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif', minWidth: 140 }}
-                                                MenuProps={{ PaperProps: { sx: { '& .MuiMenuItem-root': { fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif', py: 0.5 } } } }}
-                                            >
-                                                <MenuItem value="SELECT_ALL" sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
-                                                    <Checkbox checked={graphSources.length === availableSources.length && availableSources.length > 0} indeterminate={graphSources.length > 0 && graphSources.length < availableSources.length} size="small" />
-                                                    <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>Select All</Typography>
-                                                </MenuItem>
-                                                {availableSources.map(src => (
-                                                    <MenuItem key={src} value={src} sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
-                                                        <Checkbox checked={graphSources.indexOf(src) > -1} size="small" />
-                                                        <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>{src}</Typography>
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
+    <Select
+        multiple
+        value={graphSources}
+        onChange={(e: SelectChangeEvent<string[]>) => {
+            const value = e.target.value;
+            if (typeof value === 'string') return;
 
-                                        <FormControl size="small">
-                                            <Select value={selectedYear} onChange={(e: SelectChangeEvent<string | number>) => onYearChange(e.target.value)} sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
-                                                {availableYears.map(year => <MenuItem key={year} value={year} sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>{year}</MenuItem>)}
-                                                <>{console.log(availableYears)}</>
-                                            </Select>
-                                        </FormControl>
+            if (value.includes('SELECT_ALL')) {
+                if (graphSources.length === availableSources.length) {
+                    setGraphSources([]);
+                } else {
+                    setGraphSources(availableSources);
+                }
+            } else {
+                setGraphSources(value);
+            }
+        }}
+        renderValue={(selected) =>
+            selected.length === availableSources.length
+                ? 'All Sources'
+                : selected.length === 1
+                ? selected[0]
+                : `${selected.length} Sources`
+        }
+        sx={{
+            fontSize: '0.8rem',
+            fontFamily: 'Nunito Sans, sans-serif',
+            minWidth: 140
+        }}
+        MenuProps={{
+            PaperProps: {
+                sx: {
+                    '& .MuiMenuItem-root': {
+                        fontSize: '0.8rem',
+                        fontFamily: 'Nunito Sans, sans-serif',
+                        py: 0.5
+                    }
+                }
+            }
+        }}
+    >
+        <MenuItem value="SELECT_ALL">
+            <Checkbox
+                checked={
+                    graphSources.length === availableSources.length &&
+                    availableSources.length > 0
+                }
+                indeterminate={
+                    graphSources.length > 0 &&
+                    graphSources.length < availableSources.length
+                }
+                size="small"
+            />
+            <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
+                Select All
+            </Typography>
+        </MenuItem>
+
+        {availableSources.map((src) => (
+            <MenuItem key={src} value={src}>
+                <Checkbox checked={graphSources.includes(src)} size="small" />
+                <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}>
+                    {src}
+                </Typography>
+            </MenuItem>
+        ))}
+    </Select>
+</FormControl>
+
+<FormControl size="small">
+    <Select
+        value={selectedYear}
+        onChange={(e: SelectChangeEvent<string | number>) => onYearChange(e.target.value)}
+        sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
+    >
+        {availableYears.map((year) => (
+            <MenuItem
+                key={year}
+                value={year}
+                sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif' }}
+            >
+                {year}
+            </MenuItem>
+        ))}
+    </Select>
+</FormControl>
+
                                     </Box>
                                 </Box>
 
@@ -1782,9 +1844,9 @@ const handleOpenQuickFix = (rowData: DashboardDataObject) => {
                                                     payload={[
                                                         { value: 'Target', type: 'line', color: colorPalette.target },
                                                         { value: 'With EmissionCheckIQ+', type: 'line', color: colorPalette.withBradley },
-                                                        { value: 'Actual Electric', type: 'square', color: colorPalette.electricActual },
+                                                        { value: 'Actual Grid', type: 'square', color: colorPalette.gridActual },
                                                         { value: 'Actual Gas', type: 'square', color: colorPalette.gasActual },
-                                                        { value: 'Projected Electric', type: 'square', color: colorPalette.electricProjected },
+                                                        { value: 'Projected Grid', type: 'square', color: colorPalette.gridProjected },
                                                         { value: 'Projected Gas', type: 'square', color: colorPalette.gasProjected },
                                                     ]}
                                                 />
