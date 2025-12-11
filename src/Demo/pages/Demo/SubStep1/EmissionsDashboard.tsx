@@ -591,23 +591,46 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         );
         break;
     case 1:
-        content.title = <span style={{ color: '#000' }}>Reading Your Performance Chart</span>;
-        content.body = (
-            <>
-                <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
-                    This chart visualizes your monthly progress, comparing your actual emissions to critical benchmarks. Use it to track trends and validate your strategy.
-                </Typography>
-                <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
-                    <ul style={{ margin: 0, paddingLeft: '20px' }}>
-                        <li><b><span style={{ color: colorPalette.actual }}>Dark Grey bars</span></b> show your recorded historical emissions.</li>
-                        <li style={{ marginTop: '8px' }}><b><span style={{ color: colorPalette.projected }}>Light Grey bars</span></b> are our AI-powered forecasts for the upcoming months.</li>
-                        <li style={{ marginTop: '8px' }}>The <b style={{ color: colorPalette.target }}>Red Target Line</b> represents your monthly compliance limit. Staying below this is key to avoiding penalties.</li>
-                        <li style={{ marginTop: '8px' }}>The <b style={{ color: colorPalette.withBradley }}>Green EmissionCheckIQ+ Line</b> shows your projected emissions if you adopt our recommended solution, keeping you safely under target.</li>
-                    </ul>
-                </Paper>
-            </>
-        );
-        break;
+                content.title = <span style={{ color: '#000' }}>Reading Your Performance Chart</span>;
+                if (selectedLocations.length > 1) {
+                    content.body = (
+                        <>
+                            <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                                This chart compares performance across all selected locations, breaking down emissions by source and projection status against key benchmarks.
+                            </Typography>
+                            <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                                <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                                    <li><b>Stacked Bars</b> show the Total Emissions profile:
+                                        <ul style={{ marginTop: '4px', marginBottom: '4px' }}>
+                                            <li><b>Solid colors</b> (e.g. <span style={{ color: colorPalette.gridActual }}>■</span>, <span style={{ color: colorPalette.gasActual }}>■</span>) represent recorded <b>Actual</b> emissions.</li>
+                                            <li><b>Lighter shades</b> (e.g. <span style={{ color: colorPalette.gridProjected }}>■</span>, <span style={{ color: colorPalette.gasProjected }}>■</span>) represent <b>Projected</b> forecasts for the remainder of the year.</li>
+                                        </ul>
+                                    </li>
+                                    <li style={{ marginTop: '8px' }}>The <b><span style={{ color: colorPalette.target }}>Red Bar</span></b> indicates the specific <b>Compliance Target</b> for that location.</li>
+                                    <li style={{ marginTop: '8px' }}>The <b><span style={{ color: colorPalette.withBradley }}>Green Bar</span></b> shows the reduced emissions level achievable with the <b>EmissionCheckIQ+</b> solution.</li>
+                                    <li style={{ marginTop: '8px' }}><i>Locations are sorted by highest total emissions to help prioritize high-impact sites.</i></li>
+                                </ul>
+                            </Paper>
+                        </>
+                    );
+                } else {
+                    content.body = (
+                        <>
+                            <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                                This chart visualizes your monthly progress, comparing your actual emissions to critical benchmarks. Use it to track trends and validate your strategy.
+                            </Typography>
+                            <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                                <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                                    <li><b>Solid colors</b> (e.g. <span style={{ color: colorPalette.gridActual }}>■</span>, <span style={{ color: colorPalette.gasActual }}>■</span>): Your recorded historical emissions (Actuals).</li>
+                                    <li style={{ marginTop: '8px' }}><b>Lighter shades</b> (e.g. <span style={{ color: colorPalette.gridProjected }}>■</span>, <span style={{ color: colorPalette.gasProjected }}>■</span>): AI-powered forecasts for upcoming months.</li>
+                                    <li style={{ marginTop: '8px' }}>The <b style={{ color: colorPalette.target }}>Red Target Line</b>: Your monthly compliance limit. Staying below this is key to avoiding penalties.</li>
+                                    <li style={{ marginTop: '8px' }}>The <b style={{ color: colorPalette.withBradley }}>Green EmissionCheckIQ+ Line</b>: Projected emissions if you adopt our recommended solution.</li>
+                                </ul>
+                            </Paper>
+                        </>
+                    );
+                }
+                break;
     case 2:
         content.title = <span style={{ color: '#000' }}>Understanding Your Action Plan</span>;
         content.body = (
@@ -678,59 +701,59 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         );
         break;
     case 10: 
-        content.title = <span style={{ color: '#000' }}>Annual Emissions</span>; // CHANGE 1
-        content.body = (
-            <>
-                <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
-                    This card summarizes your total emissions profile for the year, based on current data and future projections.
-                </Typography>
-                <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
-                    <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
-                        <li style={{ marginTop: '8px' }}><b>YTD (Year-to-Date):</b> {formatValue(data?.evidence?.metrics?.actual_emissions)} MT. This is your actual, recorded emissions so far.</li>
-                        <li style={{ marginTop: '8px' }}><b>Projected:</b> {formatValue(data?.evidence?.metrics?.projected_emissions)} MT. This is our AI-forecast for the rest of the year.</li>
-                        <li style={{ marginTop: '8px' }}><b>Full Projection:</b> {formatValue(data?.evidence?.metrics?.full_year_projection)} MT. This is the (YTD + Projected) total.</li>
-                        <li style={{ marginTop: '8px' }}><b>YoY (Year-over-Year):</b> {formatValue(data?.evidence?.metrics?.actual_yoy_pct, 'percent')}. Your emissions are tracking this much higher than the previous year.</li>
-                        <li style={{ marginTop: '8px' }}><b>Over By:</b> {formatValue(data?.evidence?.metrics?.over_by)} MT. This is how much your full projection exceeds your annual compliance target.</li>
-                    </ul>
-                </Paper>
-            </>
-        );
-        break;
-    case 11: 
-        content.title = <span style={{ color: '#000' }}>Compliance Target By 2030</span>; // CHANGE 1
-        content.body = (
-            <>
-                <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
-                    This card details the specific legal requirements you must meet by 2030.
-                </Typography>
-                <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
-                    <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
-                        <li style={{ marginTop: '8px' }}><b>Target:</b> {formatValue(data?.evidence?.metrics?.compliance_target)} MT. Your annual emissions must be at or below this level by 2030.</li>
-                        <li style={{ marginTop: '8px' }}><b>Jurisdiction:</b> {data?.evidence?.metrics?.compliance_jurisdiction}. This is the governing body (e.g., state, city) setting the mandate.</li>
-                        <li style={{ marginTop: '8px' }}><b>Required Reduction:</b> {formatValue(data?.evidence?.metrics?.required_reduction_pct, 'percent')}. This is the total reduction required from your baseline to meet the 2030 target.</li>
-                    </ul>
-                </Paper>
-            </>
-        );
-        break;
-    case 12: 
-        content.title = <span style={{ color: '#000' }}>Emission Compliance Energy Supply Configuration</span>; // CHANGE 1
-        content.body = (
-            <>
-                <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
-                    This card outlines the high-level benefits of adopting the EmissionCheckIQ+ recommended energy configuration.
-                </Typography>
-                <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
-                    <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
-                        <li style={{ marginTop: '8px' }}><b>Projected Emissions:</b> {formatValue(data?.evidence?.metrics?.bradley_solution)} MT. Your new annual emissions after implementing the solution.</li>
-                        <li style={{ marginTop: '8px' }}><b>Total Reduction:</b> {formatValue(data?.evidence?.metrics?.bradley_reduction_pct, 'percent')}. The percentage decrease from your current projected emissions.</li>
-                        <li style={{ marginTop: '8px' }}><b>Annual Savings:</b> {formatValue(data?.evidence?.metrics?.bradley_savings, 'currency')}. This is the estimated amount you will save *per year* by avoiding penalties.</li>
-                        <li style={{ marginTop: '8px' }}><b>ROI (Return on Investment):</b> {formatValue(data?.evidence?.metrics?.bradley_roi_years)} years. The estimated time it will take for the solution's savings to pay for its initial investment.</li>
-                    </ul>
-                </Paper>
-            </>
-        );
-        break;
+                content.title = <span style={{ color: '#000' }}>Annual Emissions</span>;
+                content.body = (
+                    <>
+                        <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                            This card summarizes your total emissions profile for {selectedLocations.length > 1 ? 'all selected locations' : 'this location'}, based on current data and future projections.
+                        </Typography>
+                        <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
+                                <li style={{ marginTop: '8px' }}><b>YTD (Year-to-Date):</b> {formatValue(aggregatedMetrics?.actual_emissions)} MT. This is your actual, recorded emissions so far.</li>
+                                <li style={{ marginTop: '8px' }}><b>Projected:</b> {formatValue(aggregatedMetrics?.projected_emissions)} MT. This is our AI-forecast for the rest of the year.</li>
+                                <li style={{ marginTop: '8px' }}><b>Full Projection:</b> {formatValue(aggregatedMetrics?.full_year_projection)} MT. The (YTD + Projected) total.</li>
+                                <li style={{ marginTop: '8px' }}><b>YoY (Year-over-Year):</b> {aggregatedMetrics?.actual_yoy_pct === '—' || aggregatedMetrics?.actual_yoy_pct === 'N/A' ? 'N/A' : formatValue(aggregatedMetrics?.actual_yoy_pct, 'percent')}. Your emissions are tracking this much higher than the previous year.</li>
+                                <li style={{ marginTop: '8px' }}><b>Over By:</b> {formatValue(aggregatedMetrics?.over_by)} MT. This is how much your full projection exceeds your annual compliance target.</li>
+                            </ul>
+                        </Paper>
+                    </>
+                );
+                break;
+            case 11: 
+                content.title = <span style={{ color: '#000' }}>Compliance Target By 2030</span>;
+                content.body = (
+                    <>
+                        <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                            This card details the specific legal requirements {selectedLocations.length > 1 ? 'aggregated for the selected locations' : 'for this location'} you must meet by 2030.
+                        </Typography>
+                        <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
+                                <li style={{ marginTop: '8px' }}><b>Target:</b> {formatValue(aggregatedMetrics?.compliance_target)} MT. Your annual emissions must be at or below this level by 2030.</li>
+                                <li style={{ marginTop: '8px' }}><b>Jurisdiction:</b> {aggregatedMetrics?.compliance_jurisdiction}. This is the governing body (e.g., state, city) setting the mandate.</li>
+                                <li style={{ marginTop: '8px' }}><b>Required Reduction:</b> {formatValue(aggregatedMetrics?.required_reduction_pct, 'percent')}. This is the total reduction required from your baseline to meet the 2030 target.</li>
+                            </ul>
+                        </Paper>
+                    </>
+                );
+                break;
+            case 12: 
+                content.title = <span style={{ color: '#000' }}>Emission Compliance Energy Supply Configuration</span>;
+                content.body = (
+                    <>
+                        <Typography sx={{ mt: 1.5, mb: 2, color: '#555' }}>
+                            This card outlines the high-level benefits of adopting the EmissionCheckIQ+ recommended energy configuration {selectedLocations.length > 1 ? 'across all selected locations' : ''}.
+                        </Typography>
+                        <Paper variant="outlined" sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
+                                <li style={{ marginTop: '8px' }}><b>Projected Emissions:</b> {formatValue(aggregatedMetrics?.bradley_solution)} MT. Your new annual emissions after implementing the solution.</li>
+                                <li style={{ marginTop: '8px' }}><b>Total Reduction:</b> {formatValue(aggregatedMetrics?.bradley_reduction_pct, 'percent')}. The percentage decrease from your current projected emissions.</li>
+                                <li style={{ marginTop: '8px' }}><b>Annual Savings:</b> {formatValue(aggregatedMetrics?.bradley_savings, 'currency')}. This is the estimated amount you will save <i>per year</i> by avoiding penalties.</li>
+                                <li style={{ marginTop: '8px' }}><b>ROI (Return on Investment):</b> {formatValue(aggregatedMetrics?.bradley_roi_years)} years. The estimated time it will take for the solution's savings to pay for its initial investment.</li>
+                            </ul>
+                        </Paper>
+                    </>
+                );
+                break;
     default:
         return null;
 }
@@ -1826,19 +1849,59 @@ useEffect(() => {
                                         )}
                                     </Box>
                                 ) : (
-                                    // SINGLE LOCATION VIEW: Stacked Monthly Chart (Existing Code)
                                     <Box sx={{ height: 350 }}>
-                                        {/* ... (Keep existing single location chart code) ... */}
                                         <ResponsiveContainer width="100%" height="100%">
                                             <BarChart data={stackedChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                                 <CartesianGrid strokeDasharray="3 3" />
                                                 <XAxis dataKey="month" tick={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem' }} />
                                                 <YAxis tick={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem' }} domain={[0, yAxisMaxStacked]} />
-                                                <Tooltip 
-                                                    cursor={{ fill: 'rgba(230, 230, 230, 0.4)' }} 
-                                                    contentStyle={{ fontFamily: 'Nunito Sans, sans-serif', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                                                    formatter={(value: number, name: string) => [value, name.replace('_actual', ' (Actual)').replace('_projected', ' (Projected)')]}
-                                                />
+                                                <Tooltip
+    cursor={{ fill: 'rgba(230, 230, 230, 0.4)' }}
+    content={({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            const targetVal = data?.monthly_tracking?.target_per_month;
+            const bradleyVal = data?.monthly_tracking?.with_bradley_der_per_month;
+
+            return (
+                <div style={{
+                    backgroundColor: '#fff',
+                    border: '1px solid #ccc',
+                    padding: '10px',
+                    fontFamily: 'Nunito Sans, sans-serif',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    minWidth: '200px'
+                }}>
+                    <p style={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '0.85rem' }}>{label}</p>
+                    
+                    {payload.map((entry: any, index: number) => (
+                        <div key={index} style={{ color: entry.color, fontSize: '0.75rem', marginBottom: '4px', display: 'flex', justifyContent: 'space-between' }}>
+                            <span>{entry.name.replace('_actual', ' (Actual)').replace('_projected', ' (Projected)')}:</span>
+                            <span style={{ fontWeight: 600 }}>{formatValue(entry.value)}</span>
+                        </div>
+                    ))}
+
+                    <div style={{ height: '1px', backgroundColor: '#eee', margin: '8px 0' }}></div>
+
+                    {(targetVal !== null && targetVal !== undefined) && (
+                        <div style={{ color: colorPalette.target, fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between' }}>
+                            <span>Target:</span>
+                            <span>{formatValue(targetVal)}</span>
+                        </div>
+                    )}
+
+                    {(bradleyVal !== null && bradleyVal !== undefined) && (
+                        <div style={{ color: colorPalette.withBradley, fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+                            <span>With EmissionCheckIQ+:</span>
+                            <span>{formatValue(bradleyVal)}</span>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        return null;
+    }}
+/>
                                                 <Legend 
                                                     wrapperStyle={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
                                                     payload={[
