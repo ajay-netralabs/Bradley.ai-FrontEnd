@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, LinearProgress, Tooltip, Backdrop, CircularProgress, Typography, Modal, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
+import { usePDF } from 'react-to-pdf';
 
 // Contexts & Components
 import { AppProvider, useAppContext } from '../Context/AppContext';
@@ -31,6 +32,7 @@ import { updateOrganizationDetails, updateFacilityAddresses, uploadBillData, Bil
 
 // Dashboard Context
 import { DashboardDataProvider, useDashboardData } from '../Context/DashboardDataContext';
+import EmissionsReportTemplate from './components/EmissionsReportTemplate';
 
 const AppContent: React.FC = () => {
     const {
@@ -42,7 +44,14 @@ const AppContent: React.FC = () => {
         logout,
     } = useAppContext();
 
-    const { setDashboardData, isLoading, setIsLoading } = useDashboardData();
+    const { dashboardData, setDashboardData, isLoading, setIsLoading } = useDashboardData();
+
+    const { toPDF, targetRef } = usePDF({ 
+        filename: 'EmissionCheckIQ_Performance_Report.pdf',
+        page: { format: 'A4' },
+        method: 'save',
+        resolution: 2 // Higher resolution for clearer text
+    });
 
     const { organizationDetailsState } = useOrganizationDetails();
     const { facilityAddressState } = useFacilityAddress();
@@ -96,6 +105,23 @@ const AppContent: React.FC = () => {
         const isLastFurtherSubStep = currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1;
         const isLastSubStep = currentSubStep === steps[currentStep].subSteps - 1;
         const isLastStep = currentStep === steps.length - 1;
+
+        if (currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) {
+             setIsLoading(true);
+             console.log("Generating PDF Report...");
+             try {
+                await new Promise(resolve => setTimeout(resolve, 500)); 
+                await toPDF();
+             } catch (e) {
+                console.error("PDF Generation failed", e);
+                setErrorTitle("PDF Error");
+                setErrorMsg("Failed to generate report. Please try again.");
+                setErrorModalOpen(true);
+             } finally {
+                setIsLoading(false);
+             }
+             return; 
+        }
 
         // Step 0: Save Org Details
         if (currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 0) {
@@ -378,6 +404,11 @@ const AppContent: React.FC = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', zIndex: 500 }}>
+
+            <div style={{ position: 'absolute', top: -99999, left: -99999 }}>
+                <EmissionsReportTemplate ref={targetRef} data={dashboardData} />
+            </div>
+
             <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 0, position: 'absolute', backdropFilter: 'blur(3px)', display: 'flex', flexDirection: 'column', gap: 2 }}
                 open={isLoading}
@@ -473,9 +504,18 @@ const AppContent: React.FC = () => {
                                             <Button variant="outlined" onClick={handleSaveAndContinueLater} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Save and Continue Later</Button>
                                         </Tooltip>
                                     )}
-                                    <Tooltip title={(currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()) ? "You haven't uploaded bills for all addresses. Upload atleast one bill for every address first." : "Navigate to next step"} placement='bottom' arrow>
+                                    <Tooltip title={(currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()) ? "You haven't uploaded bills for all addresses. Upload at least one bill for every address first." : (currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? "Click to download your report." : "Navigate to next step")} placement='bottom' arrow>
                                         <span>
-                                            <Button variant="contained" color="primary" onClick={handleNext} disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', boxShadow: 'none', '&:focus': { outline: 'none' } }}>
+                                            <Button 
+                                                variant="contained" 
+                                                color="primary" 
+                                                onClick={(event) => {
+                                                    event.preventDefault();
+                                                    (currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) ? toPDF() : handleNext();
+                                                }} 
+                                                disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()} 
+                                                sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', boxShadow: 'none', '&:focus': { outline: 'none' } }}
+                                            >
                                                 {currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2 ? ("Generate Report") :
                                                  currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? ("Download Report") :
                                                  currentStep === 1 && currentSubStep === 1 && currentFurtherSubStep === 2 ? ("Authorize & Send Request") :

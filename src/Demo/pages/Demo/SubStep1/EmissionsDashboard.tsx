@@ -274,10 +274,13 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             bradley_solution: 0,
             over_by: 0,
             bradley_savings: 0,
-            // Weighted avg helpers
-            total_roi_investment: 0, // For ROI approx
+            // Averaging helpers
             yoy_sum: 0,
-            yoy_count: 0
+            yoy_count: 0,
+            roi_sum: 0,
+            roi_count: 0,
+            reduction_pct_sum: 0,
+            reduction_pct_count: 0
         };
 
         filteredDataByLocations.forEach(d => {
@@ -290,7 +293,16 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             acc.bradley_solution += m.bradley_solution || 0;
             acc.over_by += m.over_by || 0;
             acc.bradley_savings += m.bradley_savings || 0;
-            acc.total_roi_investment += (m.bradley_savings || 0) * (m.bradley_roi_years || 0);
+
+            // Collect ROI for Average & Sum
+            const roi = m.bradley_roi_years || 0;
+            acc.roi_sum += roi;
+            acc.roi_count += 1;
+
+            // Collect Reduction % for Average
+            const redPct = m.bradley_reduction_pct || 0;
+            acc.reduction_pct_sum += redPct;
+            acc.reduction_pct_count += 1;
 
             const yoyVal = parseFloat(String(m.actual_yoy_pct));
             if (!isNaN(yoyVal)) {
@@ -304,20 +316,22 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
             ? ((acc.full_year_projection - acc.compliance_target) / acc.full_year_projection) * 100
             : 0;
 
-        const bradley_reduction_pct = acc.full_year_projection > 0
-             ? ((acc.full_year_projection - acc.bradley_solution) / acc.full_year_projection) * 100
+        // UPDATED: Simple Average for Bradley Reduction %
+        const bradley_reduction_pct = acc.reduction_pct_count > 0
+             ? acc.reduction_pct_sum / acc.reduction_pct_count
              : 0;
         
-        // Approximate average ROI
-        const bradley_roi_years = acc.bradley_savings > 0 
-            ? acc.total_roi_investment / acc.bradley_savings 
+        // UPDATED: Simple Average for ROI (Fixes 0 display for negative savings)
+        const bradley_roi_years_avg = acc.roi_count > 0 
+            ? acc.roi_sum / acc.roi_count 
             : 0;
 
         return {
             ...acc,
             required_reduction_pct,
             bradley_reduction_pct,
-            bradley_roi_years,
+            bradley_roi_years: bradley_roi_years_avg,
+            bradley_roi_sum: acc.roi_sum, // Expose sum for the range display
             // For strings like jurisdiction, check if unique, else say 'Multiple'
             compliance_jurisdiction: new Set(filteredDataByLocations.map(d => d.evidence?.metrics?.compliance_jurisdiction)).size > 1 
                 ? 'Multiple Jurisdictions' 
@@ -554,7 +568,11 @@ const EmissionsDashboard: React.FC<EmissionsDashboardProps> = ({
         { 
             value: `${formatValue(aggregatedMetrics?.bradley_solution)} MT`, 
             title: 'Emission Compliance Energy Supply Configuration', 
-            description: <><b>{formatValue(aggregatedMetrics?.bradley_reduction_pct, 'percent')}</b> Reduction<br/>Saves: <b>{formatValue(aggregatedMetrics?.bradley_savings, 'currency')}/yr</b><br/>ROI: <b>{formatValue(aggregatedMetrics?.bradley_roi_years)} years</b></>, 
+            description: <><b>{formatValue(aggregatedMetrics?.bradley_reduction_pct, 'percent')}</b> Reduction<br/>Saves: <b>{formatValue(aggregatedMetrics?.bradley_savings, 'currency')}/yr</b><br/>ROI: <b>{
+                selectedLocations.length > 1 
+                ? `${formatValue(aggregatedMetrics?.bradley_roi_years)} - ${formatValue(aggregatedMetrics?.bradley_roi_sum)} years`
+                : `${formatValue(aggregatedMetrics?.bradley_roi_years)} years`
+            }</b></>, 
             watermark: '💡' 
         },
     ];
@@ -1342,6 +1360,11 @@ useEffect(() => {
             const creditsNeeded = activeMetrics?.srec_needed_mwh || 0;
             const reducedEmissions = activeMetrics?.reduced_emissions_mtpy || 0;
             const emissionFactor = activeMetrics?.emission_factor_constant || 0.433;
+            const penaltyRisk = activeData?.verdict?.penalty_risk_usd || 0;
+            const optimalPercentage = activeMetrics?.percentage_needed || 0;
+            // const totalSrecCost = activeMetrics?.total_srec_cost_usd || 0;
+            // const reducedEmissionsMtpy = activeMetrics?.reduced_emissions_mtpy || 0;
+            // const srecNeeded = activeMetrics?.srec_needed_mwh || 0;
 
             return (
                 <>
@@ -1360,7 +1383,7 @@ useEffect(() => {
                     </Box>
                     
                     <Typography sx={{ fontSize: '0.85rem', color: '#666', mb: 3, fontFamily: 'Nunito Sans, sans-serif' }}>
-                        Avoid {formatValue(data?.verdict?.penalty_risk_usd, 'currency')} penalty while you work on long-term solutions
+                        Avoid {formatValue(penaltyRisk, 'currency')} penalty while you work on long-term solutions
                     </Typography>
 
                     <Paper 
@@ -1464,7 +1487,7 @@ useEffect(() => {
                                         }
                                     }}
                                 >
-                                    Optimal {activeMetrics?.percentage_needed || 0}%
+                                    Optimal {optimalPercentage}%
                                 </Button>
                             </Box>
                         </Box>
@@ -1477,7 +1500,6 @@ useEffect(() => {
                                         Total Cost (USD)
                                     </Typography>
                                     <Typography sx={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'Nunito Sans, sans-serif', color: activeColors.color }}>
-                                        {/* Note: using currentMetrics global calculation, or fallback to row static if needed */}
                                         {formatValue(srecPercentage === 0 ? 0 : (calculatedSrecMetrics ? calculatedSrecMetrics.total_srec_cost_usd : activeMetrics?.total_srec_cost_usd), 'currency')}
                                     </Typography>
                                 </Box>
