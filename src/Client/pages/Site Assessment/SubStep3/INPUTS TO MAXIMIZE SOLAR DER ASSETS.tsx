@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, TextField, Typography, IconButton, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useSolarAssets } from '../../../../Context/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS Context';
+import { useSolarAssets } from '../../../Context/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS Context';
 
 const SubStep3: React.FC = () => {
   const { solarAssetsState, updateField, addRoofSection, removeRoofSection, updateRoofSection } = useSolarAssets();

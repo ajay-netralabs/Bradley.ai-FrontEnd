@@ -8,7 +8,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { useAppContext } from '../Context/AppContext';
 
 const Navbar: React.FC = () => {
-  const { logout } = useAppContext();
+  const { logoutForProduct } = useAppContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -20,7 +20,8 @@ const Navbar: React.FC = () => {
   };
 
   const handleLogout = () => {
-    logout();
+    const isEmissionCheckIQ = window.location.pathname.startsWith('/emissioncheckiq');
+    logoutForProduct(isEmissionCheckIQ ? "emissioncheckiq" : "bradley");
     handleMenuClose();
   };
 
@@ -35,7 +36,7 @@ const Navbar: React.FC = () => {
         </Typography> */}
         <Box sx={{ flexGrow: 1, display: 'inline-flex', alignItems: 'center' }}>
           <img 
-            src={window.location.pathname === '/demo' ? '/EmissionCheckIQ+_navbar_logo.png' : '/Bradley.AI_navbar_logo.png'} 
+            src={window.location.pathname === '/emissioncheckiq' ? '/EmissionCheckIQ+_navbar_logo.png' : '/Bradley.AI_navbar_logo.png'} 
             alt="Logo" 
             style={{ height: '50px', marginRight: '4px', marginLeft: '-11.5px' }} 
           />

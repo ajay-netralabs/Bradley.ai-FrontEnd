@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Typography, FormControlLabel, Switch } from '@mui/material';
-import { useExistingContractsI } from '../../../../../Context/Financial Info/SubStep2/Own/Existing Energy Contracts - I Context';
+import { useExistingContractsI } from '../../../../Context/Financial Info/SubStep2/Own/Existing Energy Contracts - I Context';
 
 const SubStep2: React.FC = () => {
   const { existingContractsIState, updateField } = useExistingContractsI();

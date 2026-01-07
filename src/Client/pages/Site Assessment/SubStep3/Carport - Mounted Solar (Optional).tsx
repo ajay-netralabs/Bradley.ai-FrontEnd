@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Typography, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useCarportSolar } from '../../../../Context/Site Assessment/SubStep3/Carport - Mounted Solar (Optional) Context';
+import { useCarportSolar } from '../../../Context/Site Assessment/SubStep3/Carport - Mounted Solar (Optional) Context';
 
 const SubStep3: React.FC = () => {
   const { carportSolarState, updateField } = useCarportSolar();

@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, TextField, Select, MenuItem, Typography, Switch, FormControlLabel, Button, IconButton, SelectChangeEvent } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useSiteCharacteristicsI } from '../../../../Context/Site Assessment/SubStep2/Site Characteristics - I Context';
+import { useSiteCharacteristicsI } from '../../../Context/Site Assessment/SubStep2/Site Characteristics - I Context';
 
 const SubStep2: React.FC = () => {
   const {

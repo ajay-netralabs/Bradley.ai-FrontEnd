@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Typography, MenuItem, Select, TextField, Tooltip } from '@mui/material';
-import { usePrioritizationI } from '../../../../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
+import { usePrioritizationI } from '../../../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
 
 const options = [
   "Select one",

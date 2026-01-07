@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Select, MenuItem, Typography, FormControl, SelectChangeEvent } from '@mui/material';
-import { useSiteCharacteristicsII } from '../../../../Context/Site Assessment/SubStep2/Site Characteristics - II Context';
+import { useSiteCharacteristicsII } from '../../../Context/Site Assessment/SubStep2/Site Characteristics - II Context';
 
 const SubStep2: React.FC = () => {
   const { siteCharacteristicsIIState, updateField } = useSiteCharacteristicsII();

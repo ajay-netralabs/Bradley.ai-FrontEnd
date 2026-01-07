@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Typography, Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material';
-import { useExistingAssets } from '../../../../Context/Site Assessment/SubStep3/Existing Solar & Wind Resource (Optional) Context';
+import { useExistingAssets } from '../../../Context/Site Assessment/SubStep3/Existing Solar & Wind Resource (Optional) Context';
 
 const SubStep3: React.FC = () => {
   const { existingAssetsState, updateField } = useExistingAssets();

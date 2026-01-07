@@ -2,8 +2,8 @@ import React, { useRef } from 'react';
 import { Box, TextField, Typography, Tooltip, List, ListItem, IconButton, Select, MenuItem, FormControl, InputLabel, Paper } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useNaturalGasBillUpload } from '../../../../Context/Energy Profile/SubStep2/Natural Gas Bill Upload Context';
-import { useBillAddress } from '../../../../Context/Energy Profile/BillAddressContext';
+import { useNaturalGasBillUpload } from '../../../Context/Energy Profile/SubStep2/Natural Gas Bill Upload Context';
+import { useBillAddress } from '../../../Context/Energy Profile/BillAddressContext';
 
 const SubStep2: React.FC = () => {
   const { addFiles, removeFile } = useNaturalGasBillUpload();

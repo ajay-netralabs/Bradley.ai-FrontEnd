@@ -1,6 +1,6 @@
 import React/* , { useState } */ from 'react';
 import { Box, Typography, Radio, RadioGroup, FormControlLabel, TextField, Tooltip, Select, MenuItem/* , Checkbox */ } from '@mui/material';
-import { useOtherDetails } from '../../../../Context/Organizational Profile/SubStep2/Other Details Context';
+import { useOtherDetails } from '../../../Context/Organizational Profile/SubStep2/Other Details Context';
 
 const SubStep2: React.FC = () => {
   const { otherDetails, updateOtherDetails, updateNestedField } = useOtherDetails();

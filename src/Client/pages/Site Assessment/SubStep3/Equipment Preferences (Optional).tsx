@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Select, MenuItem, TextField, SelectChangeEvent } from '@mui/material';
-import { useEquipmentPreferences, brandMapping, controlsBrands, switchgearBrands, standardsOptions, primeMoverOptions } from '../../../../Context/Site Assessment/SubStep3/Equipment Preferences (Optional) Context';
+import { useEquipmentPreferences, brandMapping, controlsBrands, switchgearBrands, standardsOptions, primeMoverOptions } from '../../../Context/Site Assessment/SubStep3/Equipment Preferences (Optional) Context';
 
 const SubStep3: React.FC = () => {
   const { equipmentPreferencesState, updateField } = useEquipmentPreferences();

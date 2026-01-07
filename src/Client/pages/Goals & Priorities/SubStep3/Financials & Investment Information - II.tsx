@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, TextField, Typography, MenuItem, Select, IconButton, InputAdornment, SelectChangeEvent } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useFinancialsII } from '../../../../Context/Goals & Priorities/SubStep3/Financials & Investment Information - II Context';
+import { useFinancialsII } from '../../../Context/Goals & Priorities/SubStep3/Financials & Investment Information - II Context';
 
 const SubStep3: React.FC = () => {
   const { financialsIIState, updateField, addInvestmentAmount, removeInvestmentAmount, updateInvestmentAmount } = useFinancialsII();

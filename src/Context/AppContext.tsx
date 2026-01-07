@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
+import { emissioncheckiqLogin, emissioncheckiqLogout, emissioncheckiqSessionCheck, emissioncheckiqBootstrap } from "../Demo/components/Auth";
 
+type ProductKey = "bradley" | "emissioncheckiq" | string;
 
 interface User {
-  role: 'client' | 'analyst' | 'demo';
+  role: 'client' | 'analyst' | 'demo' | string;
   email: string;
+  product: ProductKey;
 }
 
 interface AppContextProps {
@@ -23,11 +26,17 @@ interface AppContextProps {
   credentials: { [key in User['role']]: { email: string; password: string } };
   login: (user: User) => void;
   logout: () => void;
+  loginForProduct: (product: ProductKey, email: string, password: string) => Promise<User>;
+  sessionCheckForProduct: (product: ProductKey) => Promise<User | null>;
+  logoutForProduct: (product: ProductKey) => Promise<void>;
+  authReady: boolean;
+  bootstrap: any | null;
+  setBootstrap: React.Dispatch<React.SetStateAction<any | null>>;
 }
 
 const defaultCredentials = {
   client: { email: 'client@gmail.com', password: 'client@gmail.com' },
-  analyst: { email: 'analyst@gmail.com', password: 'analyst@gmail.com' },
+  // analyst: { email: 'analyst@gmail.com', password: 'analyst@gmail.com' },
   demo: { email: '', password: '' }, // Demo user has no credentials
 };
 
@@ -45,9 +54,13 @@ interface AppProviderProps {
   children: React.ReactNode;
   steps: { label: string; subSteps: number; furtherSubSteps: number[] }[];
   appPrefix: string;
+  initialBootstrap?: any | null;
 }
 
-export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPrefix }) => {
+export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPrefix, initialBootstrap = null }) => {
+  const [authReady, setAuthReady] = useState(false);
+  const [bootstrap, setBootstrap] = useState<any | null>(initialBootstrap);
+
   const [currentStep, setCurrentStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentStep`) || 0));
   const [currentSubStep, setCurrentSubStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentSubStep`) || 0));
   const [currentFurtherSubStep, setCurrentFurtherSubStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentFurtherSubStep`) || 0));
@@ -88,6 +101,37 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPr
     }
   }, [currentStep, currentSubStep, currentFurtherSubStep, visitedSteps, completedSubSteps, user, appPrefix]);
 
+  useEffect(() => {
+    if (initialBootstrap) {
+      setBootstrap(initialBootstrap);
+    }
+  }, [initialBootstrap]);
+
+  useEffect(() => {
+  let alive = true;
+
+  (async () => {
+    try {
+      const sessionUser = await emissioncheckiqSessionCheck();
+      if (sessionUser && alive) {
+        setUser({
+          email: sessionUser.email,
+          role: sessionUser.role || "demo",
+          product: "emissioncheckiq",
+        });
+        const bootstrapData = await emissioncheckiqBootstrap();
+        setBootstrap(bootstrapData);
+      } else {
+        if (alive) setUser(null);
+      }
+    } finally {
+      if (alive) setAuthReady(true);
+    }
+  })();
+
+  return () => { alive = false; };
+  }, []);
+
   const login = (user: User) => {
     setUser(user);
     Cookies.set(`${appPrefix}_user`, JSON.stringify(user));
@@ -97,28 +141,109 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPr
     setUser(null);
     Cookies.remove(`${appPrefix}_user`);
     Cookies.remove('global_user');
-    window.location.href = '/login';
+    if (appPrefix === 'emissioncheckiq') {
+      window.location.href = '/login/emissioncheckiq';
+    } else {
+      window.location.href = '/login/bradley';
+    }
   };
+
+  const loginForProduct = React.useCallback(async (product: ProductKey, email: string, password: string): Promise<User> => {
+    if (product === "bradley") {
+      const client = defaultCredentials.client;
+      // const analyst = defaultCredentials.analyst;
+
+      if (email === client.email && password === client.password) {
+        const u = { email, role: "client", product: "bradley" as const };
+        setUser(u);
+        return u;
+      }
+      // if (email === analyst.email && password === analyst.password) {
+      //   const u = { email, role: "analyst", product: "bradley" as const };
+      //   setUser(u);
+      //   return u;
+      // }
+      throw new Error("Invalid email or password");
+    }
+
+    if (product === "emissioncheckiq") {
+      const sessionUser = await emissioncheckiqLogin(email, password);
+      const bootstrapData = await emissioncheckiqBootstrap();
+      const u = { email: sessionUser.email, role: sessionUser.role || "demo", product: "emissioncheckiq" as const };
+      setUser(u);
+      setBootstrap(bootstrapData);
+      return u;
+    }
+
+    throw new Error(`Unsupported product: ${product}`);
+  }, [user]);
+
+  const sessionCheckForProduct = React.useCallback(async (product: ProductKey): Promise<User | null> => {
+    console.log("Session check for product:", product);
+    if (product === "emissioncheckiq") {
+      const sessionUser = await emissioncheckiqSessionCheck();
+      if (!sessionUser) {
+        setUser(null);
+        setBootstrap(null);
+        return null;
+      } else {
+
+      const u = { email: sessionUser.email, role: sessionUser.role || "demo", product: "emissioncheckiq" as const };
+      console.log("Session check user:", u);
+      setUser(u);
+      const bootstrapData = await emissioncheckiqBootstrap();
+      console.log("Bootstrap data:", bootstrapData);
+      setBootstrap(bootstrapData);
+      return u;
+      };
+    };
+
+    if (product === "bradley") {
+      console.log("Checking session for Bradley");
+      return user?.product === "bradley" ? user : null;
+    };
+
+    return user;
+  }, [user]);
+
+  const logoutForProduct = React.useCallback(async (product: ProductKey): Promise<void> => {
+    if (product === "emissioncheckiq") {
+      await emissioncheckiqLogout();
+    }
+    setUser(null);
+    Cookies.remove('global_user'); // if you adopt global auth cookie
+    if (product === "emissioncheckiq") {
+      window.location.href = "/login/emissioncheckiq";
+    } else {
+      window.location.href = "/login/bradley";
+    }
+  }, [user]);
 
   return (
     <AppContext.Provider
       value={{
-        currentStep,
-        setCurrentStep,
-        currentSubStep,
-        setCurrentSubStep,
-        currentFurtherSubStep,
-        setCurrentFurtherSubStep,
-        visitedSteps,
-        setVisitedSteps,
-        completedSubSteps,
-        setCompletedSubSteps,
-        user,
-        setUser,
-        credentials: defaultCredentials,
-        login,
-        logout,
-      }}
+      currentStep,
+      setCurrentStep,
+      currentSubStep,
+      setCurrentSubStep,
+      currentFurtherSubStep,
+      setCurrentFurtherSubStep,
+      visitedSteps,
+      setVisitedSteps,
+      completedSubSteps,
+      setCompletedSubSteps,
+      user,
+      setUser,
+      credentials: defaultCredentials,
+      login,
+      logout,
+      loginForProduct,
+      sessionCheckForProduct,
+      logoutForProduct,
+      authReady,
+      bootstrap,
+      setBootstrap
+    }}
     >
       {children}
     </AppContext.Provider>

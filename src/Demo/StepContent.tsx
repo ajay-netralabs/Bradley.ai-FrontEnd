@@ -12,17 +12,17 @@ type StepSubStepMapping = {
 const stepSubStepMapping: StepSubStepMapping = {
   0: {
     0: {
-      0: lazy(() => import('../Client/pages/Organizational Profile/SubStep2/Organization Details')),
-      1: lazy(() => import('../Client/pages/Organizational Profile/SubStep2/Facility Address')),
-      2: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Electric Bill Upload')),
-      3: lazy(() => import("../Client/pages/Energy Profile/SubStep2/Don't Have Interval Electric Load Data")),
-      4: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Letter Of Authorization')),
-      5: lazy(() => import('../Client/pages/Energy Profile/SubStep2/LOA - Status')),
-      6: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Natural Gas Bill Upload')),
+      0: lazy(() => import('./pages/SubStep1/Organization Details')),
+      1: lazy(() => import('./pages/SubStep1/Facility Address')),
+      2: lazy(() => import('./pages/SubStep1/Electric Bill Upload')),
+      3: lazy(() => import("./pages/SubStep1/Don't Have Interval Electric Load Data")),
+      4: lazy(() => import('./pages/SubStep1/Letter Of Authorization')),
+      5: lazy(() => import('./pages/SubStep1/LOA - Status')),
+      6: lazy(() => import('./pages/SubStep1/Natural Gas Bill Upload')),
     },
     1: {
       // 0: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - I')),
-      0: lazy(() => import('./pages/Demo/SubStep1/EmissionsDashboardWrapper')),
+      0: lazy(() => import('./pages/SubStep2/EmissionsDashboardWrapper')),
       // 1: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - II')),
       // 2: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - III')),
       // 3: lazy(() => import('../Client/pages/Energy Profile/SubStep2/Thermal Energy Needs - IV')),

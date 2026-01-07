@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Box, Typography, Tooltip, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useMEPDrawings } from '../../../../Context/Site Assessment/SubStep2/Upload Existing Drawings Context';
+import { useMEPDrawings } from '../../../Context/Site Assessment/SubStep2/Upload Existing Drawings Context';
 
 const SubStep2: React.FC = () => {
   const { mepDrawingsState, addFiles, removeFile } = useMEPDrawings();

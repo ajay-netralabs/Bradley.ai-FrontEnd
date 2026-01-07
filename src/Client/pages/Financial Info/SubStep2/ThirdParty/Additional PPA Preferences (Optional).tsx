@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Typography } from '@mui/material';
-import { useAdditionalPPAPreferences } from '../../../../../Context/Financial Info/SubStep2/Third Party/Additional PPA Preferences (Optional) Context';
+import { useAdditionalPPAPreferences } from '../../../../Context/Financial Info/SubStep2/Third Party/Additional PPA Preferences (Optional) Context';
 
 const SubStep2: React.FC = () => {
   const { additionalPPAPreferencesState, updateField } = useAdditionalPPAPreferences();

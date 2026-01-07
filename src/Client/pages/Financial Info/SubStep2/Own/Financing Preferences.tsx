@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Typography, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useFinancingPreferences } from '../../../../../Context/Financial Info/SubStep2/Own/Financing Preferences Context';
+import { useFinancingPreferences } from '../../../../Context/Financial Info/SubStep2/Own/Financing Preferences Context';
 
 const SubStep2: React.FC = () => {
   const { financingPreferencesState, updateField } = useFinancingPreferences();

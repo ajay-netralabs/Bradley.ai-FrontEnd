@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Select, MenuItem, Typography, SelectChangeEvent } from '@mui/material';
-import { useFacilityUsage } from '../../../../Context/Site Assessment/SubStep2/Facility Usage & Operating Days Context';
+import { useFacilityUsage } from '../../../Context/Site Assessment/SubStep2/Facility Usage & Operating Days Context';
 
 const SubStep2: React.FC = () => {
   const { facilityUsageState, updateMultiSelect, updateField, updateOperatingHour } = useFacilityUsage();

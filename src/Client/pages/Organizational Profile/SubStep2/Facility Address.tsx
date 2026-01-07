@@ -9,8 +9,8 @@ import L from 'leaflet';
 import { FaMapMarkerAlt, FaTrash } from 'react-icons/fa';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
-import { useFacilityAddress } from '../../../../Context/Organizational Profile/SubStep2/Facility Address Context';
-import { useBillAddress } from '../../../../Context/Energy Profile/BillAddressContext';
+import { useFacilityAddress } from '../../../Context/Organizational Profile/SubStep2/Facility Address Context';
+import { useBillAddress } from '../../../Context/Energy Profile/BillAddressContext';
 import CloseIcon from '@mui/icons-material/Close';
 
 // --- Custom Icon Creator ---

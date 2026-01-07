@@ -1,55 +1,55 @@
 import React from 'react';
 import { Box, Button, LinearProgress, Tooltip } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 // App and Stepper contexts
 import { AppProvider, useAppContext } from '../Context/AppContext';
 import { steps } from '../components/steps';
 
 // All the new form-specific context providers
-import { OrganizationDetailsProvider } from '../Context/Organizational Profile/SubStep2/Organization Details Context';
-import { AnnualEnergySpendProvider } from '../Context/Organizational Profile/SubStep2/Annual Energy Spend Context';
-import { FacilityOperationProvider } from '../Context/Organizational Profile/SubStep2/Facility Operation Description Context';
-import { FacilityAddressProvider } from '../Context/Organizational Profile/SubStep2/Facility Address Context';
-import { OtherDetailsProvider } from '../Context/Organizational Profile/SubStep2/Other Details Context';
-import { ElectricBillUploadProvider, useElectricBillUpload } from '../Context/Energy Profile/SubStep2/Electric Bill Upload Context';
-import { LOAProvider } from '../Context/Energy Profile/SubStep2/Letter Of Authorization Context';
-import { LOAStatusProvider } from '../Context/Energy Profile/SubStep2/LOA - Status Context';
-import { NaturalGasBillUploadProvider } from '../Context/Energy Profile/SubStep2/Natural Gas Bill Upload Context';
-import { ThermalEnergyNeedsIProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
-import { ThermalEnergyNeedsIIProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - II Context';
-import { ThermalEnergyNeedsIIIProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
-import { ThermalEnergyNeedsIVProvider } from '../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
-import { BoilerCogenerationProvider } from '../Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
-import { PrioritizationIProvider } from '../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
-import { PrioritizationIIProvider } from '../Context/Goals & Priorities/SubStep2/Prioritization - II Context';
-import { FinancialsIProvider } from '../Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
-import { FinancialsIIProvider } from '../Context/Goals & Priorities/SubStep3/Financials & Investment Information - II Context';
-import { OwnershipPreferenceProvider, useOwnershipPreference } from '../Context/Financial Info/SubStep1/Ownership Preference Context';
+import { OrganizationDetailsProvider } from './Context/Organizational Profile/SubStep2/Organization Details Context';
+import { AnnualEnergySpendProvider } from './Context/Organizational Profile/SubStep2/Annual Energy Spend Context';
+import { FacilityOperationProvider } from './Context/Organizational Profile/SubStep2/Facility Operation Description Context';
+import { FacilityAddressProvider } from './Context/Organizational Profile/SubStep2/Facility Address Context';
+import { OtherDetailsProvider } from './Context/Organizational Profile/SubStep2/Other Details Context';
+import { ElectricBillUploadProvider, useElectricBillUpload } from './Context/Energy Profile/SubStep2/Electric Bill Upload Context';
+import { LOAProvider } from './Context/Energy Profile/SubStep2/Letter Of Authorization Context';
+import { LOAStatusProvider } from './Context/Energy Profile/SubStep2/LOA - Status Context';
+import { NaturalGasBillUploadProvider } from './Context/Energy Profile/SubStep2/Natural Gas Bill Upload Context';
+import { ThermalEnergyNeedsIProvider } from './Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
+import { ThermalEnergyNeedsIIProvider } from './Context/Energy Profile/SubStep2/Thermal Energy Needs - II Context';
+import { ThermalEnergyNeedsIIIProvider } from './Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
+import { ThermalEnergyNeedsIVProvider } from './Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
+import { BoilerCogenerationProvider } from './Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
+import { PrioritizationIProvider } from './Context/Goals & Priorities/SubStep2/Prioritization - I Context';
+import { PrioritizationIIProvider } from './Context/Goals & Priorities/SubStep2/Prioritization - II Context';
+import { FinancialsIProvider } from './Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
+import { FinancialsIIProvider } from './Context/Goals & Priorities/SubStep3/Financials & Investment Information - II Context';
+import { OwnershipPreferenceProvider, useOwnershipPreference } from './Context/Financial Info/SubStep1/Ownership Preference Context';
 // import { SiteLocationProvider } from '../Context/Site Assessment/SubStep2/Confirm Edit Your Pre-Entered Site Location Context';
-import { SiteCharacteristicsIProvider } from '../Context/Site Assessment/SubStep2/Site Characteristics - I Context';
-import { SiteCharacteristicsIIProvider } from '../Context/Site Assessment/SubStep2/Site Characteristics - II Context';
-import { OtherSiteCharacteristicsProvider } from '../Context/Site Assessment/SubStep2/Other Site Characteristics Context';
-import { FacilityUsageProvider } from '../Context/Site Assessment/SubStep2/Facility Usage & Operating Days Context';
-import { MEPDrawingsProvider } from '../Context/Site Assessment/SubStep2/Upload Existing Drawings Context';
-import { SolarAssetsProvider } from '../Context/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS Context';
-import { RoofingConsiderationsProvider } from '../Context/Site Assessment/SubStep3/Roofing Considerations Context';
-import { RoofMountSolarProvider } from '../Context/Site Assessment/SubStep3/Roof - Mounted Solar (Optional) Context';
-import { GroundMountSolarProvider } from '../Context/Site Assessment/SubStep3/Ground - Mounted Solar (Optional) Context';
-import { CarportSolarProvider } from '../Context/Site Assessment/SubStep3/Carport - Mounted Solar (Optional) Context';
-import { ExistingAssetsProvider } from '../Context/Site Assessment/SubStep3/Existing Solar & Wind Resource (Optional) Context';
-import { EquipmentPreferencesProvider } from '../Context/Site Assessment/SubStep3/Equipment Preferences (Optional) Context';
-import { PPAPreferencesProvider } from '../Context/Financial Info/SubStep2/Third Party/PPA Preferences Context';
-import { AdditionalPPAPreferencesProvider } from '../Context/Financial Info/SubStep2/Third Party/Additional PPA Preferences (Optional) Context';
-import { FinancialPreferencesProvider } from '../Context/Financial Info/SubStep2/Own/Financial Preferences Context';
-import { ExistingContractsIProvider } from '../Context/Financial Info/SubStep2/Own/Existing Energy Contracts - I Context';
-import { ExistingPPAContractsIIProvider } from '../Context/Financial Info/SubStep2/Own/Existing Power Purchase Agreement (PPA) Electricity Contracts - II Context';
-import { ExistingPPAContractsIIIProvider } from '../Context/Financial Info/SubStep2/Own/Existing Power Purchase Agreement (PPA) for Combined Heat and or Power (CHP) Contracts – III Context';
-import { ExistingContractsIVProvider } from '../Context/Financial Info/SubStep2/Own/Existing Energy Contracts - IV Context';
-import { OtherEnergyCommitmentsProvider } from '../Context/Financial Info/SubStep2/Own/Other Energy Commitments (Optional) Context';
-import { BudgetGoalsProvider } from '../Context/Financial Info/SubStep2/Own/What Are Your Budget & Investment Goals Context';
-import { FinancingPreferencesProvider } from '../Context/Financial Info/SubStep2/Own/Financing Preferences Context';
-import { BillAddressProvider } from '../Context/Energy Profile/BillAddressContext';
+import { SiteCharacteristicsIProvider } from './Context/Site Assessment/SubStep2/Site Characteristics - I Context';
+import { SiteCharacteristicsIIProvider } from './Context/Site Assessment/SubStep2/Site Characteristics - II Context';
+import { OtherSiteCharacteristicsProvider } from './Context/Site Assessment/SubStep2/Other Site Characteristics Context';
+import { FacilityUsageProvider } from './Context/Site Assessment/SubStep2/Facility Usage & Operating Days Context';
+import { MEPDrawingsProvider } from './Context/Site Assessment/SubStep2/Upload Existing Drawings Context';
+import { SolarAssetsProvider } from './Context/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS Context';
+import { RoofingConsiderationsProvider } from './Context/Site Assessment/SubStep3/Roofing Considerations Context';
+import { RoofMountSolarProvider } from './Context/Site Assessment/SubStep3/Roof - Mounted Solar (Optional) Context';
+import { GroundMountSolarProvider } from './Context/Site Assessment/SubStep3/Ground - Mounted Solar (Optional) Context';
+import { CarportSolarProvider } from './Context/Site Assessment/SubStep3/Carport - Mounted Solar (Optional) Context';
+import { ExistingAssetsProvider } from './Context/Site Assessment/SubStep3/Existing Solar & Wind Resource (Optional) Context';
+import { EquipmentPreferencesProvider } from './Context/Site Assessment/SubStep3/Equipment Preferences (Optional) Context';
+import { PPAPreferencesProvider } from './Context/Financial Info/SubStep2/Third Party/PPA Preferences Context';
+import { AdditionalPPAPreferencesProvider } from './Context/Financial Info/SubStep2/Third Party/Additional PPA Preferences (Optional) Context';
+import { FinancialPreferencesProvider } from './Context/Financial Info/SubStep2/Own/Financial Preferences Context';
+import { ExistingContractsIProvider } from './Context/Financial Info/SubStep2/Own/Existing Energy Contracts - I Context';
+import { ExistingPPAContractsIIProvider } from './Context/Financial Info/SubStep2/Own/Existing Power Purchase Agreement (PPA) Electricity Contracts - II Context';
+import { ExistingPPAContractsIIIProvider } from './Context/Financial Info/SubStep2/Own/Existing Power Purchase Agreement (PPA) for Combined Heat and or Power (CHP) Contracts – III Context';
+import { ExistingContractsIVProvider } from './Context/Financial Info/SubStep2/Own/Existing Energy Contracts - IV Context';
+import { OtherEnergyCommitmentsProvider } from './Context/Financial Info/SubStep2/Own/Other Energy Commitments (Optional) Context';
+import { BudgetGoalsProvider } from './Context/Financial Info/SubStep2/Own/What Are Your Budget & Investment Goals Context';
+import { FinancingPreferencesProvider } from './Context/Financial Info/SubStep2/Own/Financing Preferences Context';
+import { BillAddressProvider } from './Context/Energy Profile/BillAddressContext';
 
 // UI Components
 import HorizontalStepper from '../components/HorizontalStepper';
@@ -162,12 +162,12 @@ const AppContent: React.FC = () => {
     currentFurtherSubStep, setCurrentFurtherSubStep,
     visitedSteps, setVisitedSteps,
     completedSubSteps, setCompletedSubSteps,
-    logout,
+    /* logout, */
   } = useAppContext();
 
   const { ownershipPreference, setOwnershipPreference } = useOwnershipPreference();
   const { electricBillUploadState } = useElectricBillUpload();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const markVisited = (step: number, subStep: number) => {
     setVisitedSteps((prev) => {
@@ -310,9 +310,15 @@ const AppContent: React.FC = () => {
     return ((currentFurtherSubStep + 1) / totalFurtherSubSteps) * 100;
   };
 
+  const { logoutForProduct } = useAppContext();
+
+  const handleLogout = () => {
+    const isEmissionCheckIQ = window.location.pathname.startsWith('/emissioncheckiq');
+    logoutForProduct(isEmissionCheckIQ ? "emissioncheckiq" : "bradley");
+  };
+
   const handleSaveAndContinueLater = () => {
-    logout();
-    navigate('/login');
+    handleLogout();
   };
 
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Typography } from '@mui/material';
-import { useOtherEnergyCommitments } from '../../../../../Context/Financial Info/SubStep2/Own/Other Energy Commitments (Optional) Context';
+import { useOtherEnergyCommitments } from '../../../../Context/Financial Info/SubStep2/Own/Other Energy Commitments (Optional) Context';
 
 const SubStep2: React.FC = () => {
   const { otherEnergyCommitmentsState, updateField } = useOtherEnergyCommitments();

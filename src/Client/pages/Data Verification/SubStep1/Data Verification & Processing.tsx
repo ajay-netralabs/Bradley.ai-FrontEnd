@@ -11,22 +11,22 @@ import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 import { IoEnterOutline } from "react-icons/io5";
 
 import { useAppContext } from '../../../../Context/AppContext';
-import { useOrganizationDetails } from '../../../../Context/Organizational Profile/SubStep2/Organization Details Context';
-import { useAnnualEnergySpend } from '../../../../Context/Organizational Profile/SubStep2/Annual Energy Spend Context';
-import { usePrioritizationI } from '../../../../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
-import { useBudgetGoals } from '../../../../Context/Financial Info/SubStep2/Own/What Are Your Budget & Investment Goals Context';
-import { useSiteCharacteristicsI } from '../../../../Context/Site Assessment/SubStep2/Site Characteristics - I Context';
-import { useSolarAssets } from '../../../../Context/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS Context';
-import { useOwnershipPreference } from '../../../../Context/Financial Info/SubStep1/Ownership Preference Context';
-import { useFinancialsI } from '../../../../Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
+import { useOrganizationDetails } from '../../../Context/Organizational Profile/SubStep2/Organization Details Context';
+import { useAnnualEnergySpend } from '../../../Context/Organizational Profile/SubStep2/Annual Energy Spend Context';
+import { usePrioritizationI } from '../../../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
+import { useBudgetGoals } from '../../../Context/Financial Info/SubStep2/Own/What Are Your Budget & Investment Goals Context';
+import { useSiteCharacteristicsI } from '../../../Context/Site Assessment/SubStep2/Site Characteristics - I Context';
+import { useSolarAssets } from '../../../Context/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS Context';
+import { useOwnershipPreference } from '../../../Context/Financial Info/SubStep1/Ownership Preference Context';
+import { useFinancialsI } from '../../../Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
 
-import { useThermalEnergyNeedsI } from '../../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
-import { useThermalEnergyNeedsII } from '../../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - II Context';
-import { useThermalEnergyNeedsIII } from '../../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
-import { useThermalEnergyNeedsIV } from '../../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
-import { useBoilerCogeneration } from '../../../../Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
+import { useThermalEnergyNeedsI } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
+import { useThermalEnergyNeedsII } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - II Context';
+import { useThermalEnergyNeedsIII } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
+import { useThermalEnergyNeedsIV } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
+import { useBoilerCogeneration } from '../../../Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
 
-import { useLOAStatus } from '../../../../Context/Energy Profile/SubStep2/LOA - Status Context';
+import { useLOAStatus } from '../../../Context/Energy Profile/SubStep2/LOA - Status Context';
 
 interface SummarySectionProps {
   icon: React.ReactElement;

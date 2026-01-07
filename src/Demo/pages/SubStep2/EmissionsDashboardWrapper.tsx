@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Box, CircularProgress, Typography, Backdrop } from '@mui/material';
-import { useDashboardData, type DashboardData, type DashboardDataObject, type SRECMetrics } from '../../../../Context/DashboardDataContext';
+import { useDashboardData, type DashboardData, type DashboardDataObject, type SRECMetrics } from '../../Context/DashboardDataContext';
 import EmissionsDashboard from './EmissionsDashboard';
 
 const loadingMessages = [
@@ -55,9 +55,15 @@ const EmissionsDashboardWrapper: React.FC = () => {
     // }, [dashboardData, selectedLocation]);
 
     const nextData = useMemo(() => {
-        if (!dashboardData || !selectedLocation) return null;
-        return dashboardData.find(d => d.location === selectedLocation) || null;
-    }, [dashboardData, selectedLocation]);
+        if (!dashboardData || dashboardData.length === 0) return null;
+
+        // If no selectedLocation yet, just default to first item
+        if (selectedLocation === "") return dashboardData[0];
+
+        // Otherwise pick the matching location, else fallback to first
+        return dashboardData.find(d => d.location === selectedLocation) || dashboardData[0];
+        }, [dashboardData, selectedLocation]);
+
 
 
     const availableYears = useMemo(() => {
@@ -73,10 +79,14 @@ const EmissionsDashboardWrapper: React.FC = () => {
     }, [dashboardData]);
 
     useEffect(() => {
-        if (uniqueLocations.length > 0 && !selectedLocation) {
-            setSelectedLocation(uniqueLocations[0]);
+        if (!dashboardData || dashboardData.length === 0) return;
+
+        // Always ensure selectedLocation is initialized
+        if (selectedLocation === "") {
+            setSelectedLocation(dashboardData[0]?.location ?? "");
         }
-    }, [uniqueLocations, selectedLocation]);
+    }, [dashboardData, selectedLocation]);
+
 
     useEffect(() => {
         if (activeData && activeData._id) {

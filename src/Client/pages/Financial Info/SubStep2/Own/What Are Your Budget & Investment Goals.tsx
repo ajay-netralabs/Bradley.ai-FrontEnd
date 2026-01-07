@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, TextField, Typography, IconButton, Select, MenuItem, Tooltip, SelectChangeEvent } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useBudgetGoals } from '../../../../../Context/Financial Info/SubStep2/Own/What Are Your Budget & Investment Goals Context';
+import { useBudgetGoals } from '../../../../Context/Financial Info/SubStep2/Own/What Are Your Budget & Investment Goals Context';
 
 const SubStep2: React.FC = () => {
   const { budgetGoalsState, updateField, addYearBudget, removeYearBudget, updateYearBudget } = useBudgetGoals();

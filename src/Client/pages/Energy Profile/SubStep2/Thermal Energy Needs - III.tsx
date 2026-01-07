@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Typography, FormControlLabel, Switch, Tooltip } from '@mui/material';
-import { useThermalEnergyNeedsIII } from '../../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
+import { useThermalEnergyNeedsIII } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
 
 const SubStep2: React.FC = () => {
   const { thermalNeedsIIIState, updateField } = useThermalEnergyNeedsIII();

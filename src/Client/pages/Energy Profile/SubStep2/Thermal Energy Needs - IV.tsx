@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, TextField, Button, Typography, FormControlLabel, MenuItem, Switch, IconButton, Select, Tooltip, SelectChangeEvent } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useThermalEnergyNeedsIV } from '../../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
+import { useThermalEnergyNeedsIV } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
 
 const SubStep2: React.FC = () => {
   const { thermalNeedsIVState, updateField, addWasteHeatSource, removeWasteHeatSource, updateWasteHeatSourceField } = useThermalEnergyNeedsIV();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Typography, FormControlLabel, MenuItem, Switch, Select, Tooltip, SelectChangeEvent } from '@mui/material';
-import { useThermalEnergyNeedsI } from '../../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
+import { useThermalEnergyNeedsI } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
 
 // Helper function to format a string representing a number with commas
 const formatNumberWithCommas = (numStr: string) => {

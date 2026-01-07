@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableRow } from '@mui/material';
-import { useLOA } from '../../../../Context/Energy Profile/SubStep2/Letter Of Authorization Context';
-import { useLOAStatus } from '../../../../Context/Energy Profile/SubStep2/LOA - Status Context';
+import { useLOA } from '../../../Context/Energy Profile/SubStep2/Letter Of Authorization Context';
+import { useLOAStatus } from '../../../Context/Energy Profile/SubStep2/LOA - Status Context';
 
 const SubStep3: React.FC = () => {
   const { loaState } = useLOA();

@@ -1,5 +1,5 @@
 import { ORGANIZATION_DATA, ADDRESS_DATA, ENERGY_INTERVAL_DATA, THERMAL_ENERGY_NEEDS_I_DATA, THERMAL_ENERGY_NEEDS_II_DATA, THERMAL_ENERGY_NEEDS_III_DATA, THERMAL_ENERGY_NEEDS_IV_DATA, EXISTING_BOILER_COGENERATION_DATA } from './Constants';
-import { DashboardData } from '../Context/DashboardDataContext'; // Import the interface
+import { DashboardData } from '../Demo/Context/DashboardDataContext'; // Import the interface
 
 // --- Interfaces for Data Structures (simplified for API interaction) ---
 
@@ -172,6 +172,7 @@ const response = await fetch(ORGANIZATION_DATA, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(data),
+credentials: "include",
 });
 if (!response.ok) {
 // Throw custom error with status
@@ -200,6 +201,7 @@ const response = await fetch(ADDRESS_DATA, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(data),
+credentials: "include",
 });
 if (!response.ok) {
 // Throw custom error with status
@@ -235,6 +237,7 @@ formData.append('uuids', uuid);
 const response = await fetch(ENERGY_INTERVAL_DATA, {
 method: 'POST',
 body: formData,
+credentials: "include",
 });
 
 if (!response.ok) {

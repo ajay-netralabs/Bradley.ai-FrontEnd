@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Box, Typography, Button, Grid, Paper } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { Box, Typography, Button, Grid, Paper, CircularProgress } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IoIosLogIn } from 'react-icons/io';
 import { useAppContext } from '../Context/AppContext';
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,30 +8,42 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaPlay } from 'react-icons/fa';
 
 const Login: React.FC = () => {
-  const { setUser, credentials } = useAppContext();
+  // const { setUser } = useAppContext();
+  const { loginForProduct } = useAppContext();
   const navigate = useNavigate();
+
+  const { productKey } = useParams<{ productKey: string }>();
+
+  const product = useMemo(() => {
+    return productKey || "bradley";
+  }, [productKey]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = () => {
-    const clientCredentials = credentials.client;
-    const analystCredentials = credentials.analyst;
-
-    if (email === clientCredentials.email && password === clientCredentials.password) {
-      setUser({ email, role: 'client' });
-      navigate('/client');
-    } else if (email === analystCredentials.email && password === analystCredentials.password) {
-      setUser({ email, role: 'analyst' });
-      navigate('/analyst');
-    } else {
-      toast.error('Invalid email or password', {
-        position: 'top-center',
-        autoClose: 1000,
+  const handleLogin = async () => {
+    setIsSubmitting(true);
+    try {
+      const u = await loginForProduct(product, email, password);
+      if (product === "bradley") {
+        navigate(u.role === "analyst" ? "/analyst" : "/bradley", { replace: true });
+      } else {
+        navigate(`/${product}`, { replace: true });
+      }
+    } catch (e: any) {
+      setIsSubmitting(false);
+      toast.error(e?.message || "Login failed", {
+        position: "top-center",
+        autoClose: 1200,
         hideProgressBar: true,
-        style: { fontSize: '14px', padding: '8px 16px', fontFamily: '"Nunito Sans", sans-serif' },
+        style: { fontSize: "14px", padding: "8px 16px", fontFamily: '"Nunito Sans", sans-serif' },
       });
     }
+  };
+
+  const handleSwitchProduct = () => {
+    navigate(product === "emissioncheckiq" ? "/login/bradley" : "/login/emissioncheckiq");
   };
 
   return (
@@ -118,11 +130,11 @@ const Login: React.FC = () => {
                       fontFamily: '"Nunito Sans", sans-serif',
                     }}
                   >
-                    <Typography 
-                      variant="h6" 
-                      fontWeight="bold" 
-                      color="#FF6B00" 
-                      sx={{ 
+                    <Typography
+                      variant="h6"
+                      fontWeight="bold"
+                      color="#FF6B00"
+                      sx={{
                         fontFamily: '"Nunito Sans", sans-serif',
                         fontSize: '1.1rem',
                         marginBottom: '4px'
@@ -130,10 +142,10 @@ const Login: React.FC = () => {
                     >
                       {item.value}
                     </Typography>
-                    <Typography 
-                      variant="caption" 
-                      sx={{ 
-                        color: '#ccc', 
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: '#ccc',
                         fontFamily: '"Nunito Sans", sans-serif',
                         fontSize: '0.7rem',
                         lineHeight: 1.2,
@@ -156,7 +168,7 @@ const Login: React.FC = () => {
         <Box
           sx={{
             width: '60%',
-            padding: 4,
+            padding: 3.5,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -176,7 +188,7 @@ const Login: React.FC = () => {
               fontFamily: '"Nunito Sans", sans-serif',
             }}
           >
-            <h3 style={{ fontFamily: '"Nunito Sans", sans-serif' }}>Sign in to {/* EmissionCheckIQ+ */}your account</h3>
+            <h3 style={{ fontFamily: '"Nunito Sans", sans-serif' }}>{product === "emissioncheckiq" ? "Sign in to EmissionCheckIQ+" : "Sign in to Bradley.ai"}</h3>
           </Typography>
 
           <Box sx={{ width: '90%', marginBottom: 2 }}>
@@ -188,6 +200,7 @@ const Login: React.FC = () => {
               type="email"
               placeholder="Enter your email."
               value={email}
+              disabled={isSubmitting}
               onChange={(e) => setEmail(e.target.value)}
               style={{
                 width: '100%',
@@ -198,9 +211,10 @@ const Login: React.FC = () => {
                 borderRadius: '8px',
                 height: '40px',
                 boxSizing: 'border-box',
-                backgroundColor: 'white',
+                backgroundColor: isSubmitting ? '#f5f5f5' : 'white',
                 color: 'black',
                 fontFamily: '"Nunito Sans", sans-serif',
+                cursor: isSubmitting ? 'not-allowed' : 'text',
               }}
             />
           </Box>
@@ -214,9 +228,10 @@ const Login: React.FC = () => {
                 style={{
                   fontSize: '0.85rem',
                   textDecoration: 'underline',
-                  color: 'black',
-                  cursor: 'pointer',
+                  color: isSubmitting ? '#999' : 'black',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
                   fontFamily: '"Nunito Sans", sans-serif',
+                  pointerEvents: isSubmitting ? 'none' : 'auto',
                 }}
               >
                 <b>Forgot?</b>
@@ -227,6 +242,7 @@ const Login: React.FC = () => {
               type="password"
               placeholder="Enter your password."
               value={password}
+              disabled={isSubmitting}
               onChange={(e) => setPassword(e.target.value)}
               style={{
                 width: '100%',
@@ -237,52 +253,58 @@ const Login: React.FC = () => {
                 borderRadius: '8px',
                 height: '40px',
                 boxSizing: 'border-box',
-                backgroundColor: 'white',
+                backgroundColor: isSubmitting ? '#f5f5f5' : 'white',
                 color: 'black',
                 fontFamily: '"Nunito Sans", sans-serif',
+                cursor: isSubmitting ? 'not-allowed' : 'text',
               }}
             />
           </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', width: '90%', gap: 2, marginTop: 3 }}>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: '#0e0c22',
-                  color: 'white',
-                  borderRadius: 2,
-                  paddingX: 3.5,
-                  '&:hover': { backgroundColor: '#1c1b2e' },
-                  width: '100%',
-                  height: '45px',
-                  fontFamily: '"Nunito Sans", sans-serif',
-                }}
-                onClick={handleLogin}
-              >
+          <Box sx={{ display: 'flex', flexDirection: 'column', width: '90%', gap: 2, marginTop: 3 }}>
+            <Button
+              variant="contained"
+              disabled={isSubmitting}
+              sx={{
+                backgroundColor: '#0e0c22',
+                color: 'white',
+                borderRadius: 2,
+                paddingX: 3.5,
+                '&:hover': { backgroundColor: '#1c1b2e' },
+                width: '100%',
+                height: '45px',
+                fontFamily: '"Nunito Sans", sans-serif',
+              }}
+              onClick={handleLogin}
+            >
+              {isSubmitting ? (
+                <CircularProgress size={20} color="inherit" sx={{ marginRight: 1 }} />
+              ) : (
                 <IoIosLogIn size={20} style={{ marginRight: 8 }} />
-                LOG IN
-              </Button>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: '#FF6B00',
-                  color: 'white',
-                  borderRadius: 2,
-                  paddingX: 3.5,
-                  '&:hover': { backgroundColor: '#ff8533' },
-                  width: '100%',
-                  height: '45px',
-                  fontFamily: '"Nunito Sans", sans-serif',
-                }}
-                onClick={() => {
-                  setUser({ email: '', role: 'demo' });
-                  navigate('/demo');
-                }}
-              >
-                <FaPlay size={14} style={{ marginRight: 8 }} />
-                TRY EmissionCheckIQ+
-              </Button>
-            </Box>
+              )}
+              LOG IN
+            </Button>
+            <Button
+              variant="contained"
+              disabled={isSubmitting}
+              sx={{
+                backgroundColor: '#FF6B00',
+                color: 'white',
+                borderRadius: 2,
+                paddingX: 3.5,
+                '&:hover': { backgroundColor: '#ff8533' },
+                width: '100%',
+                height: '45px',
+                fontFamily: '"Nunito Sans", sans-serif',
+              }}
+              onClick={() => {
+                handleSwitchProduct();
+              }}
+            >
+              <FaPlay size={14} style={{ marginRight: 8 }} />
+              {product === "emissioncheckiq" ? "Switch to Bradley.ai" : "Switch to EmissionCheckIQ+"}
+            </Button>
+          </Box>
 
           <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', width: '100%' }}>
             <Typography
@@ -296,8 +318,13 @@ const Login: React.FC = () => {
             >
               Don't have an account? {' '}
               <span
-                onClick={() => navigate('/signup')}
-                style={{ textDecoration: 'underline', cursor: 'pointer', fontFamily: '"Nunito Sans", sans-serif' }}
+                onClick={() => !isSubmitting && navigate('/signup')}
+                style={{
+                  textDecoration: 'underline',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  fontFamily: '"Nunito Sans", sans-serif',
+                  color: isSubmitting ? '#999' : 'inherit'
+                }}
               >
                 <b>Sign Up</b>
               </span>

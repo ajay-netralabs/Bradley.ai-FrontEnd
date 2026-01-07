@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Typography, FormControlLabel, Switch, Tooltip, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useThermalEnergyNeedsII } from '../../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - II Context';
+import { useThermalEnergyNeedsII } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - II Context';
 
 const formatNumberWithCommas = (numStr: string) => {
   if (!numStr) return '';

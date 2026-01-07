@@ -9,8 +9,8 @@ import { FaMapMarkerAlt, FaTrash } from 'react-icons/fa';
 import { renderToStaticMarkup } from 'react-dom/server';
 // ADDED: Imports for search functionality
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch'; 
-import { useFacilityAddress } from '../../../../Context/Organizational Profile/SubStep2/Facility Address Context';
-import { useBillAddress } from '../../../../Context/Energy Profile/BillAddressContext';
+import { useFacilityAddress } from '../../../Context/Organizational Profile/SubStep2/Facility Address Context';
+import { useBillAddress } from '../../../Context/Energy Profile/BillAddressContext';
 
 // ADDED: Helper component for the search bar
 const MapSearch = () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, TextField, Typography, MenuItem, Select, Slider, SelectChangeEvent } from '@mui/material';
-import { usePrioritizationII/* , PrioritizationIIState */ } from '../../../../Context/Goals & Priorities/SubStep2/Prioritization - II Context';
-import { usePrioritizationI } from '../../../../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
+import { usePrioritizationII/* , PrioritizationIIState */ } from '../../../Context/Goals & Priorities/SubStep2/Prioritization - II Context';
+import { usePrioritizationI } from '../../../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
 
 const SubStep2: React.FC = () => {
   const { prioritizationIIState, updateField, updateTargetField } = usePrioritizationII();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Typography, Slider, Tooltip, InputAdornment } from '@mui/material';
-import { usePPAPreferences } from  '../../../../../Context/Financial Info/SubStep2/Third Party/PPA Preferences Context';
+import { usePPAPreferences } from  '../../../../Context/Financial Info/SubStep2/Third Party/PPA Preferences Context';
 
 const SubStep2: React.FC = () => {
   const { ppaPreferencesState, updateField } = usePPAPreferences();

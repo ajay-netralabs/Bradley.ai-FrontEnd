@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, TextField, Typography } from '@mui/material';
-import { useFinancialsI } from '../../../../Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
+import { useFinancialsI } from '../../../Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
 
 const SubStep3: React.FC = () => {
   const { financialsIState, updateField } = useFinancialsI();

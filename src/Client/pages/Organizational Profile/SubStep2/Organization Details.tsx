@@ -1,6 +1,6 @@
 import React, {useState} from 'react'; 
 import { Box, TextField, Typography, Select, MenuItem, Tooltip, Autocomplete, Paper } from '@mui/material';
-import { useOrganizationDetails } from '../../../../Context/Organizational Profile/SubStep2/Organization Details Context';
+import { useOrganizationDetails } from '../../../Context/Organizational Profile/SubStep2/Organization Details Context';
 
 const companyOptions = [
   "Adobe", "Airbnb", "Alibaba", "Alphabet", "Amazon", "AMD", "Apple", "ASUS", "Atlassian", "Autodesk",

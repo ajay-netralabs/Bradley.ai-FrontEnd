@@ -66,7 +66,7 @@ const generateId = (): string => uuidv4();;
 
 export const FacilityAddressProvider: React.FC<FacilityAddressProviderProps> = ({ children }) => {
   const [facilityAddressState, setFacilityAddressState] = useState<FacilityAddressState>(() => {
-    const savedState = Cookies.get('facilityAddressState');
+    const savedState = Cookies.get('bradley_facilityAddressState');
     if (savedState) {
       try {
         const parsedState = JSON.parse(savedState);
@@ -108,7 +108,7 @@ export const FacilityAddressProvider: React.FC<FacilityAddressProviderProps> = (
           : null,
       })),
     };
-    Cookies.set('facilityAddressState', JSON.stringify(stateToSave));
+    Cookies.set('bradley_facilityAddressState', JSON.stringify(stateToSave));
   }, [facilityAddressState]);
 
   const updateFacilityAddress = (newState: Partial<FacilityAddressState>) => {
