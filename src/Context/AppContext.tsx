@@ -52,7 +52,7 @@ export const useAppContext = () => {
 
 interface AppProviderProps {
   children: React.ReactNode;
-  steps: { label: string; subSteps: number; furtherSubSteps: number[] }[];
+  steps: any[];
   appPrefix: string;
   initialBootstrap?: any | null;
 }
@@ -64,13 +64,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPr
   const [currentStep, setCurrentStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentStep`) || 0));
   const [currentSubStep, setCurrentSubStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentSubStep`) || 0));
   const [currentFurtherSubStep, setCurrentFurtherSubStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentFurtherSubStep`) || 0));
+  const getSubStepCount = (step: any) => Array.isArray(step.subSteps) ? step.subSteps.length : step.subSteps;
 
   const [visitedSteps, setVisitedSteps] = useState(() => {
     const savedVisitedSteps = Cookies.get(`${appPrefix}_visitedSteps`);
     return savedVisitedSteps
       ? JSON.parse(savedVisitedSteps)
       : Array.from({ length: steps.length }, (_, i) =>
-          Array.from({ length: steps[i].subSteps }, (_, j) => i === 0 && j === 0)
+          Array.from({ length: getSubStepCount(steps[i]) }, (_, j) => i === 0 && j === 0)
         );
   });
 
@@ -79,7 +80,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPr
     return savedCompletedSubSteps
       ? JSON.parse(savedCompletedSubSteps)
       : Array.from({ length: steps.length }, (_, i) =>
-          Array.from({ length: steps[i].subSteps }, () => false)
+          Array.from({ length: getSubStepCount(steps[i]) }, () => false)
         );
   });
 

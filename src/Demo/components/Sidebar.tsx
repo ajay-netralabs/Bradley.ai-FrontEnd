@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import {
   Stepper,
   Step,
@@ -13,11 +13,30 @@ import {
 } from '@mui/material';
 import { steps } from './steps';
 
+import { GoOrganization } from 'react-icons/go';
+import { MdOutlineWarehouse, MdDashboard, MdOutlineFactCheck } from 'react-icons/md';
+import { BsFileEarmarkArrowUp, BsFileEarmarkBarGraph } from 'react-icons/bs';
+import { GrDocumentVerified } from 'react-icons/gr';
+
 interface SidebarProps {
   currentStep: number;
+  currentSubStep: number;
+  currentFurtherSubStep: number;
   visitedSteps: boolean[][];
-  onStepChange: (step: number) => void;
+  onStepChange: (step: number, subStep: number, furtherSubStep: number) => void;
+  hasElectricFiles: boolean;
 }
+
+const iconMap: { [key: string]: React.ElementType } = {
+    'Organization Details': GoOrganization,
+    'Facility Address': MdOutlineWarehouse,
+    'Electric Bill Upload': BsFileEarmarkArrowUp,
+    "Don't Have Interval Data": BsFileEarmarkBarGraph,
+    'Letter Of Authorization': GrDocumentVerified,
+    'LOA - Status': MdOutlineFactCheck,
+    'Natural Gas Bill Upload': BsFileEarmarkArrowUp,
+    'Emissions Dashboard': MdDashboard,
+};
 
 const CustomStepConnector = styled(StepConnector)(() => ({
   marginLeft: '22px',
@@ -39,29 +58,45 @@ const CustomStepConnector = styled(StepConnector)(() => ({
   },
 }));
 
-const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChange }) => {
-  const [completedSteps, setCompletedSteps] = useState<boolean[]>(new Array(steps.length).fill(false));
+const Sidebar: React.FC<SidebarProps> = ({
+  currentStep,
+  currentSubStep,
+  currentFurtherSubStep,
+  visitedSteps,
+  onStepChange,
+  hasElectricFiles,
+}) => {
 
-  useEffect(() => {
-    if (currentStep > 0 && !completedSteps[currentStep - 1]) {
-      markStepAsCompleted(currentStep - 1);
-    }
-  }, [currentStep, completedSteps]);
+  const { flatSteps, activeFlatIndex } = useMemo(() => {
+    const newFlatSteps: any[] = [];
+    let cumulativeIndex = 0;
+    let newActiveFlatIndex = -1;
 
-  const handleStepClick = (index: number) => {
-    if (visitedSteps[index].some(visited => visited)) {
-      onStepChange(index);
-    }
-  };
-
-  const markStepAsCompleted = (step: number) => {
-    setCompletedSteps((prev) => {
-      const newCompleted = [...prev];
-      newCompleted[step] = true;
-      return newCompleted;
+    steps.forEach((step, stepIndex) => {
+      step.subSteps.forEach((subStep, subStepIndex) => {
+        subStep.furtherSubSteps.forEach((fStep, fIndex) => {
+          if (stepIndex === currentStep && subStepIndex === currentSubStep && fIndex === currentFurtherSubStep) {
+            newActiveFlatIndex = cumulativeIndex;
+          }
+          newFlatSteps.push({
+            label: fStep.label,
+            icon: iconMap[fStep.label] || GoOrganization,
+            stepIndex,
+            subStepIndex,
+            furtherSubStepIndex: fIndex,
+            flatIndex: cumulativeIndex,
+          });
+          cumulativeIndex++;
+        });
+      });
     });
-  };
+    return { flatSteps: newFlatSteps, activeFlatIndex: newActiveFlatIndex };
+  }, [currentStep, currentSubStep, currentFurtherSubStep]);
 
+  const handleStepClick = (stepData: any) => {
+    onStepChange(stepData.stepIndex, stepData.subStepIndex, stepData.furtherSubStepIndex);
+  };
+  
   const CustomStepIcon = ({ icon: IconComponent, active, completed, visited, isCurrent }: any) => (
     <div
       style={{
@@ -71,21 +106,21 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
         width: 30,
         height: 30,
         borderRadius: '50%',
-        backgroundColor: completed || active || visited ? (isCurrent ? '#036ca1' : '#0584b7') : '#808080',
+        backgroundColor: active || completed || visited ? (isCurrent ? '#036ca1' : '#0584b7') : '#808080',
         color: '#fff',
       }}
     >
-      <IconComponent fontSize="small" style={{ color: '#fff' }} />
+      <IconComponent fontSize="medium" style={{ color: '#fff' }} />
     </div>
   );
 
   return (
-    <Paper sx={{ width: '210px', position: 'fixed', height: '100vh', top: 0, mt: '40px', padding: '10px', paddingTop: '40px', boxShadow: 1 }}>
+    <Paper sx={{ width: '210px', position: 'fixed', height: '100vh', top: 0, mt: '40px', padding: '10px', paddingTop: '40px', boxShadow: 1, overflowY: 'auto', scrollbarWidth: 'none' }}>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
       </style>
       <Stepper
-        activeStep={currentStep}
+        activeStep={activeFlatIndex}
         orientation="vertical"
         nonLinear
         connector={<CustomStepConnector />}
@@ -100,28 +135,34 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
           },
         }}
       >
-        {steps.map((step, index) => {
-          const IconComponent = step.icon;
-          const isVisited = visitedSteps[index].some(visited => visited);
-          const isCurrent = currentStep === index;
+        {flatSteps.map((stepData) => {
+          const { label, icon: IconComponent, stepIndex, subStepIndex, flatIndex } = stepData;
+
+          const isCurrent = activeFlatIndex === flatIndex;
+          const isCompleted = flatIndex < activeFlatIndex;
+          const isVisited = visitedSteps[stepIndex]?.[subStepIndex] === true;
+          const isDisabled = hasElectricFiles && (label === "Don't Have Interval Data" || label === "Letter Of Authorization" || label === "LOA - Status");
+          const isClickable = !isDisabled && (isVisited || isCompleted);
+
+          const textColor = isDisabled ? '#bdbdbd' : (isCurrent ? '#036ca1' : (isVisited || isCompleted ? '#0584b7' : 'gray'));
+
           return (
-            <Step key={step.label} completed={completedSteps[index]}>
+            <Step key={label + flatIndex} completed={isCompleted} active={isCurrent}>
               <StepLabel
                 StepIconComponent={(props) => (
                   <CustomStepIcon 
                     icon={IconComponent} 
                     active={props.active} 
                     completed={props.completed} 
-                    visited={isVisited} 
+                    visited={isVisited}
                     isCurrent={isCurrent}
                   />
                 )}
               >
-                {isVisited ? (
-                  <Tooltip title={index === currentStep ? "You are here" : "Navigate to step"} placement="right" arrow>
+                {isClickable ? (
+                  <Tooltip title={isCurrent ? "You are here" : "Navigate to step"} placement="right" arrow>
                     <ListItemButton
-                      onClick={() => handleStepClick(index)}
-                      selected={currentStep === index}
+                      onClick={() => handleStepClick(stepData)}
                       sx={{
                         padding: '3px 4px',
                         fontFamily: 'Nunito Sans, sans-serif',
@@ -138,35 +179,38 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
                         primary={
                           <Typography sx={{ 
                             fontSize: '0.75rem', 
-                            fontFamily: 'Nunito Sans, sans-serif', 
-                            fontWeight: index === currentStep ? 'bold' : 'normal',
-                            color: isCurrent ? '#036ca1' : '#0584b7'
+                            fontFamily: 'Nunito Sans, sans-serif',
+                            fontWeight: isCurrent ? 'bold' : 'normal',
+                            color: textColor
                           }}>
-                            {index === currentStep ? `${step.label}*` : step.label}
+                            {isCurrent ? `${label}*` : label}
                           </Typography>
                         }
                       />
                     </ListItemButton>
                   </Tooltip>
                 ) : (
-                  <ListItemButton
-                    sx={{
-                      padding: '3px 4px',
-                      fontFamily: 'Nunito Sans, sans-serif',
-                      color: 'gray',
-                      '&:hover': {
-                        borderRadius: '8px',
-                      },
-                    }}
-                  >
-                    <ListItemText
-                      primary={
-                        <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' }}>
-                          {step.label}
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
+                  <Tooltip title={isDisabled ? "You have already uploaded an electric bill" : ""} placement="right" arrow>
+                    <ListItemButton
+                      sx={{
+                        padding: '3px 4px',
+                        fontFamily: 'Nunito Sans, sans-serif',
+                        color: 'gray',
+                        '&:hover': {
+                          borderRadius: '8px',
+                        },
+                        cursor: isDisabled ? 'not-allowed' : 'default',
+                      }}
+                    >
+                      <ListItemText
+                        primary={
+                          <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', color: textColor }}>
+                            {label}
+                          </Typography>
+                        }
+                      />
+                    </ListItemButton>
+                  </Tooltip>
                 )}
               </StepLabel>
             </Step>

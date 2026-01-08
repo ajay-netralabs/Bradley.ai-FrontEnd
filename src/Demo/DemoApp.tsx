@@ -133,11 +133,11 @@ const AppContent: React.FC = () => {
     const [errorTitle, setErrorTitle] = useState('Error');
     const [errorMsg, setErrorMsg] = useState('');
 
-    const handleStepChange = (step: number) => {
-        if (visitedSteps[step]?.[0]) {
+    const handleStepChange = (step: number, subStep: number = 0, furtherSubStep: number = 0) => {
+        if (visitedSteps[step]?.[subStep]) {
             setCurrentStep(step);
-            setCurrentSubStep(0);
-            setCurrentFurtherSubStep(0);
+            setCurrentSubStep(subStep);
+            setCurrentFurtherSubStep(furtherSubStep);
         }
     };
 
@@ -149,11 +149,11 @@ const AppContent: React.FC = () => {
     };
 
     const handleNext = async () => {
-        const isLastFurtherSubStep = currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1;
-        const isLastSubStep = currentSubStep === steps[currentStep].subSteps - 1;
+        const isLastFurtherSubStep = currentFurtherSubStep === steps[currentStep].subSteps[currentSubStep].furtherSubSteps.length - 1;
+        const isLastSubStep = currentSubStep === steps[currentStep].subSteps.length - 1;
         const isLastStep = currentStep === steps.length - 1;
 
-        if (currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) {
+        if (currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps.length - 1 && currentFurtherSubStep === steps[currentStep].subSteps[currentSubStep].furtherSubSteps.length - 1) {
              setIsLoading(true);
              console.log("Generating PDF Report...");
              try {
@@ -406,18 +406,18 @@ const AppContent: React.FC = () => {
         } else if (currentSubStep > 0) {
             const prevSubStep = currentSubStep - 1;
             setCurrentSubStep(prevSubStep);
-            setCurrentFurtherSubStep(steps[currentStep].furtherSubSteps[prevSubStep] - 1);
+            setCurrentFurtherSubStep(steps[currentStep].subSteps[prevSubStep].furtherSubSteps.length - 1);
         } else if (currentStep > 0) {
             const prevStep = currentStep - 1;
-            const lastSubStepOfPrevStep = steps[prevStep].subSteps - 1;
+            const lastSubStepOfPrevStep = steps[prevStep].subSteps.length - 1;
             setCurrentStep(prevStep);
             setCurrentSubStep(lastSubStepOfPrevStep);
-            setCurrentFurtherSubStep(steps[prevStep].furtherSubSteps[lastSubStepOfPrevStep] - 1);
+            setCurrentFurtherSubStep(steps[prevStep].subSteps[lastSubStepOfPrevStep].furtherSubSteps.length - 1);
         }
     };
 
     const calculateProgress = () => {
-        const totalFurtherSubSteps = steps[currentStep]?.furtherSubSteps?.[currentSubStep] || 1;
+        const totalFurtherSubSteps = steps[currentStep]?.subSteps?.[currentSubStep]?.furtherSubSteps?.length || 1;
         return ((currentFurtherSubStep + 1) / totalFurtherSubSteps) * 100;
     };
 
@@ -554,40 +554,47 @@ const AppContent: React.FC = () => {
             />
             <Box sx={{ display: 'flex', flexGrow: 1, mt: '64px', width: '100vw' }}>
                 <Box sx={{ width: '210px', flexShrink: 0 }}>
-                    <Sidebar currentStep={currentStep} visitedSteps={visitedSteps} onStepChange={handleStepChange} />
+                    <Sidebar 
+                        currentStep={currentStep} 
+                        currentSubStep={currentSubStep} 
+                        currentFurtherSubStep={currentFurtherSubStep} 
+                        visitedSteps={visitedSteps}
+                        onStepChange={handleStepChange}
+                        hasElectricFiles={electricBillUploadState.fileMetadata.length > 0}
+                    />
                 </Box>
                 <Box component="main" sx={{ flexGrow: 1, p: 4, bgcolor: '#f5f5f5', overflowX: 'auto', scrollbarWidth: 'none' }}>
                     <Box sx={{ mt: 1, pl: 2, pb: 1, pt: 3, mb: 7, ml: 8, mr: 5, borderRadius: '8px', bgcolor: 'white', boxShadow: 1, color: 'black', display: 'flex' }}>
                         <Box sx={{ flexGrow: 1 }}>
-                            <HorizontalStepper currentSubStep={currentSubStep} totalSubSteps={steps[currentStep]?.subSteps} visitedSteps={visitedSteps[currentStep]} completedSubSteps={completedSubSteps[currentStep]} onSubStepChange={handleSubStepChange} currentStep={currentStep} />
+                            <HorizontalStepper currentSubStep={currentSubStep} totalSubSteps={steps[currentStep]?.subSteps?.length} visitedSteps={visitedSteps[currentStep]} completedSubSteps={completedSubSteps[currentStep]} onSubStepChange={handleSubStepChange} currentStep={currentStep} />
                             <LinearProgress variant="determinate" value={calculateProgress()} sx={{ width: 'calc(100% + 16px)', height: '3.5px', margin: '0px -16px', mt: '30px', mb: '10px', backgroundColor: '#e0e0e0', '& .MuiLinearProgress-bar': { backgroundColor: '#036cc1' } }} />
                             <StepContent step={currentStep} subStep={currentSubStep} furtherSubStep={currentFurtherSubStep} />
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3, mr: 5.2, ml: 1, mb: 1 }}>
-                                {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
+                                {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps.length - 1 && currentFurtherSubStep === steps[currentStep].subSteps[currentSubStep].furtherSubSteps.length - 1) && (
                                     <Tooltip title="Navigate to previous step" placement='bottom' arrow>
                                         <Button variant="outlined" onClick={handleBack} disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 0} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Back</Button>
                                     </Tooltip>
                                 )}
                                 <Box sx={{ display: 'flex', gap: 1, ml: 'auto' }}>
-                                    {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) && (
+                                    {!(currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps.length - 1 && currentFurtherSubStep === steps[currentStep].subSteps[currentSubStep].furtherSubSteps.length - 1) && (
                                         <Tooltip title="Save progress and log out" placement='bottom' arrow>
                                             <Button variant="outlined" onClick={handleSaveAndContinueLater} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Save and Continue Later</Button>
                                         </Tooltip>
                                     )}
-                                    <Tooltip title={(currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()) ? "You haven't uploaded bills for all addresses. Upload at least one bill for every address first." : (currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? "Click to download your report." : "Navigate to next step")} placement='bottom' arrow>
+                                    <Tooltip title={(currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()) ? "You haven't uploaded bills for all addresses. Upload at least one bill for every address first." : (currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps.length - 1 && currentFurtherSubStep === steps[currentStep].subSteps[currentSubStep].furtherSubSteps.length - 1 ? "Click to download your report." : "Navigate to next step")} placement='bottom' arrow>
                                         <span>
                                             <Button 
                                                 variant="contained" 
                                                 color="primary" 
                                                 onClick={(event) => {
                                                     event.preventDefault();
-                                                    (currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1) ? toPDF() : handleNext();
+                                                    (currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps.length - 1 && currentFurtherSubStep === steps[currentStep].subSteps[currentSubStep].furtherSubSteps.length - 1) ? toPDF() : handleNext();
                                                 }} 
                                                 disabled={currentStep === 0 && currentSubStep === 0 && currentFurtherSubStep === 6 && isNextDisabled()} 
                                                 sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', boxShadow: 'none', '&:focus': { outline: 'none' } }}
                                             >
-                                                {currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 2 ? ("Generate Report") :
-                                                 currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps - 1 && currentFurtherSubStep === steps[currentStep].furtherSubSteps[currentSubStep] - 1 ? ("Download Report") :
+                                                {currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps.length - 1 && currentFurtherSubStep === steps[currentStep].subSteps[currentSubStep].furtherSubSteps.length - 2 ? ("Generate Report") :
+                                                 currentStep === steps.length - 1 && currentSubStep === steps[currentStep].subSteps.length - 1 && currentFurtherSubStep === steps[currentStep].subSteps[currentSubStep].furtherSubSteps.length - 1 ? ("Download Report") :
                                                  currentStep === 1 && currentSubStep === 1 && currentFurtherSubStep === 2 ? ("Authorize & Send Request") :
                                                  currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0 ? ("Submit") : ("Next")}
                                             </Button>
