@@ -66,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   currentFurtherSubStep,
   visitedSteps,
   onStepChange,
-  hasElectricFiles,
+  // hasElectricFiles,
   hasElectric,
   hasGas,
 }) => {
@@ -155,9 +155,9 @@ const Sidebar: React.FC<SidebarProps> = ({
           } else if (label === 'Natural Gas Bill Upload' && !hasGas) {
               isDisabled = true;
               tooltipTitle = "No natural gas facility selected";
-          } else if (hasElectricFiles && (label === "Don't Have Interval Data" || label === "Letter Of Authorization" || label === "LOA - Status")) {
+          } else if (hasElectric && (label === "Don't Have Interval Data" || label === "Letter Of Authorization" || label === "LOA - Status")) {
               isDisabled = true;
-              tooltipTitle = "You have already uploaded an electric bill";
+              tooltipTitle = "You have an electric facility with interval data";
           } else if (label === "Don't Have Interval Data" && !hasElectric) {
           }
 
