@@ -263,12 +263,12 @@ throw new Error(friendlyMessage);
 export const addThermalEnergyNeedsI = async (data: ThermalEnergyNeedsI, file_id: string): Promise<boolean> => {
 try {
 const payload = { ...data, file_id };
-const response = await fetch(THERMAL_ENERGY_NEEDS_I_DATA, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload),
-});
-if (!response.ok) {
+    const response = await fetch(THERMAL_ENERGY_NEEDS_I_DATA, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    });if (!response.ok) {
 // Throw custom error with status
 throw new HttpError(`HTTP error! status: ${response.status}`, response.status);
 }
@@ -285,12 +285,12 @@ return false;
 export const addThermalEnergyNeedsII = async (data: ThermalEnergyNeedsII, file_id: string): Promise<boolean> => {
 try {
 const payload = { ...data, file_id };
-const response = await fetch(THERMAL_ENERGY_NEEDS_II_DATA, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload),
-});
-if (!response.ok) {
+    const response = await fetch(THERMAL_ENERGY_NEEDS_II_DATA, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    });if (!response.ok) {
 // Throw custom error with status
 throw new HttpError(`HTTP error! status: ${response.status}`, response.status);
 }
@@ -307,12 +307,12 @@ return false;
 export const addThermalEnergyNeedsIII = async (data: ThermalEnergyNeedsIII, file_id: string): Promise<boolean> => {
 try {
 const payload = { ...data, file_id };
-const response = await fetch(THERMAL_ENERGY_NEEDS_III_DATA, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload),
-});
-if (!response.ok) {
+    const response = await fetch(THERMAL_ENERGY_NEEDS_III_DATA, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    });if (!response.ok) {
 // Throw custom error with status
 throw new HttpError(`HTTP error! status: ${response.status}`, response.status);
 }
@@ -329,12 +329,12 @@ return false;
 export const addThermalEnergyNeedsIV = async (data: ThermalEnergyNeedsIV, file_id: string): Promise<boolean> => {
 try {
 const payload = { ...data, file_id };
-const response = await fetch(THERMAL_ENERGY_NEEDS_IV_DATA, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload),
-});
-if (!response.ok) {
+    const response = await fetch(THERMAL_ENERGY_NEEDS_IV_DATA, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    });if (!response.ok) {
 // Throw custom error with status
 throw new HttpError(`HTTP error! status: ${response.status}`, response.status);
 }
@@ -351,12 +351,12 @@ return false;
 export const addExistingBoilerCogeneration = async (data: ExistingBoilerCogeneration, file_id: string): Promise<boolean> => {
 try {
 const payload = { ...data, file_id };
-const response = await fetch(EXISTING_BOILER_COGENERATION_DATA, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload),
-});
-if (!response.ok) {
+    const response = await fetch(EXISTING_BOILER_COGENERATION_DATA, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    });if (!response.ok) {
 // Throw custom error with status
 throw new HttpError(`HTTP error! status: ${response.status}`, response.status);
 }

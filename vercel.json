@@ -10,5 +10,9 @@
 			]
 		}
 	],
-	"rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+	"rewrites": [
+		{ "source": "/api/(.*)", "destination": "https://bradley-emission.onrender.com/api/$1" },
+		{ "source": "/auth/(.*)", "destination": "https://bradley-emission.onrender.com/auth/$1" },
+		{ "source": "/(.*)", "destination": "/index.html" }
+	]
 }
