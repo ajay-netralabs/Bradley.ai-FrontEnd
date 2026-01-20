@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { AppBar, IconButton, Toolbar, Menu, MenuItem, Tooltip, Box } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
@@ -124,13 +124,15 @@ const Navbar: React.FC<NavbarProps> = ({ OrganizationDetailsComponent, FacilityA
       </AppBar>
 
       {OrganizationDetailsComponent && FacilityAddressComponent && (
-        <UserProfileModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          initialTab={modalTab}
-          OrganizationDetailsComponent={OrganizationDetailsComponent}
-          FacilityAddressComponent={FacilityAddressComponent}
-        />
+        <Suspense fallback={null}>
+          <UserProfileModal
+            open={modalOpen}
+            onClose={() => setModalOpen(false)}
+            initialTab={modalTab}
+            OrganizationDetailsComponent={OrganizationDetailsComponent}
+            FacilityAddressComponent={FacilityAddressComponent}
+          />
+        </Suspense>
       )}
     </>
   );

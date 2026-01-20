@@ -16,4 +16,17 @@ export default defineConfig({
     },
   },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          mui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+          charts: ['chart.js', 'react-chartjs-2', 'recharts', 'react-google-charts'],
+          maps: ['leaflet', 'react-leaflet', 'leaflet-geosearch'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
 })

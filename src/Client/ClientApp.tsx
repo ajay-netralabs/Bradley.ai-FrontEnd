@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { Box, Button, LinearProgress, Tooltip } from '@mui/material';
 // import { useNavigate } from 'react-router-dom';
 
@@ -59,8 +59,17 @@ import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
 import ChatBot from '../components/ChatBot';
 
-import OrganizationDetails from './pages/Organizational Profile/SubStep2/Organization Details';
-import FacilityAddress from './pages/Organizational Profile/SubStep2/Facility Address';
+// import OrganizationDetails from './pages/Organizational Profile/SubStep2/Organization Details';
+// import FacilityAddress from './pages/Organizational Profile/SubStep2/Facility Address';
+
+const OrganizationDetails = lazy(() =>
+  import('./pages/Organizational Profile/SubStep2/Organization Details')
+);
+
+const FacilityAddress = lazy(() =>
+  import('./pages/Organizational Profile/SubStep2/Facility Address')
+);
+
 
 
 // Component to hold all providers for cleanliness

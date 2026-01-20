@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
-import Login from './Auth/Login';
-import Signup from './Auth/Signup';
-import ClientApp from './Client/ClientApp';
-// import AnalystApp from './Analyst/AnalystApp';
-import DemoApp from './Demo/DemoApp';
 import { useAppContext } from './Context/AppContext';
+import { CircularProgress } from '@mui/material';
+
+const Login = lazy(() => import('./Auth/Login'));
+const Signup = lazy(() => import('./Auth/Signup'));
+const ClientApp = lazy(() => import('./Client/ClientApp'));
+// const AnalystApp = lazy(() => import('./Analyst/AnalystApp'));
+const DemoApp = lazy(() => import('./Demo/DemoApp'));
 
 const TitleUpdater: React.FC = () => {
   const location = useLocation();
@@ -54,54 +56,56 @@ const App: React.FC = () => {
   return (
     <Router>
       <TitleUpdater />
-      <Routes>
-        <Route
-          path="/login"
-          element={LoginElement}
-        />
-        
-        <Route
-          path="/login/:productKey"
-          element={LoginElement}
-        />
+      <Suspense fallback={<CircularProgress className="flex items-center justify-center h-screen" />}>
+        <Routes>
+          <Route
+            path="/login"
+            element={LoginElement}
+          />
+          
+          <Route
+            path="/login/:productKey"
+            element={LoginElement}
+          />
 
-        <Route
-          path="/signup"
-          element={
-            user 
-              ? <Navigate to={redirectPath} replace /> 
-              : <Signup />
-          }
-        />
-        <Route
-          path="/emissioncheckiq/*"
-          element={
-            user?.product === "emissioncheckiq"
-              ? <DemoApp />
-              : <Navigate to="/login/emissioncheckiq" replace />
-          }
-        />
-        <Route 
-          path="/bradley/*" 
-          element={
-            user?.role === 'client' 
-              ? <ClientApp /> 
-              : <Navigate to="/login/bradley" replace />
-          } 
-        />
-        {/* <Route 
-          path="/analyst/*" 
-          element={
-            user?.role === 'analyst' 
-              ? <AnalystApp /> 
-              : <Navigate to="/login" replace />
-          } 
-        /> */}
-        <Route
-          path="/"
-          element={<Navigate to={redirectPath} replace />}
-        />
-      </Routes>
+          <Route
+            path="/signup"
+            element={
+              user 
+                ? <Navigate to={redirectPath} replace /> 
+                : <Signup />
+            }
+          />
+          <Route
+            path="/emissioncheckiq/*"
+            element={
+              user?.product === "emissioncheckiq"
+                ? <DemoApp />
+                : <Navigate to="/login/emissioncheckiq" replace />
+            }
+          />
+          <Route 
+            path="/bradley/*" 
+            element={
+              user?.role === 'client' 
+                ? <ClientApp /> 
+                : <Navigate to="/login/bradley" replace />
+            } 
+          />
+          {/* <Route 
+            path="/analyst/*" 
+            element={
+              user?.role === 'analyst' 
+                ? <AnalystApp /> 
+                : <Navigate to="/login" replace />
+            } 
+          /> */}
+          <Route
+            path="/"
+            element={<Navigate to={redirectPath} replace />}
+          />
+        </Routes>
+      </Suspense>
     </Router>
   );
 };

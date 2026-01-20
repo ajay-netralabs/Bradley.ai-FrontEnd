@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { Box, Button, LinearProgress, Tooltip, Backdrop, CircularProgress, Typography, Modal, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 // import { useNavigate } from 'react-router-dom';
@@ -35,8 +35,17 @@ import { updateOrganizationDetails, updateFacilityAddresses, uploadBillData, Bil
 // Dashboard Context
 import { DashboardDataProvider, useDashboardData } from './Context/DashboardDataContext';
 import EmissionsReportTemplate from './components/EmissionsReportTemplate';
-import OrganizationDetails from './pages/SubStep1/Organization Details';
-import FacilityAddress from './pages/SubStep1/Facility Address';
+// import OrganizationDetails from './pages/SubStep1/Organization Details';
+// import FacilityAddress from './pages/SubStep1/Facility Address';
+
+const STEP_COMPONENTS = {
+  organizationDetails: lazy(() =>
+    import('./pages/SubStep1/Organization Details')
+  ),
+  facilityAddress: lazy(() =>
+    import('./pages/SubStep1/Facility Address')
+  ),
+};
 
 const AppContent: React.FC = () => {
     const {
@@ -694,9 +703,9 @@ const AppContent: React.FC = () => {
                 </Box>
             </Modal>
 
-            <Navbar 
-                OrganizationDetailsComponent={OrganizationDetails} 
-                FacilityAddressComponent={FacilityAddress} 
+            <Navbar
+              OrganizationDetailsComponent={STEP_COMPONENTS.organizationDetails}
+              FacilityAddressComponent={STEP_COMPONENTS.facilityAddress}
             />
             <Box sx={{ display: 'flex', flexGrow: 1, mt: '64px', width: '100vw' }}>
                 <Box sx={{ width: '210px', flexShrink: 0 }}>
