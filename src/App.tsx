@@ -1,7 +1,7 @@
 import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import { useAppContext } from './Context/AppContext';
-import { CircularProgress } from '@mui/material';
+// import { CircularProgress } from '@mui/material';
 
 const Login = lazy(() => import('./Auth/Login'));
 const Signup = lazy(() => import('./Auth/Signup'));
@@ -56,7 +56,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <TitleUpdater />
-      <Suspense fallback={<CircularProgress className="flex items-center justify-center h-screen" />}>
+      <Suspense /* fallback={<CircularProgress className="flex items-center justify-center h-screen" />} */>
         <Routes>
           <Route
             path="/login"
