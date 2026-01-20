@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface LOATextFields {
   day: string;
@@ -49,12 +49,12 @@ const defaultState: LOAState = {
 
 export const LOAProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [loaState, setLoaState] = useState<LOAState>(() => {
-    const savedState = Cookies.get('loaState');
+    const savedState = localStorage.getItem('loaState');
     return savedState ? { ...defaultState, ...JSON.parse(savedState) } : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('loaState', JSON.stringify(loaState));
+    localStorage.setItem('loaState', JSON.stringify(loaState));
   }, [loaState]);
 
   const updateField = (field: keyof LOAState, value: string | boolean) => {

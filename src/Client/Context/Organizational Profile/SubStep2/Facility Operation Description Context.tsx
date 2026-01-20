@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface FacilityOperationState {
   checked: {
@@ -84,12 +84,12 @@ const defaultState: FacilityOperationState = {
 
 export const FacilityOperationProvider: React.FC<FacilityOperationProviderProps> = ({ children }) => {
   const [facilityOperation, setFacilityOperation] = useState<FacilityOperationState>(() => {
-    const savedState = Cookies.get('facilityOperationState');
+    const savedState = localStorage.getItem('facilityOperationState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('facilityOperationState', JSON.stringify(facilityOperation));
+    localStorage.setItem('facilityOperationState', JSON.stringify(facilityOperation));
   }, [facilityOperation]);
 
   const updateFacilityOperation = (newState: Partial<FacilityOperationState>) => {

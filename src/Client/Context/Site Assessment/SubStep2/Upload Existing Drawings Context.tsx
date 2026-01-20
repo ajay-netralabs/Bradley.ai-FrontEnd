@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface FileMetadata {
   name: string;
@@ -35,7 +35,7 @@ const defaultState: MEPDrawingsState = {
 
 export const MEPDrawingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [mepDrawingsState, setMEPDrawingsState] = useState<MEPDrawingsState>(() => {
-    const savedState = Cookies.get('mepDrawingsState');
+    const savedState = localStorage.getItem('mepDrawingsState');
     if (savedState) {
       const { fileMetadata } = JSON.parse(savedState);
       return { files: [], fileMetadata };
@@ -47,7 +47,7 @@ export const MEPDrawingsProvider: React.FC<{ children: ReactNode }> = ({ childre
     const stateToSave = {
       fileMetadata: mepDrawingsState.fileMetadata,
     };
-    Cookies.set('mepDrawingsState', JSON.stringify(stateToSave));
+    localStorage.setItem('mepDrawingsState', JSON.stringify(stateToSave));
   }, [mepDrawingsState.fileMetadata]);
 
   const addFiles = (newFiles: File[]) => {

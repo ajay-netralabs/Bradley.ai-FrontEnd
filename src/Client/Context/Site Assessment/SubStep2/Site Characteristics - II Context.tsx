@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface SiteCharacteristicsIIState {
   shifts: string;
@@ -34,12 +34,12 @@ const defaultState: SiteCharacteristicsIIState = {
 
 export const SiteCharacteristicsIIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [siteCharacteristicsIIState, setSiteCharacteristicsIIState] = useState<SiteCharacteristicsIIState>(() => {
-    const savedState = Cookies.get('siteCharacteristicsIIState');
+    const savedState = localStorage.getItem('siteCharacteristicsIIState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('siteCharacteristicsIIState', JSON.stringify(siteCharacteristicsIIState));
+    localStorage.setItem('siteCharacteristicsIIState', JSON.stringify(siteCharacteristicsIIState));
   }, [siteCharacteristicsIIState]);
 
   const updateField = (field: keyof SiteCharacteristicsIIState, value: string) => {

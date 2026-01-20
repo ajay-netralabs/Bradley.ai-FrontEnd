@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface WasteHeatSource {
   type: string;
@@ -40,12 +40,12 @@ const defaultState: ThermalEnergyNeedsIVState = {
 
 export const ThermalEnergyNeedsIVProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [thermalNeedsIVState, setThermalNeedsIVState] = useState<ThermalEnergyNeedsIVState>(() => {
-    const savedState = Cookies.get('thermalEnergyNeedsIVState');
+    const savedState = localStorage.getItem('thermalEnergyNeedsIVState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('thermalEnergyNeedsIVState', JSON.stringify(thermalNeedsIVState));
+    localStorage.setItem('thermalEnergyNeedsIVState', JSON.stringify(thermalNeedsIVState));
   }, [thermalNeedsIVState]);
 
   const updateField = (field: keyof ThermalEnergyNeedsIVState, value: string | boolean) => {

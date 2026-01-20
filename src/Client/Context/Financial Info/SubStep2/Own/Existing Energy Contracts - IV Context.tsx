@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface FileMetadata {
   name: string;
@@ -48,7 +48,7 @@ const defaultState: ExistingContractsIVState = {
 
 export const ExistingContractsIVProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [existingContractsIVState, setExistingContractsIVState] = useState<ExistingContractsIVState>(() => {
-    const savedState = Cookies.get('existingContractsIVState');
+    const savedState = localStorage.getItem('existingContractsIVState');
     if (savedState) {
       const { fileMetadata, ...rest } = JSON.parse(savedState);
       return { ...rest, files: [], fileMetadata: fileMetadata || [] };
@@ -58,7 +58,7 @@ export const ExistingContractsIVProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     const stateToSave = { ...existingContractsIVState, files: undefined };
-    Cookies.set('existingContractsIVState', JSON.stringify(stateToSave));
+    localStorage.setItem('existingContractsIVState', JSON.stringify(stateToSave));
   }, [existingContractsIVState]);
 
   const updateField = (field: keyof Omit<ExistingContractsIVState, 'files' | 'fileMetadata'>, value: string | boolean) => {

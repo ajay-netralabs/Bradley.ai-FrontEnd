@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface BoilerCogenerationSource {
   type: string;
@@ -41,12 +41,12 @@ const defaultState: BoilerCogenerationState = {
 
 export const BoilerCogenerationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [boilerCogenerationState, setBoilerCogenerationState] = useState<BoilerCogenerationState>(() => {
-    const savedState = Cookies.get('boilerCogenerationState');
+    const savedState = localStorage.getItem('boilerCogenerationState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('boilerCogenerationState', JSON.stringify(boilerCogenerationState));
+    localStorage.setItem('boilerCogenerationState', JSON.stringify(boilerCogenerationState));
   }, [boilerCogenerationState]);
 
   const addSource = () => {

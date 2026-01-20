@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface SelectedArea {
 	coordinates: [number, number][];
@@ -41,12 +41,12 @@ const defaultState: RoofMountSolarState = {
 
 export const RoofMountSolarProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	const [roofMountState, setRoofMountState] = useState<RoofMountSolarState>(() => {
-		const savedState = Cookies.get('roofMountSolarState');
+		const savedState = localStorage.getItem('roofMountSolarState');
 		return savedState ? JSON.parse(savedState) : defaultState;
 	});
 
 	useEffect(() => {
-		Cookies.set('roofMountSolarState', JSON.stringify(roofMountState));
+		localStorage.setItem('roofMountSolarState', JSON.stringify(roofMountState));
 	}, [roofMountState]);
 
 	const updateField = (field: keyof Omit<RoofMountSolarState, 'selectedAreas' | 'roofArea'>, value: string | boolean) => {

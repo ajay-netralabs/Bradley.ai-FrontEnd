@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface RoofingConsiderationsState {
   roofPenetration: string;
@@ -34,12 +34,12 @@ const defaultState: RoofingConsiderationsState = {
 
 export const RoofingConsiderationsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [roofingConsiderationsState, setRoofingConsiderationsState] = useState<RoofingConsiderationsState>(() => {
-    const savedState = Cookies.get('roofingConsiderationsState');
+    const savedState = localStorage.getItem('roofingConsiderationsState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('roofingConsiderationsState', JSON.stringify(roofingConsiderationsState));
+    localStorage.setItem('roofingConsiderationsState', JSON.stringify(roofingConsiderationsState));
   }, [roofingConsiderationsState]);
 
   const updateField = (field: keyof RoofingConsiderationsState, value: string) => {

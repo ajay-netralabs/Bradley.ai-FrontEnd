@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 // Interface for the serializable metadata of a file.
 interface FileMetadata {
@@ -46,7 +46,7 @@ const formatFileSize = (bytes: number): string => {
 
 export const NaturalGasBillUploadProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [naturalGasBillUploadState, setNaturalGasBillUploadState] = useState<NaturalGasBillUploadState>(() => {
-    const savedState = Cookies.get('naturalGasBillUploadState');
+    const savedState = localStorage.getItem('naturalGasBillUploadState');
     const initialState = savedState ? JSON.parse(savedState) : defaultState;
     initialState.files = []; // Ensure files are not persisted
     return initialState;
@@ -54,7 +54,7 @@ export const NaturalGasBillUploadProvider: React.FC<{ children: ReactNode }> = (
 
   useEffect(() => {
     const stateToSave = { ...naturalGasBillUploadState, files: undefined };
-    Cookies.set('naturalGasBillUploadState', JSON.stringify(stateToSave));
+    localStorage.setItem('naturalGasBillUploadState', JSON.stringify(stateToSave));
   }, [naturalGasBillUploadState]);
 
   const addFiles = (newFiles: File[]) => {

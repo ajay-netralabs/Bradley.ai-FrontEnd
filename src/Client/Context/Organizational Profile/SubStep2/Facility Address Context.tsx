@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 import L from 'leaflet';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -66,7 +66,7 @@ const generateId = (): string => uuidv4();;
 
 export const FacilityAddressProvider: React.FC<FacilityAddressProviderProps> = ({ children }) => {
   const [facilityAddressState, setFacilityAddressState] = useState<FacilityAddressState>(() => {
-    const savedState = Cookies.get('bradley_facilityAddressState');
+    const savedState = localStorage.getItem('bradley_facilityAddressState');
     if (savedState) {
       try {
         const parsedState = JSON.parse(savedState);
@@ -108,7 +108,7 @@ export const FacilityAddressProvider: React.FC<FacilityAddressProviderProps> = (
           : null,
       })),
     };
-    Cookies.set('bradley_facilityAddressState', JSON.stringify(stateToSave));
+    localStorage.setItem('bradley_facilityAddressState', JSON.stringify(stateToSave));
   }, [facilityAddressState]);
 
   const updateFacilityAddress = (newState: Partial<FacilityAddressState>) => {

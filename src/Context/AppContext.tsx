@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
+
 import { emissioncheckiqLogin, emissioncheckiqLogout, emissioncheckiqSessionCheck, emissioncheckiqBootstrap } from "../Demo/components/Auth";
 
 type ProductKey = "bradley" | "emissioncheckiq" | string;
@@ -61,13 +61,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPr
   const [authReady, setAuthReady] = useState(false);
   const [bootstrap, setBootstrap] = useState<any | null>(initialBootstrap);
 
-  const [currentStep, setCurrentStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentStep`) || 0));
-  const [currentSubStep, setCurrentSubStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentSubStep`) || 0));
-  const [currentFurtherSubStep, setCurrentFurtherSubStep] = useState(() => Number(Cookies.get(`${appPrefix}_currentFurtherSubStep`) || 0));
+  const [currentStep, setCurrentStep] = useState(() => Number(localStorage.getItem(`${appPrefix}_currentStep`) || 0));
+  const [currentSubStep, setCurrentSubStep] = useState(() => Number(localStorage.getItem(`${appPrefix}_currentSubStep`) || 0));
+  const [currentFurtherSubStep, setCurrentFurtherSubStep] = useState(() => Number(localStorage.getItem(`${appPrefix}_currentFurtherSubStep`) || 0));
   const getSubStepCount = (step: any) => Array.isArray(step.subSteps) ? step.subSteps.length : step.subSteps;
 
   const [visitedSteps, setVisitedSteps] = useState(() => {
-    const savedVisitedSteps = Cookies.get(`${appPrefix}_visitedSteps`);
+    const savedVisitedSteps = localStorage.getItem(`${appPrefix}_visitedSteps`);
     return savedVisitedSteps
       ? JSON.parse(savedVisitedSteps)
       : Array.from({ length: steps.length }, (_, i) =>
@@ -76,7 +76,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPr
   });
 
   const [completedSubSteps, setCompletedSubSteps] = useState(() => {
-    const savedCompletedSubSteps = Cookies.get(`${appPrefix}_completedSubSteps`);
+    const savedCompletedSubSteps = localStorage.getItem(`${appPrefix}_completedSubSteps`);
     return savedCompletedSubSteps
       ? JSON.parse(savedCompletedSubSteps)
       : Array.from({ length: steps.length }, (_, i) =>
@@ -85,20 +85,20 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPr
   });
 
   const [user, setUser] = useState<User | null>(() => {
-    const savedUser = Cookies.get(`${appPrefix}_user`);
+    const savedUser = localStorage.getItem(`${appPrefix}_user`);
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
   useEffect(() => {
-    Cookies.set(`${appPrefix}_currentStep`, currentStep.toString());
-    Cookies.set(`${appPrefix}_currentSubStep`, currentSubStep.toString());
-    Cookies.set(`${appPrefix}_currentFurtherSubStep`, currentFurtherSubStep.toString());
-    Cookies.set(`${appPrefix}_visitedSteps`, JSON.stringify(visitedSteps));
-    Cookies.set(`${appPrefix}_completedSubSteps`, JSON.stringify(completedSubSteps));
+    localStorage.setItem(`${appPrefix}_currentStep`, currentStep.toString());
+    localStorage.setItem(`${appPrefix}_currentSubStep`, currentSubStep.toString());
+    localStorage.setItem(`${appPrefix}_currentFurtherSubStep`, currentFurtherSubStep.toString());
+    localStorage.setItem(`${appPrefix}_visitedSteps`, JSON.stringify(visitedSteps));
+    localStorage.setItem(`${appPrefix}_completedSubSteps`, JSON.stringify(completedSubSteps));
     if (user) {
-      Cookies.set(`${appPrefix}_user`, JSON.stringify(user));
+      localStorage.setItem(`${appPrefix}_user`, JSON.stringify(user));
     } else {
-      Cookies.remove(`${appPrefix}_user`);
+      localStorage.removeItem(`${appPrefix}_user`);
     }
   }, [currentStep, currentSubStep, currentFurtherSubStep, visitedSteps, completedSubSteps, user, appPrefix]);
 
@@ -135,13 +135,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPr
 
   const login = (user: User) => {
     setUser(user);
-    Cookies.set(`${appPrefix}_user`, JSON.stringify(user));
+    localStorage.setItem(`${appPrefix}_user`, JSON.stringify(user));
   };
 
   const logout = () => {
     setUser(null);
-    Cookies.remove(`${appPrefix}_user`);
-    Cookies.remove('global_user');
+    localStorage.removeItem(`${appPrefix}_user`);
+    localStorage.removeItem('global_user');
     if (appPrefix === 'emissioncheckiq') {
       window.location.href = '/login/emissioncheckiq';
     } else {
@@ -212,7 +212,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPr
       await emissioncheckiqLogout();
     }
     setUser(null);
-    Cookies.remove('global_user'); // if you adopt global auth cookie
+    localStorage.removeItem('global_user'); // if you adopt global auth cookie
     if (product === "emissioncheckiq") {
       window.location.href = "/login/emissioncheckiq";
     } else {

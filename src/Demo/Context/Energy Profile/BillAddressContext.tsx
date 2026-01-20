@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface Bill {
   id: string;
@@ -37,7 +37,7 @@ interface BillAddressProviderProps {
 
 export const BillAddressProvider = ({ children, appPrefix }: BillAddressProviderProps) => {
   const [bills, setBills] = useState<Bill[]>(() => {
-    const saved = Cookies.get(`${appPrefix}_bills`);
+    const saved = localStorage.getItem(`${appPrefix}_bills`);
     if (saved) {
       try {
         const parsedBills = JSON.parse(saved);
@@ -53,16 +53,16 @@ export const BillAddressProvider = ({ children, appPrefix }: BillAddressProvider
   });
 
   const [addresses, setAddresses] = useState<Address[]>(() => {
-    const saved = Cookies.get(`${appPrefix}_addresses`);
+    const saved = localStorage.getItem(`${appPrefix}_addresses`);
     return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => {
-    Cookies.set(`${appPrefix}_bills`, JSON.stringify(bills));
+    localStorage.setItem(`${appPrefix}_bills`, JSON.stringify(bills));
   }, [bills, appPrefix]);
 
   useEffect(() => {
-    Cookies.set(`${appPrefix}_addresses`, JSON.stringify(addresses));
+    localStorage.setItem(`${appPrefix}_addresses`, JSON.stringify(addresses));
   }, [addresses, appPrefix]);
 
   const addBill = (bill: Omit<Bill, 'id' | 'dateRange' | 'addressId'>) => {

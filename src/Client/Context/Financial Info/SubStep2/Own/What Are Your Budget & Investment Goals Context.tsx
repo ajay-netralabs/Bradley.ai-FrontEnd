@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface BudgetGoalsState {
   yearBudget: string[];
@@ -33,12 +33,12 @@ const defaultState: BudgetGoalsState = {
 
 export const BudgetGoalsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [budgetGoalsState, setBudgetGoalsState] = useState<BudgetGoalsState>(() => {
-    const savedState = Cookies.get('budgetGoalsState');
+    const savedState = localStorage.getItem('budgetGoalsState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('budgetGoalsState', JSON.stringify(budgetGoalsState));
+    localStorage.setItem('budgetGoalsState', JSON.stringify(budgetGoalsState));
   }, [budgetGoalsState]);
 
   const updateField = (field: keyof Omit<BudgetGoalsState, 'yearBudget'>, value: string) => {

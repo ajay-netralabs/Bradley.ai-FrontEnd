@@ -1,7 +1,7 @@
 // src/Context/AnnualEnergySpendContext.tsx
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 // 1. Expand the interface to include all form fields
 interface AnnualEnergySpend {
@@ -38,7 +38,7 @@ interface AnnualEnergySpendProviderProps {
 export const AnnualEnergySpendProvider: React.FC<AnnualEnergySpendProviderProps> = ({ children }) => {
   // 2. Initialize state from cookies with the new, expanded shape
   const [annualEnergySpend, setAnnualEnergySpend] = useState<AnnualEnergySpend>(() => {
-    const savedSpend = Cookies.get('annualEnergySpend');
+    const savedSpend = localStorage.getItem('annualEnergySpend');
     return savedSpend ? JSON.parse(savedSpend) : {
       electricity: '',
       naturalGas: '',
@@ -54,7 +54,7 @@ export const AnnualEnergySpendProvider: React.FC<AnnualEnergySpendProviderProps>
 
   // This useEffect will automatically save the expanded state to cookies
   useEffect(() => {
-    Cookies.set('annualEnergySpend', JSON.stringify(annualEnergySpend));
+    localStorage.setItem('annualEnergySpend', JSON.stringify(annualEnergySpend));
   }, [annualEnergySpend]);
 
   const updateAnnualEnergySpend = (spend: Partial<AnnualEnergySpend>) => {

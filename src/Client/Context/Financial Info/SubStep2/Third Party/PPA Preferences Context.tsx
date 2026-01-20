@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface PPAPreferencesState {
   electricityRate: string;
@@ -32,12 +32,12 @@ const defaultState: PPAPreferencesState = {
 
 export const PPAPreferencesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [ppaPreferencesState, setPPAPreferencesState] = useState<PPAPreferencesState>(() => {
-    const savedState = Cookies.get('ppaPreferencesState');
+    const savedState = localStorage.getItem('ppaPreferencesState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('ppaPreferencesState', JSON.stringify(ppaPreferencesState));
+    localStorage.setItem('ppaPreferencesState', JSON.stringify(ppaPreferencesState));
   }, [ppaPreferencesState]);
 
   const updateField = (field: keyof PPAPreferencesState, value: string | number) => {

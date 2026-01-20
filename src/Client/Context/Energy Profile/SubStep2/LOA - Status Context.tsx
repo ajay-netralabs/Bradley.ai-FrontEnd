@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 type LoaStatusType = 'Awaiting Approval' | 'Approved' | 'Declined' | 'LOA Not Signed';
 
@@ -30,12 +30,12 @@ const defaultState: LOAStatusState = {
 
 export const LOAStatusProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [loaStatusState, setLOAStatusState] = useState<LOAStatusState>(() => {
-    const savedState = Cookies.get('loaStatusState');
+    const savedState = localStorage.getItem('loaStatusState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('loaStatusState', JSON.stringify(loaStatusState));
+    localStorage.setItem('loaStatusState', JSON.stringify(loaStatusState));
   }, [loaStatusState]);
 
   const updateLOAStatus = (status: LoaStatusType, details?: string) => {

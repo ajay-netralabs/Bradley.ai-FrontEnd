@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 type Preference = 'own' | 'third-party' | null;
 
@@ -28,12 +28,12 @@ const defaultState: OwnershipPreferenceState = {
 
 export const OwnershipPreferenceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [ownershipPreference, setOwnershipPreferenceState] = useState<OwnershipPreferenceState>(() => {
-    const savedState = Cookies.get('ownershipPreference');
+    const savedState = localStorage.getItem('ownershipPreference');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('ownershipPreference', JSON.stringify(ownershipPreference));
+    localStorage.setItem('ownershipPreference', JSON.stringify(ownershipPreference));
   }, [ownershipPreference]);
 
   const setOwnershipPreference = (preference: Preference) => {

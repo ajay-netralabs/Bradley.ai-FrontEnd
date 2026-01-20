@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface CarportSolarState {
   roofPenetration: string;
@@ -36,12 +36,12 @@ const defaultState: CarportSolarState = {
 
 export const CarportSolarProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [carportSolarState, setCarportSolarState] = useState<CarportSolarState>(() => {
-    const savedState = Cookies.get('carportSolarState');
+    const savedState = localStorage.getItem('carportSolarState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('carportSolarState', JSON.stringify(carportSolarState));
+    localStorage.setItem('carportSolarState', JSON.stringify(carportSolarState));
   }, [carportSolarState]);
 
   const updateField = (field: keyof CarportSolarState, value: string) => {

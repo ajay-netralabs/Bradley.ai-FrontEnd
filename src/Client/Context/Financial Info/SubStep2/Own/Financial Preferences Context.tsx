@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface FinancialPreferencesState {
   taxAppetite: string;
@@ -32,12 +32,12 @@ const defaultState: FinancialPreferencesState = {
 
 export const FinancialPreferencesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [financialPreferencesState, setFinancialPreferencesState] = useState<FinancialPreferencesState>(() => {
-    const savedState = Cookies.get('financialPreferencesState');
+    const savedState = localStorage.getItem('financialPreferencesState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('financialPreferencesState', JSON.stringify(financialPreferencesState));
+    localStorage.setItem('financialPreferencesState', JSON.stringify(financialPreferencesState));
   }, [financialPreferencesState]);
 
   const updateField = (field: keyof FinancialPreferencesState, value: string | number) => {

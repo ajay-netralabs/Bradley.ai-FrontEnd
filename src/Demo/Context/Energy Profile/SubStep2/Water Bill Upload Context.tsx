@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 // Interface for the serializable metadata of a file.
 interface FileMetadata {
@@ -46,7 +46,7 @@ const formatFileSize = (bytes: number): string => {
 
 export const WaterBillUploadProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [waterBillUploadState, setWaterBillUploadState] = useState<WaterBillUploadState>(() => {
-    const savedState = Cookies.get('waterBillUploadState');
+    const savedState = localStorage.getItem('waterBillUploadState');
     const initialState = savedState ? JSON.parse(savedState) : defaultState;
     initialState.files = []; // Ensure files are not persisted
     return initialState;
@@ -54,7 +54,7 @@ export const WaterBillUploadProvider: React.FC<{ children: ReactNode }> = ({ chi
 
   useEffect(() => {
     const stateToSave = { ...waterBillUploadState, files: undefined };
-    Cookies.set('waterBillUploadState', JSON.stringify(stateToSave));
+    localStorage.setItem('waterBillUploadState', JSON.stringify(stateToSave));
   }, [waterBillUploadState]);
 
   const addFiles = (newFiles: File[]) => {

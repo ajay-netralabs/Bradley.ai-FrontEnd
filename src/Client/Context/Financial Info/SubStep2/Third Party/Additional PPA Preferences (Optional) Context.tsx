@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface AdditionalPPAPreferencesState {
   preferencesText: string;
@@ -26,12 +26,12 @@ const defaultState: AdditionalPPAPreferencesState = {
 
 export const AdditionalPPAPreferencesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [additionalPPAPreferencesState, setAdditionalPPAPreferencesState] = useState<AdditionalPPAPreferencesState>(() => {
-    const savedState = Cookies.get('additionalPPAPreferencesState');
+    const savedState = localStorage.getItem('additionalPPAPreferencesState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('additionalPPAPreferencesState', JSON.stringify(additionalPPAPreferencesState));
+    localStorage.setItem('additionalPPAPreferencesState', JSON.stringify(additionalPPAPreferencesState));
   }, [additionalPPAPreferencesState]);
 
   const updateField = (field: keyof AdditionalPPAPreferencesState, value: string) => {

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface OtherEnergyCommitmentsState {
   commitmentsText: string;
@@ -26,12 +26,12 @@ const defaultState: OtherEnergyCommitmentsState = {
 
 export const OtherEnergyCommitmentsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [otherEnergyCommitmentsState, setOtherEnergyCommitmentsState] = useState<OtherEnergyCommitmentsState>(() => {
-    const savedState = Cookies.get('otherEnergyCommitmentsState');
+    const savedState = localStorage.getItem('otherEnergyCommitmentsState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('otherEnergyCommitmentsState', JSON.stringify(otherEnergyCommitmentsState));
+    localStorage.setItem('otherEnergyCommitmentsState', JSON.stringify(otherEnergyCommitmentsState));
   }, [otherEnergyCommitmentsState]);
 
   const updateField = (field: keyof OtherEnergyCommitmentsState, value: string) => {

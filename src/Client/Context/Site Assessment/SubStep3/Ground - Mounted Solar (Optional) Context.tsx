@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface SelectedArea {
   coordinates: [number, number][];
@@ -41,12 +41,12 @@ const defaultState: GroundMountSolarState = {
 
 export const GroundMountSolarProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [groundMountState, setGroundMountState] = useState<GroundMountSolarState>(() => {
-    const savedState = Cookies.get('groundMountSolarState');
+    const savedState = localStorage.getItem('groundMountSolarState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('groundMountSolarState', JSON.stringify(groundMountState));
+    localStorage.setItem('groundMountSolarState', JSON.stringify(groundMountState));
   }, [groundMountState]);
 
   const updateField = (field: keyof Omit<GroundMountSolarState, 'selectedAreas' | 'landArea'>, value: string | boolean) => {

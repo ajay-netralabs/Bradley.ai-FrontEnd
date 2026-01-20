@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface PrioritizationIState {
   selectedRanks: { [key: number]: string };
@@ -30,12 +30,12 @@ const defaultState: PrioritizationIState = {
 
 export const PrioritizationIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [prioritizationIState, setPrioritizationIState] = useState<PrioritizationIState>(() => {
-    const savedState = Cookies.get('prioritizationIState');
+    const savedState = localStorage.getItem('prioritizationIState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('prioritizationIState', JSON.stringify(prioritizationIState));
+    localStorage.setItem('prioritizationIState', JSON.stringify(prioritizationIState));
   }, [prioritizationIState]);
 
   const updateRank = (rank: number, value: string) => {

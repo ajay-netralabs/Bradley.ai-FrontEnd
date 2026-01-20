@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 export const brandMapping = {
   "Reciprocating (Piston) Engines": ['Aggreko', 'AKSA', 'AP Electric & Generators', 'Briggs & Stratton', 'Caterpillar', 'Cummins', 'Deutz', 'Doosan', 'Generac', 'INNIO (Jenbacher, Waukesha)', 'Kohler', 'Kubota', 'MAN', 'MTU', 'Rolls-Royce', 'Taylor Power Systems', 'Wärtsilä'],
@@ -57,12 +57,12 @@ const defaultState: EquipmentPreferencesState = {
 
 export const EquipmentPreferencesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [equipmentPreferencesState, setEquipmentPreferencesState] = useState<EquipmentPreferencesState>(() => {
-    const savedState = Cookies.get('equipmentPreferencesState');
+    const savedState = localStorage.getItem('equipmentPreferencesState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('equipmentPreferencesState', JSON.stringify(equipmentPreferencesState));
+    localStorage.setItem('equipmentPreferencesState', JSON.stringify(equipmentPreferencesState));
   }, [equipmentPreferencesState]);
 
   const updateField = (field: keyof EquipmentPreferencesState, value: string) => {

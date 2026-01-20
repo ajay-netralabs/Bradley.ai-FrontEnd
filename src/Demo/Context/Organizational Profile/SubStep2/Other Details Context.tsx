@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface OwnerEntityDetails {
   legalName: string;
@@ -90,12 +90,12 @@ const defaultState: OtherDetailsState = {
 
 export const OtherDetailsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [otherDetails, setOtherDetails] = useState<OtherDetailsState>(() => {
-    const savedState = Cookies.get('otherDetailsState');
+    const savedState = localStorage.getItem('otherDetailsState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('otherDetailsState', JSON.stringify(otherDetails));
+    localStorage.setItem('otherDetailsState', JSON.stringify(otherDetails));
   }, [otherDetails]);
 
   const updateOtherDetails = (newState: Partial<OtherDetailsState>) => {

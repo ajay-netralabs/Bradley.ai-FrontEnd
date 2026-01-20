@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface FinancialsIIState {
   investmentAmounts: string[];
@@ -37,12 +37,12 @@ const defaultState: FinancialsIIState = {
 
 export const FinancialsIIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [financialsIIState, setFinancialsIIState] = useState<FinancialsIIState>(() => {
-    const savedState = Cookies.get('financialsIIState');
+    const savedState = localStorage.getItem('financialsIIState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('financialsIIState', JSON.stringify(financialsIIState));
+    localStorage.setItem('financialsIIState', JSON.stringify(financialsIIState));
   }, [financialsIIState]);
 
   const updateField = (field: keyof Omit<FinancialsIIState, 'investmentAmounts'>, value: string) => {

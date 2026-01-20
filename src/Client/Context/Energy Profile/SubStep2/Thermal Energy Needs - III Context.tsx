@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface ThermalEnergyNeedsIIIState {
   showChilledWater: boolean;
@@ -40,12 +40,12 @@ const defaultState: ThermalEnergyNeedsIIIState = {
 
 export const ThermalEnergyNeedsIIIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [thermalNeedsIIIState, setThermalNeedsIState] = useState<ThermalEnergyNeedsIIIState>(() => {
-    const savedState = Cookies.get('thermalEnergyNeedsIIIState');
+    const savedState = localStorage.getItem('thermalEnergyNeedsIIIState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('thermalEnergyNeedsIIIState', JSON.stringify(thermalNeedsIIIState));
+    localStorage.setItem('thermalEnergyNeedsIIIState', JSON.stringify(thermalNeedsIIIState));
   }, [thermalNeedsIIIState]);
 
   const updateField = (field: keyof ThermalEnergyNeedsIIIState, value: string | boolean) => {

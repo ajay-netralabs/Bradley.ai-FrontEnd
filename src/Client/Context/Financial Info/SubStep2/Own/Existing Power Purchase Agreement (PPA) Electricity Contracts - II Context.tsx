@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface FileMetadata {
   name: string;
@@ -48,7 +48,7 @@ const defaultState: ExistingPPAContractsIIState = {
 
 export const ExistingPPAContractsIIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [ppaContractsIIState, setPPAContractsIIState] = useState<ExistingPPAContractsIIState>(() => {
-    const savedState = Cookies.get('existingPPAContractsIIState');
+    const savedState = localStorage.getItem('existingPPAContractsIIState');
     if (savedState) {
         const { fileMetadata, ...rest } = JSON.parse(savedState);
         return { ...rest, files: [], fileMetadata: fileMetadata || [] };
@@ -61,7 +61,7 @@ export const ExistingPPAContractsIIProvider: React.FC<{ children: ReactNode }> =
       ...ppaContractsIIState,
       files: undefined, // Don't save File objects
     };
-    Cookies.set('existingPPAContractsIIState', JSON.stringify(stateToSave));
+    localStorage.setItem('existingPPAContractsIIState', JSON.stringify(stateToSave));
   }, [ppaContractsIIState]);
 
   const updateField = (field: keyof Omit<ExistingPPAContractsIIState, 'files' | 'fileMetadata'>, value: string | boolean) => {

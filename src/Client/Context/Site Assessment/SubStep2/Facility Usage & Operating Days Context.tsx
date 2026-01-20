@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface FacilityUsageState {
   facilityUsage: string[];
@@ -32,12 +32,12 @@ const defaultState: FacilityUsageState = {
 
 export const FacilityUsageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [facilityUsageState, setFacilityUsageState] = useState<FacilityUsageState>(() => {
-    const savedState = Cookies.get('facilityUsageState');
+    const savedState = localStorage.getItem('facilityUsageState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('facilityUsageState', JSON.stringify(facilityUsageState));
+    localStorage.setItem('facilityUsageState', JSON.stringify(facilityUsageState));
   }, [facilityUsageState]);
 
   const updateMultiSelect = (field: 'facilityUsage' | 'daysOfOperation', value: string[]) => {

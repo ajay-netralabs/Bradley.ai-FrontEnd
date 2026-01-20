@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface FinancialsIState {
   acceptableIRR: string;
@@ -30,12 +30,12 @@ const defaultState: FinancialsIState = {
 
 export const FinancialsIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [financialsIState, setFinancialsIState] = useState<FinancialsIState>(() => {
-    const savedState = Cookies.get('financialsIState');
+    const savedState = localStorage.getItem('financialsIState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('financialsIState', JSON.stringify(financialsIState));
+    localStorage.setItem('financialsIState', JSON.stringify(financialsIState));
   }, [financialsIState]);
 
   const updateField = (field: keyof FinancialsIState, value: string) => {

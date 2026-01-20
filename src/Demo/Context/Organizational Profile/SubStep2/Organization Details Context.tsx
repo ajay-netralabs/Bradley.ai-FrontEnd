@@ -1,7 +1,7 @@
 // src/Context/OrganizationDetailsContext.tsx
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface OrganizationDetails {
   organizationName: string;
@@ -35,7 +35,7 @@ interface OrganizationDetailsProviderProps {
 
 export const OrganizationDetailsProvider: React.FC<OrganizationDetailsProviderProps> = ({ children }) => {
   const [organizationDetailsState, setOrganizationDetailsState] = useState<OrganizationDetails>(() => {
-    const savedDetails = Cookies.get('organizationDetailsState');
+    const savedDetails = localStorage.getItem('organizationDetailsState');
     return savedDetails ? JSON.parse(savedDetails) : {
       organizationName: '',
       userName: '',
@@ -49,7 +49,7 @@ export const OrganizationDetailsProvider: React.FC<OrganizationDetailsProviderPr
   });
 
   useEffect(() => {
-    Cookies.set('organizationDetailsState', JSON.stringify(organizationDetailsState));
+    localStorage.setItem('organizationDetailsState', JSON.stringify(organizationDetailsState));
   }, [organizationDetailsState]);
 
   const updateOrganizationDetails = (details: Partial<OrganizationDetails>) => {

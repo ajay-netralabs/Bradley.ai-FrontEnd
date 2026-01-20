@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface ExistingContractsIState {
   hasThirdPartyContract: boolean;
@@ -34,12 +34,12 @@ const defaultState: ExistingContractsIState = {
 
 export const ExistingContractsIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [existingContractsIState, setExistingContractsIState] = useState<ExistingContractsIState>(() => {
-    const savedState = Cookies.get('existingContractsIState');
+    const savedState = localStorage.getItem('existingContractsIState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('existingContractsIState', JSON.stringify(existingContractsIState));
+    localStorage.setItem('existingContractsIState', JSON.stringify(existingContractsIState));
   }, [existingContractsIState]);
 
   const updateField = (field: keyof ExistingContractsIState, value: string | boolean) => {

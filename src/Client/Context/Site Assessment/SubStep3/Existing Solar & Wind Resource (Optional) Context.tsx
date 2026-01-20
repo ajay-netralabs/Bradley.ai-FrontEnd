@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface ExistingAssetsState {
   existingSolar: string;
@@ -30,12 +30,12 @@ const defaultState: ExistingAssetsState = {
 
 export const ExistingAssetsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [existingAssetsState, setExistingAssetsState] = useState<ExistingAssetsState>(() => {
-    const savedState = Cookies.get('existingAssetsState');
+    const savedState = localStorage.getItem('existingAssetsState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('existingAssetsState', JSON.stringify(existingAssetsState));
+    localStorage.setItem('existingAssetsState', JSON.stringify(existingAssetsState));
   }, [existingAssetsState]);
 
   const updateField = (field: keyof ExistingAssetsState, value: string) => {

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+
 
 interface BreakerAmperageField {
   id: string;
@@ -56,12 +56,12 @@ const defaultState: SiteCharacteristicsIState = {
 
 export const SiteCharacteristicsIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [siteCharacteristicsIState, setSiteCharacteristicsIState] = useState<SiteCharacteristicsIState>(() => {
-    const savedState = Cookies.get('siteCharacteristicsIState');
+    const savedState = localStorage.getItem('siteCharacteristicsIState');
     return savedState ? JSON.parse(savedState) : defaultState;
   });
 
   useEffect(() => {
-    Cookies.set('siteCharacteristicsIState', JSON.stringify(siteCharacteristicsIState));
+    localStorage.setItem('siteCharacteristicsIState', JSON.stringify(siteCharacteristicsIState));
   }, [siteCharacteristicsIState]);
 
   const updateField = (field: keyof Omit<SiteCharacteristicsIState, 'breakers' | 'numberOfOpenBreakers'>, value: string | boolean) => {
