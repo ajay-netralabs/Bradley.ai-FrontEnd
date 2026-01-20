@@ -1,5 +1,5 @@
 import React, { useState, Suspense, lazy } from 'react';
-import { Box, CircularProgress } from '@mui/material';
+import { Box/* , CircularProgress */ } from '@mui/material';
 import Navbar from '../components/Navbar';
 import AnalystSidebar from '../components/AnalystSidebar';
 import Footer from '../components/Footer';
@@ -66,7 +66,7 @@ const AnalystApp: React.FC = () => {
               }}
             >
               <Box sx={{ flexGrow: 1 }}>
-                <Suspense fallback={<CircularProgress />}>
+                <Suspense /* fallback={<CircularProgress />} */>
                   {renderPage()}
                 </Suspense>
               </Box>
