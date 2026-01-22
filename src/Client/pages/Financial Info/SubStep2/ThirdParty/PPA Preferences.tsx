@@ -1,22 +1,28 @@
 import React from 'react';
 import { Box, TextField, Typography, Slider, Tooltip, InputAdornment } from '@mui/material';
-import { usePPAPreferences } from  '../../../../Context/Financial Info/SubStep2/Third Party/PPA Preferences Context';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { updatePPAPrefField, PPAPreferencesState } from '../../../../../store/slices/financialInfoSlice';
 
 const SubStep2: React.FC = () => {
-  const { ppaPreferencesState, updateField } = usePPAPreferences();
+  const dispatch = useAppDispatch();
+  const ppaPreferencesState = useAppSelector((state) => state.financialInfo.ppaPreferences);
   const { electricityRate, thermalRate, ppaTerm, escalationRate } = ppaPreferencesState;
+
+  const handleUpdateField = (field: keyof PPAPreferencesState, value: string | number) => {
+      dispatch(updatePPAPrefField({ field, value }));
+  };
 
   const handleElectricityRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (/^0(\.\d{0,2})?$/.test(value) || value === '0' || value === '') {
-      updateField('electricityRate', value);
+      handleUpdateField('electricityRate', value);
     }
   };
 
   const handleThermalRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (/^\d{0,2}(\.\d{0,2})?$/.test(value)) {
-      updateField('thermalRate', value);
+      handleUpdateField('thermalRate', value);
     }
   };
 
@@ -36,7 +42,7 @@ const SubStep2: React.FC = () => {
             <Slider
               sx={{ flex: 0.348 }}
               value={ppaTerm}
-              onChange={(_, value) => updateField('ppaTerm', value as number)}
+              onChange={(_, value) => handleUpdateField('ppaTerm', value as number)}
               aria-label="PPA Term"
               valueLabelDisplay="auto"
               min={10}
@@ -71,7 +77,7 @@ const SubStep2: React.FC = () => {
             <Slider
               sx={{ flex: 0.348 }}
               value={escalationRate}
-              onChange={(_, value) => updateField('escalationRate', value as number)}
+              onChange={(_, value) => handleUpdateField('escalationRate', value as number)}
               aria-label="Escalation Rate"
               valueLabelDisplay="auto"
               min={0.5} max={5}

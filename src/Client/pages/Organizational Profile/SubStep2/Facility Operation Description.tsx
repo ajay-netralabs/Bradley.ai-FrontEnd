@@ -1,6 +1,7 @@
 import React/* , { useState } */, {useRef} from 'react';
 import { Box, TextField, Typography, FormControlLabel, Checkbox, Tooltip, Select, MenuItem, /* OutlinedInput, */ FormControl, SelectChangeEvent, InputAdornment, IconButton } from '@mui/material';
-import { useFacilityOperation } from '../../../Context/Organizational Profile/SubStep2/Facility Operation Description Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateFacilityOperation, FacilityOperationState } from '../../../../store/slices/organizationalProfileSlice';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 // interface DescriptionState {
@@ -15,8 +16,13 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const SubStep2: React.FC = () => {
   // 2. Get the entire state object and the update function from the context.
-  const { facilityOperation, updateFacilityOperation } = useFacilityOperation();
+  const dispatch = useAppDispatch();
+  const facilityOperation = useAppSelector((state) => state.organizationalProfile.facilityOperation);
   const { checked, description, operationalHours, typicalHours, setbackTemperature, facilityTenantTemperature } = facilityOperation;
+
+  const handleUpdateFacilityOperation = (newState: Partial<FacilityOperationState>) => {
+      dispatch(updateFacilityOperation(newState));
+  };
 
   // 3. Create handlers that update the central context state.
   const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,25 +38,25 @@ const SubStep2: React.FC = () => {
 
     // If unchecking water treatment, also clear its description
     if (name === 'waterTreatment' && !isChecked) {
-      updateFacilityOperation({
+      handleUpdateFacilityOperation({
         checked: newChecked,
         description: { ...description, waterTreatment: [] }
       });
     } else {
-      updateFacilityOperation({ checked: newChecked });
+      handleUpdateFacilityOperation({ checked: newChecked });
     }
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target as { name: keyof typeof description, value: string };
-    updateFacilityOperation({
+    handleUpdateFacilityOperation({
       description: { ...description, [name]: value }
     });
   };
 
   const handleWaterTreatmentChange = (event: SelectChangeEvent<string[]>) => {
     const { target: { value } } = event;
-    updateFacilityOperation({
+    handleUpdateFacilityOperation({
       description: { ...description, waterTreatment: typeof value === 'string' ? value.split(',') : value }
     });
   };
@@ -60,7 +66,7 @@ const SubStep2: React.FC = () => {
     type: 'operationalHours' | 'typicalHours'
   ) => {
     const { name, value } = event.target;
-    updateFacilityOperation({
+    handleUpdateFacilityOperation({
       [type]: { ...facilityOperation[type], [name]: value }
     });
   };
@@ -68,7 +74,7 @@ const SubStep2: React.FC = () => {
   const handleSetbackTemperatureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     if (value.length <= 2) {
-      updateFacilityOperation({
+      handleUpdateFacilityOperation({
         setbackTemperature: { ...setbackTemperature, [name]: value }
       });
     }
@@ -77,7 +83,7 @@ const SubStep2: React.FC = () => {
   const handleFacilityTenantTemperatureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     if (value.length <= 2) {
-      updateFacilityOperation({ facilityTenantTemperature: value });
+      handleUpdateFacilityOperation({ facilityTenantTemperature: value });
     }
   };
 

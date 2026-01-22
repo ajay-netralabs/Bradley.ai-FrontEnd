@@ -2,11 +2,35 @@ import React from 'react';
 import { Box, TextField, Typography, IconButton, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useSolarAssets } from '../../../Context/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { 
+    updateSolarAssetsField, 
+    updateRoofSection, 
+    addRoofSection, 
+    removeRoofSection, 
+    SolarAssetsState 
+} from '../../../../store/slices/siteAssessmentSlice';
 
 const SubStep3: React.FC = () => {
-  const { solarAssetsState, updateField, addRoofSection, removeRoofSection, updateRoofSection } = useSolarAssets();
+  const dispatch = useAppDispatch();
+  const solarAssetsState = useAppSelector((state) => state.siteAssessment.solarAssets);
   const { roofSections, roofLoadCapacity, buildingClassification } = solarAssetsState;
+
+  const handleUpdateField = (field: keyof Omit<SolarAssetsState, 'roofSections'>, value: string) => {
+      dispatch(updateSolarAssetsField({ field, value }));
+  };
+
+  const handleUpdateRoofSection = (index: number, value: string) => {
+      dispatch(updateRoofSection({ index, value }));
+  };
+
+  const handleAddRoofSection = () => {
+      dispatch(addRoofSection());
+  };
+
+  const handleRemoveRoofSection = (index: number) => {
+      dispatch(removeRoofSection(index));
+  };
 
   const formatNumber = (value: string): string => {
     const numericValue = value.replace(/[^0-9]/g, '');
@@ -15,19 +39,19 @@ const SubStep3: React.FC = () => {
   };
 
   const handleRoofSectionChange = (index: number, value: string) => {
-    updateRoofSection(index, formatNumber(value));
+    handleUpdateRoofSection(index, formatNumber(value));
   };
   
   const handleRoofSectionBlur = (index: number) => {
-    updateRoofSection(index, formatNumber(roofSections[index]));
+    handleUpdateRoofSection(index, formatNumber(roofSections[index]));
   };
 
   const handleRoofLoadCapacityChange = (value: string) => {
-    updateField('roofLoadCapacity', formatNumber(value));
+    handleUpdateField('roofLoadCapacity', formatNumber(value));
   };
 
   const handleRoofLoadCapacityBlur = () => {
-    updateField('roofLoadCapacity', formatNumber(roofLoadCapacity));
+    handleUpdateField('roofLoadCapacity', formatNumber(roofLoadCapacity));
   };
 
   return (
@@ -52,10 +76,10 @@ const SubStep3: React.FC = () => {
               <TextField key={index} variant="outlined" size="small" type="text" value={value} onChange={(e) => handleRoofSectionChange(index, e.target.value)} onBlur={() => handleRoofSectionBlur(index)} placeholder={`Sec. ${index + 1} Area`} sx={{ flex: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
             ))}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
-              <IconButton onClick={addRoofSection} color="primary" sx={{ p: 0, '&:focus': { outline: 'none' } }}>
+              <IconButton onClick={handleAddRoofSection} color="primary" sx={{ p: 0, '&:focus': { outline: 'none' } }}>
                 <AddCircleOutlineIcon fontSize="small" />
               </IconButton>
-              <IconButton onClick={() => removeRoofSection(roofSections.length - 1)} sx={{ p: 0, '&:focus': { outline: 'none' } }} disabled={roofSections.length === 1}>
+              <IconButton onClick={() => handleRemoveRoofSection(roofSections.length - 1)} sx={{ p: 0, '&:focus': { outline: 'none' } }} disabled={roofSections.length === 1}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Box>
@@ -79,7 +103,7 @@ const SubStep3: React.FC = () => {
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 0.3 }}>
             <b>Building Classification:</b> (Optional)
           </Typography>
-          <Select size="small" value={buildingClassification} onChange={(e: SelectChangeEvent) => updateField('buildingClassification', e.target.value)} sx={{ flex: 0.7, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
+          <Select size="small" value={buildingClassification} onChange={(e: SelectChangeEvent) => handleUpdateField('buildingClassification', e.target.value)} sx={{ flex: 0.7, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
             <MenuItem value="default" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select Classification</MenuItem>
             <MenuItem value="Class 3" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Class 3 (loads must be restored automatically by the emergency power system within a set time<br />(typically 10 seconds), but carry a lower reliability requirement than Class 4 “life‐safety” loads)</MenuItem>
             <MenuItem value="Class 4" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Class 4 (highest priority load - requires increased reliability, with automatic transfer, redundancy,<br />and routine testing)</MenuItem>

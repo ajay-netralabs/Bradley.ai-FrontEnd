@@ -1,9 +1,15 @@
 import React from 'react';
 import { Box, TextField, Typography, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useOtherSiteCharacteristics } from '../../../Context/Site Assessment/SubStep2/Other Site Characteristics Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateOtherField, OtherSiteCharacteristicsState } from '../../../../store/slices/siteAssessmentSlice';
 
 const SubStep2: React.FC = () => {
-  const { otherCharacteristicsState, updateField } = useOtherSiteCharacteristics();
+  const dispatch = useAppDispatch();
+  const otherCharacteristicsState = useAppSelector((state) => state.siteAssessment.otherCharacteristics);
+
+  const handleUpdateField = (field: keyof OtherSiteCharacteristicsState, value: string) => {
+      dispatch(updateOtherField({ field, value }));
+  };
 
   const voltageFields = [
     { 
@@ -62,7 +68,7 @@ const SubStep2: React.FC = () => {
     if (numericValue === '' || (numValue >= 1 && numValue <= 1000000)) {
       // Format with commas and update state
       const formattedValue = formatNumberWithCommas(numericValue);
-      updateField(`${fieldName}CustomValue` as keyof typeof otherCharacteristicsState, formattedValue);
+      handleUpdateField(`${fieldName}CustomValue` as keyof typeof otherCharacteristicsState, formattedValue);
     }
   };
 
@@ -88,7 +94,7 @@ const SubStep2: React.FC = () => {
               multiline
               rows={2}
               value={otherCharacteristicsState.uniqueFeatures}
-              onChange={(e) => updateField('uniqueFeatures', e.target.value)}
+              onChange={(e) => handleUpdateField('uniqueFeatures', e.target.value)}
               sx={{
                 flex: 0.4,
                 fontSize: '0.7rem',
@@ -109,7 +115,7 @@ const SubStep2: React.FC = () => {
               size="small"
               variant="outlined"
               value={otherCharacteristicsState[topographyField.name as keyof typeof otherCharacteristicsState]}
-              onChange={(e: SelectChangeEvent) => updateField(topographyField.name as keyof typeof otherCharacteristicsState, e.target.value)}
+              onChange={(e: SelectChangeEvent) => handleUpdateField(topographyField.name as keyof typeof otherCharacteristicsState, e.target.value)}
               sx={{
                 flex: 0.4,
                 fontFamily: 'Nunito Sans, sans-serif',
@@ -140,7 +146,7 @@ const SubStep2: React.FC = () => {
                   size="small"
                   variant="outlined"
                   value={otherCharacteristicsState[field.name as keyof typeof otherCharacteristicsState]}
-                  onChange={(e: SelectChangeEvent) => updateField(field.name as keyof typeof otherCharacteristicsState, e.target.value)}
+                  onChange={(e: SelectChangeEvent) => handleUpdateField(field.name as keyof typeof otherCharacteristicsState, e.target.value)}
                   sx={{
                     flex: shouldShowCustomVoltageInput(field.name) ? 0.5 : 1,
                     fontFamily: 'Nunito Sans, sans-serif',

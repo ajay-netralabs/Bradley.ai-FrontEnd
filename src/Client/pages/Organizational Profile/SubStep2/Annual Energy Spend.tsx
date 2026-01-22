@@ -1,6 +1,7 @@
 import React/* , { useState } */ from 'react';
 import { Box, TextField, Typography, Tooltip, InputAdornment } from '@mui/material';
-import { useAnnualEnergySpend } from '../../../Context/Organizational Profile/SubStep2/Annual Energy Spend Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateAnnualEnergySpend, AnnualEnergySpendState } from '../../../../store/slices/organizationalProfileSlice';
 
 const formatNumber = (value: string) => {
   if (!value) return '';
@@ -14,13 +15,18 @@ const parseInput = (value: string) => {
 };
 
 const SubStep2: React.FC = () => {
-  const { annualEnergySpend, updateAnnualEnergySpend } = useAnnualEnergySpend();
+  const dispatch = useAppDispatch();
+  const annualEnergySpend = useAppSelector((state) => state.organizationalProfile.annualEnergySpend);
+
+  const handleUpdateAnnualEnergySpend = (spend: Partial<AnnualEnergySpendState>) => {
+      dispatch(updateAnnualEnergySpend(spend));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
   
     if (name === 'otherLabel') {
-      updateAnnualEnergySpend({ [name]: value });
+      handleUpdateAnnualEnergySpend({ [name]: value });
       return;
     }
 
@@ -30,7 +36,7 @@ const SubStep2: React.FC = () => {
       return;
     }
     
-    updateAnnualEnergySpend({ [name]: parsedValue });
+    handleUpdateAnnualEnergySpend({ [name]: parsedValue });
   };
 
   const renderCurrencyField = (label: string, name: keyof typeof annualEnergySpend, tooltip: string) => (
@@ -49,7 +55,7 @@ const SubStep2: React.FC = () => {
           type="text"
           value={formatNumber(annualEnergySpend[name])}
           onChange={handleChange}
-          name={name}
+          name={String(name)}
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
           }}

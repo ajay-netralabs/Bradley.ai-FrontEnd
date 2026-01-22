@@ -3,22 +3,40 @@ import { Box, Typography, TextField, List, ListItem, IconButton, Tooltip, Select
 
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useElectricBillUpload } from '../../../Context/Energy Profile/SubStep2/Electric Bill Upload Context'
-import { useBillAddress } from '../../../Context/Energy Profile/BillAddressContext';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import {
+  addElectricFiles,
+  removeElectricFile,
+  addBill,
+  removeBill,
+  assignAddressToBill,
+  updateBillDateRange
+} from '../../../../store/slices/energyProfileSlice';
 
 const SubStep2: React.FC = () => {
-  const { addFiles, removeFile } = useElectricBillUpload();
-  const { bills, addBill, removeBill: removeBillFromContext, addresses, assignAddressToBill, updateBillDateRange } = useBillAddress();
-  const electricBills = bills.filter(b => b.type === 'grid');
+  const dispatch = useAppDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Selectors
+  const allBills = useAppSelector((state) => state.energyProfile.billAddress.bills);
+  const electricBills = allBills.filter(bill => bill.type === 'grid');
+  const addresses = useAppSelector((state) => state.energyProfile.billAddress.addresses);
+
+  const formatFileSize = (bytes: number) => {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = event.target.files;
     if (newFiles) {
       Array.from(newFiles).forEach(file => {
-        addBill({ name: file.name, size: formatFileSize(file.size), type: 'grid' });
+        dispatch(addBill({ name: file.name, size: formatFileSize(file.size), type: 'grid' }));
       });
-      addFiles(Array.from(newFiles));
+      dispatch(addElectricFiles(Array.from(newFiles)));
     }
   };
 
@@ -31,9 +49,9 @@ const SubStep2: React.FC = () => {
     const newFiles = event.dataTransfer.files;
     if (newFiles) {
       Array.from(newFiles).forEach(file => {
-        addBill({ name: file.name, size: formatFileSize(file.size), type: 'grid' });
+        dispatch(addBill({ name: file.name, size: formatFileSize(file.size), type: 'grid' }));
       });
-      addFiles(Array.from(newFiles));
+      dispatch(addElectricFiles(Array.from(newFiles)));
     }
   };
 
@@ -42,17 +60,17 @@ const SubStep2: React.FC = () => {
   };
 
   const handleRemoveFile = (billId: string, fileName: string) => {
-    removeFile(fileName);
-    removeBillFromContext(billId);
+    dispatch(removeElectricFile(fileName));
+    dispatch(removeBill(billId));
   };
-
-  const formatFileSize = (bytes: number) => {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    };
+  
+  const handleAssignAddress = (billId: string, addressId: string) => {
+      dispatch(assignAddressToBill({ billId, addressId }));
+  };
+  
+  const handleUpdateDateRange = (billId: string, start: string, end: string) => {
+      dispatch(updateBillDateRange({ billId, dateRange: { start, end } }));
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -168,7 +186,7 @@ const SubStep2: React.FC = () => {
                                 <InputLabel sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>Address</InputLabel>
                                                                 <Select
   value={bill.addressId || ''}
-  onChange={(e) => assignAddressToBill(bill.id, e.target.value as string)}
+  onChange={(e) => handleAssignAddress(bill.id, e.target.value as string)}
   label="Address"
   sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
 >
@@ -213,7 +231,7 @@ const SubStep2: React.FC = () => {
                                 size="small"
                                 type="date"
                                 value={bill.dateRange.start}
-                                onChange={(e) => updateBillDateRange(bill.id, { ...bill.dateRange, start: e.target.value })}
+                                onChange={(e) => handleUpdateDateRange(bill.id, e.target.value, bill.dateRange.end)}
                                 sx={{
                                 width: '180px',
                                 '& .MuiInputBase-root': { height: '40px' },
@@ -228,7 +246,7 @@ const SubStep2: React.FC = () => {
                                 size="small"
                                 type="date"
                                 value={bill.dateRange.end}
-                                onChange={(e) => updateBillDateRange(bill.id, { ...bill.dateRange, end: e.target.value })}
+                                onChange={(e) => handleUpdateDateRange(bill.id, bill.dateRange.start, e.target.value)}
                                 sx={{
                                 width: '180px',
                                 '& .MuiInputBase-root': { height: '40px' },

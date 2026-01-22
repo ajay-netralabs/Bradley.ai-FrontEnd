@@ -10,23 +10,8 @@ import { MdOutlineWarehouse } from 'react-icons/md';
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 import { IoEnterOutline } from "react-icons/io5";
 
-import { useAppContext } from '../../../../Context/AppContext';
-import { useOrganizationDetails } from '../../../Context/Organizational Profile/SubStep2/Organization Details Context';
-import { useAnnualEnergySpend } from '../../../Context/Organizational Profile/SubStep2/Annual Energy Spend Context';
-import { usePrioritizationI } from '../../../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
-import { useBudgetGoals } from '../../../Context/Financial Info/SubStep2/Own/What Are Your Budget & Investment Goals Context';
-import { useSiteCharacteristicsI } from '../../../Context/Site Assessment/SubStep2/Site Characteristics - I Context';
-import { useSolarAssets } from '../../../Context/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS Context';
-import { useOwnershipPreference } from '../../../Context/Financial Info/SubStep1/Ownership Preference Context';
-import { useFinancialsI } from '../../../Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
-
-import { useThermalEnergyNeedsI } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
-import { useThermalEnergyNeedsII } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - II Context';
-import { useThermalEnergyNeedsIII } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
-import { useThermalEnergyNeedsIV } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
-import { useBoilerCogeneration } from '../../../Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
-
-import { useLOAStatus } from '../../../Context/Energy Profile/SubStep2/LOA - Status Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { setCurrentStep, setCurrentSubStep } from '../../../../store/slices/workflowSlice';
 
 interface SummarySectionProps {
   icon: React.ReactElement;
@@ -154,25 +139,25 @@ const SummarySection: React.FC<SummarySectionProps> = ({
 };
 
 const SubStep1: React.FC = () => {
-  const { setCurrentStep, setCurrentSubStep } = useAppContext();
+  const dispatch = useAppDispatch();
   const [expanded, setExpanded] = useState<number[]>([0, 1, 2, 3, 4]);
 
-  const { organizationDetailsState } = useOrganizationDetails();
-  const { annualEnergySpend } = useAnnualEnergySpend();
-  const { prioritizationIState } = usePrioritizationI();
-  const { budgetGoalsState } = useBudgetGoals();
-  const { siteCharacteristicsIState } = useSiteCharacteristicsI();
-  const { solarAssetsState } = useSolarAssets();
-  const { ownershipPreference } = useOwnershipPreference();
-  const { financialsIState } = useFinancialsI();
+  const organizationDetailsState = useAppSelector((state) => state.organizationalProfile.organizationDetails);
+  const annualEnergySpend = useAppSelector((state) => state.organizationalProfile.annualEnergySpend);
+  const prioritizationIState = useAppSelector((state) => state.goals.prioritizationI);
+  const budgetGoalsState = useAppSelector((state) => state.financialInfo.budgetGoals);
+  const siteCharacteristicsIState = useAppSelector((state) => state.siteAssessment.siteCharacteristicsI);
+  const solarAssetsState = useAppSelector((state) => state.siteAssessment.solarAssets);
+  const ownershipPreference = useAppSelector((state) => state.financialInfo.ownershipPreference);
+  const financialsIState = useAppSelector((state) => state.goals.financialsI);
 
-  const { thermalNeedsIState } = useThermalEnergyNeedsI();
-  const { thermalNeedsIIState } = useThermalEnergyNeedsII();
-  const { thermalNeedsIIIState } = useThermalEnergyNeedsIII();
-  const { thermalNeedsIVState } = useThermalEnergyNeedsIV();
-  const { boilerCogenerationState } = useBoilerCogeneration();
+  const thermalNeedsIState = useAppSelector((state) => state.energyProfile.thermalNeedsI);
+  const thermalNeedsIIState = useAppSelector((state) => state.energyProfile.thermalNeedsII);
+  const thermalNeedsIIIState = useAppSelector((state) => state.energyProfile.thermalNeedsIII);
+  const thermalNeedsIVState = useAppSelector((state) => state.energyProfile.thermalNeedsIV);
+  const boilerCogenerationState = useAppSelector((state) => state.energyProfile.boilerCogeneration);
 
-  const { loaStatusState } = useLOAStatus();
+  const loaStatusState = useAppSelector((state) => state.energyProfile.loaStatus);
 
   const orgData = [
     { label: 'Company Name', value: organizationDetailsState.organizationName },
@@ -249,11 +234,11 @@ const SubStep1: React.FC = () => {
   };
 
   const sections = [
-    { title: "Organizational Profile", icon: <GoOrganization />, data: orgData, completionStatus: getCompletionStatus(orgData), onEdit: () => { setCurrentStep(0); setCurrentSubStep(1); } },
-    { title: "Energy Profile", icon: <MdOutlineEnergySavingsLeaf />, data: energyData, completionStatus: getCompletionStatus(energyData), onEdit: () => { setCurrentStep(1); setCurrentSubStep(1); } },
-    { title: "Goals & Priorities", icon: <LuGoal />, data: goalsData, completionStatus: getCompletionStatus(goalsData), onEdit: () => { setCurrentStep(2); setCurrentSubStep(1); } },
-    { title: "Site Assessment", icon: <MdOutlineWarehouse />, data: siteData, completionStatus: getCompletionStatus(siteData), onEdit: () => { setCurrentStep(3); setCurrentSubStep(1); } },
-    { title: "Financial Info", icon: <MdOutlineAccountBalanceWallet />, data: financialData, completionStatus: getCompletionStatus(financialData), onEdit: () => { setCurrentStep(4); setCurrentSubStep(0); } },
+    { title: "Organizational Profile", icon: <GoOrganization />, data: orgData, completionStatus: getCompletionStatus(orgData), onEdit: () => { dispatch(setCurrentStep(0)); dispatch(setCurrentSubStep(1)); } },
+    { title: "Energy Profile", icon: <MdOutlineEnergySavingsLeaf />, data: energyData, completionStatus: getCompletionStatus(energyData), onEdit: () => { dispatch(setCurrentStep(1)); dispatch(setCurrentSubStep(1)); } },
+    { title: "Goals & Priorities", icon: <LuGoal />, data: goalsData, completionStatus: getCompletionStatus(goalsData), onEdit: () => { dispatch(setCurrentStep(2)); dispatch(setCurrentSubStep(1)); } },
+    { title: "Site Assessment", icon: <MdOutlineWarehouse />, data: siteData, completionStatus: getCompletionStatus(siteData), onEdit: () => { dispatch(setCurrentStep(3)); dispatch(setCurrentSubStep(1)); } },
+    { title: "Financial Info", icon: <MdOutlineAccountBalanceWallet />, data: financialData, completionStatus: getCompletionStatus(financialData), onEdit: () => { dispatch(setCurrentStep(4)); dispatch(setCurrentSubStep(0)); } },
   ];
 
   const handleExpandClick = (index: number) => {

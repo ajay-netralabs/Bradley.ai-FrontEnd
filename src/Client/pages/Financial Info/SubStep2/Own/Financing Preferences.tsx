@@ -1,10 +1,16 @@
 import React from 'react';
 import { Box, TextField, Typography, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useFinancingPreferences } from '../../../../Context/Financial Info/SubStep2/Own/Financing Preferences Context';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { updateFinancingField, FinancingPreferencesState } from '../../../../../store/slices/financialInfoSlice';
 
 const SubStep2: React.FC = () => {
-  const { financingPreferencesState, updateField } = useFinancingPreferences();
+  const dispatch = useAppDispatch();
+  const financingPreferencesState = useAppSelector((state) => state.financialInfo.financingPreferences);
   const { selectedOption, otherText } = financingPreferencesState;
+  
+  const handleUpdateField = (field: keyof FinancingPreferencesState, value: string) => {
+      dispatch(updateFinancingField({ field, value }));
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -22,7 +28,7 @@ const SubStep2: React.FC = () => {
           <Select
             id='financing-preferences'
             value={selectedOption}
-            onChange={(e: SelectChangeEvent) => updateField('selectedOption', e.target.value)}
+            onChange={(e: SelectChangeEvent) => handleUpdateField('selectedOption', e.target.value)}
             displayEmpty
             sx={{ flex: 0.68, fontFamily: 'Nunito Sans, sans-serif', marginLeft: 'auto', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}
           >
@@ -43,7 +49,7 @@ const SubStep2: React.FC = () => {
             placeholder="Describe Your Preferred Financing Method Here..."
             disabled={selectedOption !== 'other'}
             value={otherText}
-            onChange={(e) => updateField('otherText', e.target.value)}
+            onChange={(e) => handleUpdateField('otherText', e.target.value)}
             sx={{ flex: 0.68, width: '100%', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: '10px', fontSize: '0.7rem' } }}
           />
         </Box>

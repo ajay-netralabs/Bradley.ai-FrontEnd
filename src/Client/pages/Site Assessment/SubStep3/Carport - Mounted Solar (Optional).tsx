@@ -1,18 +1,24 @@
 import React from 'react';
 import { Box, TextField, Typography, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useCarportSolar } from '../../../Context/Site Assessment/SubStep3/Carport - Mounted Solar (Optional) Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateCarportField, CarportSolarState } from '../../../../store/slices/siteAssessmentSlice';
 
 const SubStep3: React.FC = () => {
-  const { carportSolarState, updateField } = useCarportSolar();
+  const dispatch = useAppDispatch();
+  const carportSolarState = useAppSelector((state) => state.siteAssessment.carportSolar);
   const { roofPenetration, totalParkingSpots, parkingGarageWidth, parkingGarageLength, switchgearFloor, topFloorHeight } = carportSolarState;
+
+  const handleUpdateField = (field: keyof CarportSolarState, value: string) => {
+      dispatch(updateCarportField({ field, value }));
+  };
 
   const handleNumericChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: keyof typeof carportSolarState
+    field: keyof CarportSolarState
   ) => {
     // Allow only numeric input
     const value = event.target.value.replace(/[^0-9]/g, '');
-    updateField(field, value);
+    handleUpdateField(field, value);
   };
   
   return (
@@ -30,7 +36,7 @@ const SubStep3: React.FC = () => {
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 0.7 }}>
             <b>Would You Allow Roof Penetration Anchoring Methods on an Existing Carport Structure For Solar Panel Installation?</b>
           </Typography>
-          <Select size="small" value={roofPenetration} onChange={(e: SelectChangeEvent) => updateField('roofPenetration', e.target.value)} displayEmpty sx={{ flex: 0.3, marginLeft: 'auto', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
+          <Select size="small" value={roofPenetration} onChange={(e: SelectChangeEvent) => handleUpdateField('roofPenetration', e.target.value)} displayEmpty sx={{ flex: 0.3, marginLeft: 'auto', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
             <MenuItem disabled value="" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select Yes or No</MenuItem>
             <MenuItem value="yes" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Yes</MenuItem>
             <MenuItem value="no" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>No</MenuItem>
@@ -59,7 +65,7 @@ const SubStep3: React.FC = () => {
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 0.7 }}>
             <b>Top Floor Height:</b><br />(<i>What is the height of the top floor of the parking garage from ground level?</i>)
           </Typography>
-          <TextField variant="outlined" size="small" type="text" placeholder="Input Height" value={topFloorHeight} onChange={(e) => updateField('topFloorHeight', e.target.value)} sx={{ flex: 0.3, marginLeft: 'auto', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+          <TextField variant="outlined" size="small" type="text" placeholder="Input Height" value={topFloorHeight} onChange={(e) => handleUpdateField('topFloorHeight', e.target.value)} sx={{ flex: 0.3, marginLeft: 'auto', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ mt: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 1 }}>

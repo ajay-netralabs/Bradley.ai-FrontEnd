@@ -1,10 +1,16 @@
 import React from 'react';
 import { Box, TextField, Typography } from '@mui/material';
-import { useAdditionalPPAPreferences } from '../../../../Context/Financial Info/SubStep2/Third Party/Additional PPA Preferences (Optional) Context';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { updateAdditionalPPAField } from '../../../../../store/slices/financialInfoSlice';
 
 const SubStep2: React.FC = () => {
-  const { additionalPPAPreferencesState, updateField } = useAdditionalPPAPreferences();
+  const dispatch = useAppDispatch();
+  const additionalPPAPreferencesState = useAppSelector((state) => state.financialInfo.additionalPPAPreferences);
   const { preferencesText } = additionalPPAPreferencesState;
+
+  const handleUpdateField = (field: 'preferencesText', value: string) => {
+      dispatch(updateAdditionalPPAField({ field, value }));
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -24,7 +30,7 @@ const SubStep2: React.FC = () => {
             variant="outlined"
             placeholder="Possible additional preferences would be to hold the PPA rate firm for a limited time at the beginning of the PPA and then allowing escalation."
             value={preferencesText}
-            onChange={(e) => updateField('preferencesText', e.target.value)}
+            onChange={(e) => handleUpdateField('preferencesText', e.target.value)}
             sx={{
               fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.9rem',

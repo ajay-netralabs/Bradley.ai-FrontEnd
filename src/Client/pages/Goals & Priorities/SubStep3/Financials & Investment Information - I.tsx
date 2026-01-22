@@ -1,10 +1,16 @@
 import React from 'react';
 import { Box, TextField, Typography } from '@mui/material';
-import { useFinancialsI } from '../../../Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateFinancialsIField, FinancialsIState } from '../../../../store/slices/goalsSlice';
 
 const SubStep3: React.FC = () => {
-  const { financialsIState, updateField } = useFinancialsI();
+  const dispatch = useAppDispatch();
+  const financialsIState = useAppSelector((state) => state.goals.financialsI);
   const { acceptableIRR, minimumROI, paybackPeriod } = financialsIState;
+
+  const handleUpdateField = (field: keyof FinancialsIState, value: string) => {
+      dispatch(updateFinancialsIField({ field, value }));
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -46,21 +52,21 @@ const SubStep3: React.FC = () => {
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}>
               <b>Desired Minimally Acceptable IRR:</b><br />(Hint: {window.location.pathname === '/demo' ? 'EmissionCheckIQ+' : 'Bradley.ai'} auto-sets the IRR to 10%.)
             </Typography>
-            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={acceptableIRR} onChange={(e) => updateField('acceptableIRR', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={acceptableIRR} onChange={(e) => handleUpdateField('acceptableIRR', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}>
               <b>Desired Minimum ROI: </b>(5 - 15 years)
             </Typography>
-            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={minimumROI} onChange={(e) => updateField('minimumROI', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={minimumROI} onChange={(e) => handleUpdateField('minimumROI', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}>
               <b>Minimum Acceptable Payback Period: </b>(in years)
             </Typography>
-            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={paybackPeriod} onChange={(e) => updateField('paybackPeriod', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={paybackPeriod} onChange={(e) => handleUpdateField('paybackPeriod', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
           </Box>
         </Box>
       </Box>

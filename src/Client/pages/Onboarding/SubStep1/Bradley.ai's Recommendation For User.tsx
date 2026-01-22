@@ -12,14 +12,14 @@ import {
   // Button 
 } from '@mui/material';
 import { StyledTitle, StyledRecommendation, StyledKeyBenefitsTitle, EnhancedBenefitCard, /* StyledBenefitValue, StyledBenefitDescription, */ StyledTabPanelBox, StyledTabPanelTitle, StyledExpandButton, ExpandableModal, TabPanel, ExpandablePanelInfo, benefitDataTop, benefitDataBottom, EnergyProductionBreakdown, EnergyFlowDiagram, mockExpandedContent, /* IndicativeFinanceDetails, FinancialIncentives, FinanceOptions, */ Resources, GeneralArrangement, SystemDiagram, InvestmentSummary, ProjectSchedule, AnnualEnergyCostAsIsComparedToDEROvertime, EnergySpecifications, FinancingOptionsAnalysis } from '../../../../components/RecommendationUI';
-import { useOrganizationDetails } from '../../../Context/Organizational Profile/SubStep2/Organization Details Context';
+import { useAppSelector } from '../../../../store/hooks';
 
 const SubStep1: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentExpandedPanel, setCurrentExpandedPanel] = useState<ExpandablePanelInfo | null>(null);
 
-  const { organizationDetailsState } = useOrganizationDetails();
+  const organizationDetailsState = useAppSelector((state) => state.organizationalProfile.organizationDetails);
   const { userName, organizationName } = organizationDetailsState;
 
   const recommendationTitle = (userName && organizationName) 

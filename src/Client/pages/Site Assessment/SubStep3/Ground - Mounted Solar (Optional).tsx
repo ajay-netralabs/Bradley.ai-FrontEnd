@@ -1,6 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, TextField, Typography, Select, MenuItem, Button, Alert, SelectChangeEvent } from '@mui/material';
-import { useGroundMountSolar } from '../../../Context/Site Assessment/SubStep3/Ground - Mounted Solar (Optional) Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { 
+    updateGroundMountField, 
+    updateGroundMountLandArea, 
+    updateGroundMountSelectedAreas, 
+    GroundMountSolarState,
+    SelectedArea 
+} from '../../../../store/slices/siteAssessmentSlice';
 
 declare global {
   interface Window { L: any; }
@@ -11,14 +18,22 @@ declare global {
   }
 }
 
-interface SelectedArea {
-  coordinates: [number, number][];
-  area: number;
-}
-
 const SubStep3: React.FC = () => {
-  const { groundMountState, updateField, updateSelectedAreas, updateLandArea } = useGroundMountSolar();
+  const dispatch = useAppDispatch();
+  const groundMountState = useAppSelector((state) => state.siteAssessment.groundMountSolar);
   const { landArea, topography, address, showMap, selectedAreas } = groundMountState;
+
+  const handleUpdateField = (field: keyof Omit<GroundMountSolarState, 'selectedAreas' | 'landArea'>, value: string | boolean) => {
+      dispatch(updateGroundMountField({ field, value }));
+  };
+  
+  const handleUpdateLandArea = (value: string) => {
+      dispatch(updateGroundMountLandArea(value));
+  };
+
+  const handleUpdateSelectedAreas = (areas: SelectedArea[]) => {
+      dispatch(updateGroundMountSelectedAreas(areas));
+  };
 
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -55,8 +70,8 @@ const SubStep3: React.FC = () => {
       mapInstanceRef.current.remove();
       mapInstanceRef.current = null;
       drawingLayerRef.current = null;
-      updateSelectedAreas([]);
-      updateLandArea('');
+      handleUpdateSelectedAreas([]);
+      handleUpdateLandArea('');
     }
   }, [mapLoaded, showMap]);
 
@@ -85,8 +100,8 @@ const SubStep3: React.FC = () => {
       const newArea: SelectedArea = { coordinates, area };
       const updatedAreas = [...selectedAreas, newArea];
       const totalArea = updatedAreas.reduce((sum, current) => sum + current.area, 0);
-      updateSelectedAreas(updatedAreas);
-      updateLandArea(Math.round(totalArea).toString());
+      handleUpdateSelectedAreas(updatedAreas);
+      handleUpdateLandArea(Math.round(totalArea).toString());
       layer.bindPopup(`Selected Area: ${Math.round(area).toLocaleString()} sq ft`).openPopup();
     });
 
@@ -103,8 +118,8 @@ const SubStep3: React.FC = () => {
         });
       }
       const totalArea = currentDrawnLayers.reduce((sum, current) => sum + current.area, 0);
-      updateSelectedAreas(currentDrawnLayers);
-      updateLandArea(Math.round(totalArea).toString());
+      handleUpdateSelectedAreas(currentDrawnLayers);
+      handleUpdateLandArea(Math.round(totalArea).toString());
     });
     mapInstanceRef.current = map;
   };
@@ -157,11 +172,11 @@ const SubStep3: React.FC = () => {
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 0.7 }}>
             <b>Available Land Area:</b> (in Sq. Ft.)<br /><i>(43,000 sq. ft. of unobstructed land can produce approx. 250kW of solar plant capacity)</i>
           </Typography>
-          <TextField variant="outlined" size="small" type="number" placeholder='in Sq. Ft.' value={landArea} onChange={(e) => updateLandArea(e.target.value)} sx={{ flex: 0.3, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+          <TextField variant="outlined" size="small" type="number" placeholder='in Sq. Ft.' value={landArea} onChange={(e) => handleUpdateLandArea(e.target.value)} sx={{ flex: 0.3, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 0.7 }}><b>Land Topography:</b></Typography>
-          <Select size="small" value={topography} onChange={(e: SelectChangeEvent) => updateField('topography', e.target.value)} sx={{ flex: 0.3, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
+          <Select size="small" value={topography} onChange={(e: SelectChangeEvent) => handleUpdateField('topography', e.target.value)} sx={{ flex: 0.3, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
             <MenuItem value="default" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select Topography</MenuItem>
             <MenuItem value="flat" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Flat</MenuItem>
             <MenuItem value="sloped" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Sloped</MenuItem>
@@ -172,10 +187,10 @@ const SubStep3: React.FC = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2, mt: 1, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
           <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 'bold', pl: 0.3 }}>Locate Your Property</Typography>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField variant="outlined" size="small" placeholder="Enter your address" value={address} onChange={(e) => updateField('address', e.target.value)} onKeyPress={(e) => e.key === 'Enter' && searchAddress()} sx={{ flex: 1, fontFamily: 'Nunito Sans, sans-serif', '& .MuiInputBase-root': { height: '30px' }, '& input': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem' } }} />
+            <TextField variant="outlined" size="small" placeholder="Enter your address" value={address} onChange={(e) => handleUpdateField('address', e.target.value)} onKeyPress={(e) => e.key === 'Enter' && searchAddress()} sx={{ flex: 1, fontFamily: 'Nunito Sans, sans-serif', '& .MuiInputBase-root': { height: '30px' }, '& input': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem' } }} />
             <Button variant="contained" size="small" onClick={searchAddress} disabled={!address} sx={{ minWidth: '80px', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '30px' }}>Search</Button>
           </Box>
-          <Button variant="outlined" size="small" onClick={() => updateField('showMap', !showMap)} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', alignSelf: 'flex-start', height: '30px' }}>{showMap ? 'Hide Map' : 'Show Interactive Map'}</Button>
+          <Button variant="outlined" size="small" onClick={() => handleUpdateField('showMap', !showMap)} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', alignSelf: 'flex-start', height: '30px' }}>{showMap ? 'Hide Map' : 'Show Interactive Map'}</Button>
         </Box>
         {showMap && (
           <Box sx={{ mb: 2 }}>

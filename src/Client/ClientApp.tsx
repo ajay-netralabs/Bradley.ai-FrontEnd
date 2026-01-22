@@ -1,55 +1,21 @@
-import React, { lazy } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { Box, Button, LinearProgress, Tooltip } from '@mui/material';
-// import { useNavigate } from 'react-router-dom';
 
-// App and Stepper contexts
-import { AppProvider, useAppContext } from '../Context/AppContext';
+// Steps definition
 import { steps } from '../components/steps';
 
-// All the new form-specific context providers
-import { OrganizationDetailsProvider } from './Context/Organizational Profile/SubStep2/Organization Details Context';
-import { AnnualEnergySpendProvider } from './Context/Organizational Profile/SubStep2/Annual Energy Spend Context';
-import { FacilityOperationProvider } from './Context/Organizational Profile/SubStep2/Facility Operation Description Context';
-import { FacilityAddressProvider } from './Context/Organizational Profile/SubStep2/Facility Address Context';
-import { OtherDetailsProvider } from './Context/Organizational Profile/SubStep2/Other Details Context';
-import { ElectricBillUploadProvider, useElectricBillUpload } from './Context/Energy Profile/SubStep2/Electric Bill Upload Context';
-import { LOAProvider } from './Context/Energy Profile/SubStep2/Letter Of Authorization Context';
-import { LOAStatusProvider } from './Context/Energy Profile/SubStep2/LOA - Status Context';
-import { NaturalGasBillUploadProvider } from './Context/Energy Profile/SubStep2/Natural Gas Bill Upload Context';
-import { ThermalEnergyNeedsIProvider } from './Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
-import { ThermalEnergyNeedsIIProvider } from './Context/Energy Profile/SubStep2/Thermal Energy Needs - II Context';
-import { ThermalEnergyNeedsIIIProvider } from './Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
-import { ThermalEnergyNeedsIVProvider } from './Context/Energy Profile/SubStep2/Thermal Energy Needs - IV Context';
-import { BoilerCogenerationProvider } from './Context/Energy Profile/SubStep2/Existing Boiler Cogeneration Context';
-import { PrioritizationIProvider } from './Context/Goals & Priorities/SubStep2/Prioritization - I Context';
-import { PrioritizationIIProvider } from './Context/Goals & Priorities/SubStep2/Prioritization - II Context';
-import { FinancialsIProvider } from './Context/Goals & Priorities/SubStep3/Financials & Investment Information - I Context';
-import { FinancialsIIProvider } from './Context/Goals & Priorities/SubStep3/Financials & Investment Information - II Context';
-import { OwnershipPreferenceProvider, useOwnershipPreference } from './Context/Financial Info/SubStep1/Ownership Preference Context';
-// import { SiteLocationProvider } from '../Context/Site Assessment/SubStep2/Confirm Edit Your Pre-Entered Site Location Context';
-import { SiteCharacteristicsIProvider } from './Context/Site Assessment/SubStep2/Site Characteristics - I Context';
-import { SiteCharacteristicsIIProvider } from './Context/Site Assessment/SubStep2/Site Characteristics - II Context';
-import { OtherSiteCharacteristicsProvider } from './Context/Site Assessment/SubStep2/Other Site Characteristics Context';
-import { FacilityUsageProvider } from './Context/Site Assessment/SubStep2/Facility Usage & Operating Days Context';
-import { MEPDrawingsProvider } from './Context/Site Assessment/SubStep2/Upload Existing Drawings Context';
-import { SolarAssetsProvider } from './Context/Site Assessment/SubStep3/INPUTS TO MAXIMIZE SOLAR DER ASSETS Context';
-import { RoofingConsiderationsProvider } from './Context/Site Assessment/SubStep3/Roofing Considerations Context';
-import { RoofMountSolarProvider } from './Context/Site Assessment/SubStep3/Roof - Mounted Solar (Optional) Context';
-import { GroundMountSolarProvider } from './Context/Site Assessment/SubStep3/Ground - Mounted Solar (Optional) Context';
-import { CarportSolarProvider } from './Context/Site Assessment/SubStep3/Carport - Mounted Solar (Optional) Context';
-import { ExistingAssetsProvider } from './Context/Site Assessment/SubStep3/Existing Solar & Wind Resource (Optional) Context';
-import { EquipmentPreferencesProvider } from './Context/Site Assessment/SubStep3/Equipment Preferences (Optional) Context';
-import { PPAPreferencesProvider } from './Context/Financial Info/SubStep2/Third Party/PPA Preferences Context';
-import { AdditionalPPAPreferencesProvider } from './Context/Financial Info/SubStep2/Third Party/Additional PPA Preferences (Optional) Context';
-import { FinancialPreferencesProvider } from './Context/Financial Info/SubStep2/Own/Financial Preferences Context';
-import { ExistingContractsIProvider } from './Context/Financial Info/SubStep2/Own/Existing Energy Contracts - I Context';
-import { ExistingPPAContractsIIProvider } from './Context/Financial Info/SubStep2/Own/Existing Power Purchase Agreement (PPA) Electricity Contracts - II Context';
-import { ExistingPPAContractsIIIProvider } from './Context/Financial Info/SubStep2/Own/Existing Power Purchase Agreement (PPA) for Combined Heat and or Power (CHP) Contracts – III Context';
-import { ExistingContractsIVProvider } from './Context/Financial Info/SubStep2/Own/Existing Energy Contracts - IV Context';
-import { OtherEnergyCommitmentsProvider } from './Context/Financial Info/SubStep2/Own/Other Energy Commitments (Optional) Context';
-import { BudgetGoalsProvider } from './Context/Financial Info/SubStep2/Own/What Are Your Budget & Investment Goals Context';
-import { FinancingPreferencesProvider } from './Context/Financial Info/SubStep2/Own/Financing Preferences Context';
-import { BillAddressProvider } from './Context/Energy Profile/BillAddressContext';
+// Redux hooks and actions
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { 
+    setCurrentStep, 
+    setCurrentSubStep, 
+    setCurrentFurtherSubStep, 
+    setVisitedSteps, 
+    setCompletedSubSteps,
+    setWorkflowState 
+} from '../store/slices/workflowSlice';
+import { setOwnershipPreference } from '../store/slices/financialInfoSlice';
+import { logoutUser } from '../store/slices/authSlice';
 
 // UI Components
 import HorizontalStepper from '../components/HorizontalStepper';
@@ -59,9 +25,6 @@ import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
 import ChatBot from '../components/ChatBot';
 
-// import OrganizationDetails from './pages/Organizational Profile/SubStep2/Organization Details';
-// import FacilityAddress from './pages/Organizational Profile/SubStep2/Facility Address';
-
 const OrganizationDetails = lazy(() =>
   import('./pages/Organizational Profile/SubStep2/Organization Details')
 );
@@ -70,147 +33,94 @@ const FacilityAddress = lazy(() =>
   import('./pages/Organizational Profile/SubStep2/Facility Address')
 );
 
-// dummy save
+const ClientApp: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const [isHydrated, setIsHydrated] = useState(false);
+  
+  // Redux Selectors
+  const { 
+    currentStep, 
+    currentSubStep, 
+    currentFurtherSubStep, 
+    visitedSteps, 
+    completedSubSteps 
+  } = useAppSelector((state) => state.workflow);
 
-// Component to hold all providers for cleanliness
-const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <AppProvider steps={steps} appPrefix="client">
-    <OrganizationDetailsProvider>
-      <AnnualEnergySpendProvider>
-        <FacilityOperationProvider>
-          <FacilityAddressProvider>
-            <OtherDetailsProvider>
-              <ElectricBillUploadProvider>
-                <LOAProvider>
-                  <LOAStatusProvider>
-                    <NaturalGasBillUploadProvider>
-                      <ThermalEnergyNeedsIProvider>
-                        <ThermalEnergyNeedsIIProvider>
-                          <ThermalEnergyNeedsIIIProvider>
-                            <ThermalEnergyNeedsIVProvider>
-                              <BoilerCogenerationProvider>
-                                <PrioritizationIProvider>
-                                  <PrioritizationIIProvider>
-                                    <FinancialsIProvider>
-                                      <FinancialsIIProvider>
-                                        <OwnershipPreferenceProvider>
-                                          {/* <SiteLocationProvider> */}
-                                          <SiteCharacteristicsIProvider>
-                                            <SiteCharacteristicsIIProvider>
-                                              <OtherSiteCharacteristicsProvider>
-                                                <FacilityUsageProvider>
-                                                  <MEPDrawingsProvider>
-                                                    <SolarAssetsProvider>
-                                                      <RoofingConsiderationsProvider>
-                                                        <RoofMountSolarProvider>
-                                                          <GroundMountSolarProvider>
-                                                            <CarportSolarProvider>
-                                                              <ExistingAssetsProvider>
-                                                                <EquipmentPreferencesProvider>
-                                                                  <PPAPreferencesProvider>
-                                                                    <AdditionalPPAPreferencesProvider>
-                                                                      <FinancialPreferencesProvider>
-                                                                        <ExistingContractsIProvider>
-                                                                          <ExistingPPAContractsIIProvider>
-                                                                            <ExistingPPAContractsIIIProvider>
-                                                                              <ExistingContractsIVProvider>
-                                                                                <OtherEnergyCommitmentsProvider>
-                                                                                  <BudgetGoalsProvider>
-                                                                                    <FinancingPreferencesProvider>
-                                                                                      <BillAddressProvider appPrefix="client">
-                                                                                        {children}
-                                                                                      </BillAddressProvider>
-                                                                                    </FinancingPreferencesProvider>
-                                                                                  </BudgetGoalsProvider>
-                                                                                </OtherEnergyCommitmentsProvider>
-                                                                              </ExistingContractsIVProvider>
-                                                                            </ExistingPPAContractsIIIProvider>
-                                                                          </ExistingPPAContractsIIProvider>
-                                                                        </ExistingContractsIProvider>
-                                                                      </FinancialPreferencesProvider>
-                                                                    </AdditionalPPAPreferencesProvider>
-                                                                  </PPAPreferencesProvider>
-                                                                </EquipmentPreferencesProvider>
-                                                              </ExistingAssetsProvider>
-                                                            </CarportSolarProvider>
-                                                          </GroundMountSolarProvider>
-                                                        </RoofMountSolarProvider>
-                                                      </RoofingConsiderationsProvider>
-                                                    </SolarAssetsProvider>
-                                                  </MEPDrawingsProvider>
-                                                </FacilityUsageProvider>
-                                              </OtherSiteCharacteristicsProvider>
-                                            </SiteCharacteristicsIIProvider>
-                                          </SiteCharacteristicsIProvider>
-                                          {/* </SiteLocationProvider> */}
-                                        </OwnershipPreferenceProvider>
-                                      </FinancialsIIProvider>
-                                    </FinancialsIProvider>
-                                  </PrioritizationIIProvider>
-                                </PrioritizationIProvider>
-                              </BoilerCogenerationProvider>
-                            </ThermalEnergyNeedsIVProvider>
-                          </ThermalEnergyNeedsIIIProvider>
-                        </ThermalEnergyNeedsIIProvider>
-                      </ThermalEnergyNeedsIProvider>
-                    </NaturalGasBillUploadProvider>
-                  </LOAStatusProvider>
-                </LOAProvider>
-              </ElectricBillUploadProvider>
-            </OtherDetailsProvider>
-          </FacilityAddressProvider>
-        </FacilityOperationProvider>
-      </AnnualEnergySpendProvider>
-    </OrganizationDetailsProvider>
-  </AppProvider>
-);
+  const ownershipPreference = useAppSelector((state) => state.financialInfo.ownershipPreference);
+  const electricBillUploadState = useAppSelector((state) => state.energyProfile.electricBill);
 
+  const appPrefix = "client"; // Hardcoded for ClientApp
 
-// The main content of the app, which can now use all the contexts
-const AppContent: React.FC = () => {
-  const {
-    currentStep, setCurrentStep,
-    currentSubStep, setCurrentSubStep,
-    currentFurtherSubStep, setCurrentFurtherSubStep,
-    visitedSteps, setVisitedSteps,
-    completedSubSteps, setCompletedSubSteps,
-    /* logout, */
-  } = useAppContext();
+  // Initialization / Hydration (Equivalent to what AppProvider was doing)
+  useEffect(() => {
+    const getSubStepCount = (step: any) => Array.isArray(step.subSteps) ? step.subSteps.length : step.subSteps;
+    
+    const savedCurrentStep = Number(localStorage.getItem(`${appPrefix}_currentStep`) || 0);
+    const savedCurrentSubStep = Number(localStorage.getItem(`${appPrefix}_currentSubStep`) || 0);
+    const savedCurrentFurtherSubStep = Number(localStorage.getItem(`${appPrefix}_currentFurtherSubStep`) || 0);
+    
+    const savedVisitedSteps = localStorage.getItem(`${appPrefix}_visitedSteps`);
+    const parsedVisitedSteps = savedVisitedSteps
+      ? JSON.parse(savedVisitedSteps)
+      : Array.from({ length: steps.length }, (_, i) =>
+          Array.from({ length: getSubStepCount(steps[i]) }, (_, j) => i === 0 && j === 0)
+        );
 
-  const { ownershipPreference, setOwnershipPreference } = useOwnershipPreference();
-  const { electricBillUploadState } = useElectricBillUpload();
-  // const navigate = useNavigate();
+    const savedCompletedSubSteps = localStorage.getItem(`${appPrefix}_completedSubSteps`);
+    const parsedCompletedSubSteps = savedCompletedSubSteps
+      ? JSON.parse(savedCompletedSubSteps)
+      : Array.from({ length: steps.length }, (_, i) =>
+          Array.from({ length: getSubStepCount(steps[i]) }, () => false)
+        );
 
+    dispatch(setWorkflowState({
+        currentStep: savedCurrentStep,
+        currentSubStep: savedCurrentSubStep,
+        currentFurtherSubStep: savedCurrentFurtherSubStep,
+        visitedSteps: parsedVisitedSteps,
+        completedSubSteps: parsedCompletedSubSteps
+    }));
+    setIsHydrated(true);
+  }, [dispatch]);
+
+  // Persistence
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    localStorage.setItem(`${appPrefix}_currentStep`, currentStep.toString());
+    localStorage.setItem(`${appPrefix}_currentSubStep`, currentSubStep.toString());
+    localStorage.setItem(`${appPrefix}_currentFurtherSubStep`, currentFurtherSubStep.toString());
+    localStorage.setItem(`${appPrefix}_visitedSteps`, JSON.stringify(visitedSteps));
+    localStorage.setItem(`${appPrefix}_completedSubSteps`, JSON.stringify(completedSubSteps));
+  }, [currentStep, currentSubStep, currentFurtherSubStep, visitedSteps, completedSubSteps, isHydrated]);
+
+  // Helper functions
   const markVisited = (step: number, subStep: number) => {
-    setVisitedSteps((prev) => {
-      const newVisited = [...prev];
-      if (!newVisited[step]) newVisited[step] = [];
-      newVisited[step][subStep] = true;
-      return newVisited;
-    });
+    const newVisited = [...visitedSteps].map(row => [...row]);
+    if (!newVisited[step]) newVisited[step] = [];
+    newVisited[step][subStep] = true;
+    dispatch(setVisitedSteps(newVisited));
   };
 
   const markCompleted = (step: number, subStep: number) => {
-    setCompletedSubSteps((prev) => {
-      const newCompleted = [...prev];
-      if (!newCompleted[step]) newCompleted[step] = [];
-      newCompleted[step][subStep] = true;
-      return newCompleted;
-    });
+    const newCompleted = [...completedSubSteps].map(row => [...row]);
+    if (!newCompleted[step]) newCompleted[step] = [];
+    newCompleted[step][subStep] = true;
+    dispatch(setCompletedSubSteps(newCompleted));
   };
 
   const handleStepChange = (step: number) => {
-    if (visitedSteps[step]?.[0]) {
-      setCurrentStep(step);
-      setCurrentSubStep(0);
-      setCurrentFurtherSubStep(0);
+    if (visitedSteps[step]?.some((visited: boolean) => visited)) {
+      dispatch(setCurrentStep(step));
+      dispatch(setCurrentSubStep(0));
+      dispatch(setCurrentFurtherSubStep(0));
     }
   };
 
   const handleSubStepChange = (subStep: number) => {
     if (visitedSteps[currentStep]?.[subStep]) {
-      setCurrentSubStep(subStep);
-      setCurrentFurtherSubStep(0);
+      dispatch(setCurrentSubStep(subStep));
+      dispatch(setCurrentFurtherSubStep(0));
     }
   };
 
@@ -224,22 +134,21 @@ const AppContent: React.FC = () => {
         const hasFiles = electricBillUploadState.fileMetadata.length > 0;
 
         if (hasFiles) {
-            setCurrentStep(1);
-            setCurrentSubStep(1);
-            setCurrentFurtherSubStep(4);
+            dispatch(setCurrentStep(1));
+            dispatch(setCurrentSubStep(1));
+            dispatch(setCurrentFurtherSubStep(4));
             markVisited(1, 4);
         } else {
-            setCurrentFurtherSubStep(1);
+            dispatch(setCurrentFurtherSubStep(1));
             markVisited(1, 1);
         }
         return; 
     }
 
-    // Special case for jumping from the "Third Party" path end to step 5
     if (currentStep === 4 && currentSubStep === 2 && currentFurtherSubStep === 2) {
-      setCurrentStep(5);
-      setCurrentSubStep(0);
-      setCurrentFurtherSubStep(0);
+      dispatch(setCurrentStep(5));
+      dispatch(setCurrentSubStep(0));
+      dispatch(setCurrentFurtherSubStep(0));
       markVisited(5, 0);
       return;
     }
@@ -248,72 +157,65 @@ const AppContent: React.FC = () => {
       markCompleted(currentStep, currentSubStep);
       if (isLastSubStep) {
         if (!isLastStep) {
-          setCurrentStep(currentStep + 1);
-          setCurrentSubStep(0);
-          setCurrentFurtherSubStep(0);
+          dispatch(setCurrentStep(currentStep + 1));
+          dispatch(setCurrentSubStep(0));
+          dispatch(setCurrentFurtherSubStep(0));
           markVisited(currentStep + 1, 0);
         }
       } else {
-        setCurrentSubStep(currentSubStep + 1);
-        setCurrentFurtherSubStep(0);
+        dispatch(setCurrentSubStep(currentSubStep + 1));
+        dispatch(setCurrentFurtherSubStep(0));
         markVisited(currentStep, currentSubStep + 1);
       }
     } else {
-      setCurrentFurtherSubStep(currentFurtherSubStep + 1);
+      dispatch(setCurrentFurtherSubStep(currentFurtherSubStep + 1));
     }
   };
 
   const handleBack = () => {
-
     if (currentStep === 1 && currentSubStep === 1 && currentFurtherSubStep === 4) {
         const hasFiles = electricBillUploadState.fileMetadata.length > 0;
-
         if (hasFiles) {
-            setCurrentStep(1);
-            setCurrentSubStep(1);
-            setCurrentFurtherSubStep(0);
+            dispatch(setCurrentStep(1));
+            dispatch(setCurrentSubStep(1));
+            dispatch(setCurrentFurtherSubStep(0));
             return;
         }
     }
 
-    // Special case: Going back from the start of Step 5
     if (currentStep === 5 && currentSubStep === 0 && currentFurtherSubStep === 0) {
-        // Navigate back to the end of the previously chosen financial path
         if (ownershipPreference.preference === 'own') {
-            setCurrentStep(4);
-            setCurrentSubStep(1); // 'Own' path sub-step
-            setCurrentFurtherSubStep(7); // Last further sub-step of 'Own' path
+            dispatch(setCurrentStep(4));
+            dispatch(setCurrentSubStep(1));
+            dispatch(setCurrentFurtherSubStep(7));
             return;
         } else if (ownershipPreference.preference === 'third-party') {
-            setCurrentStep(4);
-            setCurrentSubStep(2); // 'Third Party' path sub-step
-            setCurrentFurtherSubStep(2); // Last further sub-step of 'Third Party' path
+            dispatch(setCurrentStep(4));
+            dispatch(setCurrentSubStep(2));
+            dispatch(setCurrentFurtherSubStep(2));
             return;
         }
-        // Fallback to default behavior if preference is not set
     }
 
-    // Special case for navigating back to the "Ownership Preference" screen
     if (currentStep === 4 && (currentSubStep === 1 || currentSubStep === 2) && currentFurtherSubStep === 0) {
-        setCurrentStep(4);
-        setCurrentSubStep(0);
-        setCurrentFurtherSubStep(1);
+        dispatch(setCurrentStep(4));
+        dispatch(setCurrentSubStep(0));
+        dispatch(setCurrentFurtherSubStep(1));
         return;
     }
     
-    // Standard back navigation logic
     if (currentFurtherSubStep > 0) {
-      setCurrentFurtherSubStep(currentFurtherSubStep - 1);
+      dispatch(setCurrentFurtherSubStep(currentFurtherSubStep - 1));
     } else if (currentSubStep > 0) {
       const prevSubStep = currentSubStep - 1;
-      setCurrentSubStep(prevSubStep);
-      setCurrentFurtherSubStep(steps[currentStep].furtherSubSteps[prevSubStep] - 1);
+      dispatch(setCurrentSubStep(prevSubStep));
+      dispatch(setCurrentFurtherSubStep(steps[currentStep].furtherSubSteps[prevSubStep] - 1));
     } else if (currentStep > 0) {
       const prevStep = currentStep - 1;
       const lastSubStepOfPrevStep = steps[prevStep].subSteps - 1;
-      setCurrentStep(prevStep);
-      setCurrentSubStep(lastSubStepOfPrevStep);
-      setCurrentFurtherSubStep(steps[prevStep].furtherSubSteps[lastSubStepOfPrevStep] - 1);
+      dispatch(setCurrentStep(prevStep));
+      dispatch(setCurrentSubStep(lastSubStepOfPrevStep));
+      dispatch(setCurrentFurtherSubStep(steps[prevStep].furtherSubSteps[lastSubStepOfPrevStep] - 1));
     }
   };
 
@@ -322,15 +224,32 @@ const AppContent: React.FC = () => {
     return ((currentFurtherSubStep + 1) / totalFurtherSubSteps) * 100;
   };
 
-  const { logoutForProduct } = useAppContext();
-
   const handleLogout = () => {
     const isEmissionCheckIQ = window.location.pathname.startsWith('/emissioncheckiq');
-    logoutForProduct(isEmissionCheckIQ ? "emissioncheckiq" : "bradley");
+    const product = isEmissionCheckIQ ? "emissioncheckiq" : "bradley";
+    dispatch(logoutUser(product));
+    window.location.href = isEmissionCheckIQ ? "/login/emissioncheckiq" : "/login/bradley";
   };
 
   const handleSaveAndContinueLater = () => {
     handleLogout();
+  };
+  
+  const handleSetOwnership = (pref: 'own' | 'third-party') => {
+      dispatch(setOwnershipPreference(pref));
+      if (pref === 'own') {
+        dispatch(setCurrentStep(4));
+        dispatch(setCurrentSubStep(1));
+        dispatch(setCurrentFurtherSubStep(0));
+        markVisited(4, 1);
+        markCompleted(4, 0);
+      } else {
+        dispatch(setCurrentStep(4));
+        dispatch(setCurrentSubStep(2));
+        dispatch(setCurrentFurtherSubStep(0));
+        markVisited(4, 2);
+        markCompleted(4, 0);
+      }
   };
 
   return (
@@ -357,10 +276,10 @@ const AppContent: React.FC = () => {
                     <>
                       <Tooltip title="Save progress and log out" placement='bottom' arrow><Button variant="outlined" onClick={handleSaveAndContinueLater} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Save and Continue Later</Button></Tooltip>
                       <Tooltip title="Choose self ownership" placement='bottom' arrow>
-                        <Button variant="contained" color="primary" onClick={() => { setOwnershipPreference('own'); setCurrentStep(4); setCurrentSubStep(1); setCurrentFurtherSubStep(0); markVisited(4, 1); markCompleted(4, 0); }} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Own</Button>
+                        <Button variant="contained" color="primary" onClick={() => handleSetOwnership('own')} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', '&:focus': { outline: 'none' } }}>Own</Button>
                       </Tooltip>
                       <Tooltip title="Choose 3rd party ownership" placement='bottom' arrow>
-                        <Button variant="contained" color="primary" onClick={() => { setOwnershipPreference('third-party'); setCurrentStep(4); setCurrentSubStep(2); setCurrentFurtherSubStep(0); markVisited(4, 2); markCompleted(4, 0); }} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', boxShadow: 'none', '&:focus': { outline: 'none' } }}>Third Party</Button>
+                        <Button variant="contained" color="primary" onClick={() => handleSetOwnership('third-party')} sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', padding: '2px 10px', minWidth: '10px', maxHeight: '25px', textTransform: 'none', boxShadow: 'none', '&:focus': { outline: 'none' } }}>Third Party</Button>
                       </Tooltip>
                     </>
                   ) : (
@@ -382,15 +301,6 @@ const AppContent: React.FC = () => {
       </Box>
       <Footer />
     </Box>
-  );
-};
-
-
-const ClientApp: React.FC = () => {
-  return (
-    <AppProviders>
-      <AppContent />
-    </AppProviders>
   );
 };
 

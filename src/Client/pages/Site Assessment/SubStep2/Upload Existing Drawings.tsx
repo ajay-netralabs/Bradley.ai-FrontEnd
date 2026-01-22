@@ -2,17 +2,19 @@ import React, { useRef } from 'react';
 import { Box, Typography, Tooltip, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useMEPDrawings } from '../../../Context/Site Assessment/SubStep2/Upload Existing Drawings Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { addMEPFiles, removeMEPFile } from '../../../../store/slices/siteAssessmentSlice';
 
 const SubStep2: React.FC = () => {
-  const { mepDrawingsState, addFiles, removeFile } = useMEPDrawings();
-  const { files } = mepDrawingsState;
+  const dispatch = useAppDispatch();
+  const mepDrawingsState = useAppSelector((state) => state.siteAssessment.mepDrawings);
+  const { fileMetadata } = mepDrawingsState;
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = event.target.files;
     if (newFiles) {
-      addFiles(Array.from(newFiles));
+      dispatch(addMEPFiles(Array.from(newFiles)));
     }
   };
 
@@ -24,12 +26,16 @@ const SubStep2: React.FC = () => {
     event.preventDefault();
     const newFiles = event.dataTransfer.files;
     if (newFiles) {
-      addFiles(Array.from(newFiles));
+      dispatch(addMEPFiles(Array.from(newFiles)));
     }
   };
 
   const handleUploadBoxClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleRemoveFile = (fileName: string) => {
+      dispatch(removeMEPFile(fileName));
   };
 
   const formatFileSize = (bytes: number) => {
@@ -92,15 +98,15 @@ const SubStep2: React.FC = () => {
             <b>*</b>Accepted File Formats: .pdf, .cad, .jpeg, .bmp, .tif
           </Typography>
 
-          {files.length > 0 && (
+          {fileMetadata.length > 0 && (
             <Box sx={{ mt: 2 }}>
               <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif', mb: 1, fontWeight: 'bold' }}>Uploaded Files:</Typography>
               <List dense>
-                {files.map((file, index) => (
+                {fileMetadata.map((file, index) => (
                   <ListItem
                     key={index}
                     secondaryAction={
-                      <IconButton edge="end" aria-label="delete" onClick={() => removeFile(file.name)}>
+                      <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveFile(file.name)}>
                         <DeleteIcon />
                       </IconButton>
                     }

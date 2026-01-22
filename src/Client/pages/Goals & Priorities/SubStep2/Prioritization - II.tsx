@@ -1,10 +1,13 @@
 import React from 'react';
 import { Box, TextField, Typography, MenuItem, Select, Slider, SelectChangeEvent } from '@mui/material';
-import { usePrioritizationII/* , PrioritizationIIState */ } from '../../../Context/Goals & Priorities/SubStep2/Prioritization - II Context';
-import { usePrioritizationI } from '../../../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updatePrioritizationIIField, updatePrioritizationIITarget, PrioritizationIIState } from '../../../../store/slices/goalsSlice';
 
 const SubStep2: React.FC = () => {
-  const { prioritizationIIState, updateField, updateTargetField } = usePrioritizationII();
+  const dispatch = useAppDispatch();
+  const prioritizationIIState = useAppSelector((state) => state.goals.prioritizationII);
+  const prioritizationIState = useAppSelector((state) => state.goals.prioritizationI);
+  
   const {
     resiliencyIncrease,
     scope2Reduction,
@@ -20,14 +23,25 @@ const SubStep2: React.FC = () => {
     energySavingsTarget
   } = prioritizationIIState;
   
-  const { prioritizationIState } = usePrioritizationI();
   const { selectedRanks } = prioritizationIState;
+
+  const handleUpdateField = (field: keyof PrioritizationIIState, value: string | number) => {
+      dispatch(updatePrioritizationIIField({ field, value }));
+  };
+
+  const handleUpdateTargetField = (
+      target: keyof Pick<PrioritizationIIState, 'decarbonizationTarget1' | 'decarbonizationTarget2' | 'energySavingsTarget'>,
+      field: 'value' | 'unit' | 'date',
+      value: string
+  ) => {
+      dispatch(updatePrioritizationIITarget({ target, field, value }));
+  };
 
   const handleSliderChange = (
     field: 'resiliencyIncrease' | 'scope2Reduction' | 'costReduction' | 'renewableGeneration', 
     value: number | number[]
   ) => {
-    updateField(field, value as number);
+    handleUpdateField(field, value as number);
   };
   
   const rankedSliders: { [key: string]: React.ReactNode } = {
@@ -81,7 +95,7 @@ const SubStep2: React.FC = () => {
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}><b>Do you want black start mode capability?</b> (Start without external grid power)</Typography>
-            <Select size="small" variant="outlined" value={blackStartCapability} onChange={(e: SelectChangeEvent) => updateField('blackStartCapability', e.target.value)} displayEmpty sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
+            <Select size="small" variant="outlined" value={blackStartCapability} onChange={(e: SelectChangeEvent) => handleUpdateField('blackStartCapability', e.target.value)} displayEmpty sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
               <MenuItem value="" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select</MenuItem>
               <MenuItem value="Yes" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Yes</MenuItem>
               <MenuItem value="No" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>No</MenuItem>
@@ -89,7 +103,7 @@ const SubStep2: React.FC = () => {
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}><b>Do you want island mode capability?</b> (Operate independent of the grid)</Typography>
-            <Select size="small" variant="outlined" value={islandModeCapability} onChange={(e: SelectChangeEvent) => updateField('islandModeCapability', e.target.value)} displayEmpty sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
+            <Select size="small" variant="outlined" value={islandModeCapability} onChange={(e: SelectChangeEvent) => handleUpdateField('islandModeCapability', e.target.value)} displayEmpty sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
               <MenuItem value="" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select</MenuItem>
               <MenuItem value="Yes" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Yes</MenuItem>
               <MenuItem value="No" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>No</MenuItem>
@@ -97,31 +111,31 @@ const SubStep2: React.FC = () => {
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}><b>Desired duration for grid independent operations under normal conditions: </b>(in sequential hours)</Typography>
-            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={gridIndependentDuration} onChange={(e) => updateField('gridIndependentDuration', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={gridIndependentDuration} onChange={(e) => handleUpdateField('gridIndependentDuration', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}><b>Desired Backup Power Duration when grid is non-operational: </b>(hours)</Typography>
-            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={backupPowerDuration} onChange={(e) => updateField('backupPowerDuration', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={backupPowerDuration} onChange={(e) => handleUpdateField('backupPowerDuration', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}><b>Desired Renewable System Size: </b>(kW)</Typography>
-            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={renewableSystemSize} onChange={(e) => updateField('renewableSystemSize', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={renewableSystemSize} onChange={(e) => handleUpdateField('renewableSystemSize', e.target.value)} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.307 }}><b>Decarbonization Target: </b>(County)</Typography>
-            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={decarbonizationTarget1.value} onChange={(e) => updateTargetField('decarbonizationTarget1', 'value', e.target.value)} sx={{ flex: 0.235, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
-            <Select size="small" variant="outlined" value={decarbonizationTarget1.unit} onChange={(e: SelectChangeEvent) => updateTargetField('decarbonizationTarget1', 'unit', e.target.value)} sx={{ flex: 0.07, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}><MenuItem value="%" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>%</MenuItem><MenuItem value="kWh" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>kWh</MenuItem><MenuItem value="days" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>days</MenuItem></Select>
+            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={decarbonizationTarget1.value} onChange={(e) => handleUpdateTargetField('decarbonizationTarget1', 'value', e.target.value)} sx={{ flex: 0.235, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+            <Select size="small" variant="outlined" value={decarbonizationTarget1.unit} onChange={(e: SelectChangeEvent) => handleUpdateTargetField('decarbonizationTarget1', 'unit', e.target.value)} sx={{ flex: 0.07, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}><MenuItem value="%" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>%</MenuItem><MenuItem value="kWh" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>kWh</MenuItem><MenuItem value="days" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>days</MenuItem></Select>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.02, textAlign: 'center' }}>by</Typography>
-            <TextField variant="outlined" size="small" type="date" value={decarbonizationTarget1.date} onChange={(e) => updateTargetField('decarbonizationTarget1', 'date', e.target.value)} sx={{ flex: 0.11, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
+            <TextField variant="outlined" size="small" type="date" value={decarbonizationTarget1.date} onChange={(e) => handleUpdateTargetField('decarbonizationTarget1', 'date', e.target.value)} sx={{ flex: 0.11, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.307 }}><b>Decarbonization Target: </b>(State)</Typography>
-            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={decarbonizationTarget2.value} onChange={(e) => updateTargetField('decarbonizationTarget2', 'value', e.target.value)} sx={{ flex: 0.235, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
-            <Select size="small" variant="outlined" value={decarbonizationTarget2.unit} onChange={(e: SelectChangeEvent) => updateTargetField('decarbonizationTarget2', 'unit', e.target.value)} sx={{ flex: 0.07, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}><MenuItem value="%" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>%</MenuItem><MenuItem value="kWh" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>kWh</MenuItem><MenuItem value="days" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>days</MenuItem></Select>
+            <TextField variant="outlined" size="small" type="number" placeholder='Input' value={decarbonizationTarget2.value} onChange={(e) => handleUpdateTargetField('decarbonizationTarget2', 'value', e.target.value)} sx={{ flex: 0.235, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+            <Select size="small" variant="outlined" value={decarbonizationTarget2.unit} onChange={(e: SelectChangeEvent) => handleUpdateTargetField('decarbonizationTarget2', 'unit', e.target.value)} sx={{ flex: 0.07, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}><MenuItem value="%" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>%</MenuItem><MenuItem value="kWh" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>kWh</MenuItem><MenuItem value="days" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>days</MenuItem></Select>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.02, textAlign: 'center' }}>by</Typography>
-            <TextField variant="outlined" size="small" type="date" value={decarbonizationTarget2.date} onChange={(e) => updateTargetField('decarbonizationTarget2', 'date', e.target.value)} sx={{ flex: 0.11, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
+            <TextField variant="outlined" size="small" type="date" value={decarbonizationTarget2.date} onChange={(e) => handleUpdateTargetField('decarbonizationTarget2', 'date', e.target.value)} sx={{ flex: 0.11, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}><Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.307 }}><b>Energy Savings Target:</b></Typography><TextField variant="outlined" size="small" type="number" placeholder='Input' value={energySavingsTarget.value} onChange={(e) => updateTargetField('energySavingsTarget', 'value', e.target.value)} sx={{ flex: 0.235, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} /><Select size="small" variant="outlined" value={energySavingsTarget.unit} onChange={(e: SelectChangeEvent) => updateTargetField('energySavingsTarget', 'unit', e.target.value)} sx={{ flex: 0.07, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}><MenuItem value="%" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>%</MenuItem><MenuItem value="kWh" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>kWh</MenuItem><MenuItem value="days" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>days</MenuItem></Select><Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.02, textAlign: 'center' }}>by</Typography><TextField variant="outlined" size="small" type="date" value={energySavingsTarget.date} onChange={(e) => updateTargetField('energySavingsTarget', 'date', e.target.value)} sx={{ flex: 0.11, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} /></Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}><Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.307 }}><b>Energy Savings Target:</b></Typography><TextField variant="outlined" size="small" type="number" placeholder='Input' value={energySavingsTarget.value} onChange={(e) => handleUpdateTargetField('energySavingsTarget', 'value', e.target.value)} sx={{ flex: 0.235, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} /><Select size="small" variant="outlined" value={energySavingsTarget.unit} onChange={(e: SelectChangeEvent) => handleUpdateTargetField('energySavingsTarget', 'unit', e.target.value)} sx={{ flex: 0.07, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}><MenuItem value="%" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>%</MenuItem><MenuItem value="kWh" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>kWh</MenuItem><MenuItem value="days" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>days</MenuItem></Select><Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.02, textAlign: 'center' }}>by</Typography><TextField variant="outlined" size="small" type="date" value={energySavingsTarget.date} onChange={(e) => handleUpdateTargetField('energySavingsTarget', 'date', e.target.value)} sx={{ flex: 0.11, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} /></Box>
         </Box>
       </Box>
     </Box>

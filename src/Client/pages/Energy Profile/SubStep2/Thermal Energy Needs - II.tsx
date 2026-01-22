@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, TextField, Typography, FormControlLabel, Switch, Tooltip, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useThermalEnergyNeedsII } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - II Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateThermalII, ThermalEnergyNeedsIIState } from '../../../../store/slices/energyProfileSlice';
 
 const formatNumberWithCommas = (numStr: string) => {
   if (!numStr) return '';
@@ -14,7 +15,9 @@ const parseNumberString = (str: string) => {
 };
 
 const SubStep2: React.FC = () => {
-  const { thermalNeedsIIState, updateField } = useThermalEnergyNeedsII();
+  const dispatch = useAppDispatch();
+  const thermalNeedsIIState = useAppSelector((state) => state.energyProfile.thermalNeedsII);
+  
   const {
     showHotWaterHVAC,
     showHotWaterBoilers,
@@ -36,14 +39,18 @@ const SubStep2: React.FC = () => {
     bhpBoilerCount,
   } = thermalNeedsIIState;
 
+  const handleUpdateField = (field: keyof ThermalEnergyNeedsIIState, value: string | boolean) => {
+      dispatch(updateThermalII({ field, value }));
+  };
+
   const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    updateField(name as keyof typeof thermalNeedsIIState, parseNumberString(value));
+    handleUpdateField(name as keyof ThermalEnergyNeedsIIState, parseNumberString(value));
   };
   
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
-    updateField(name as keyof typeof thermalNeedsIIState, value);
+    handleUpdateField(name as keyof ThermalEnergyNeedsIIState, value);
   };
   
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +59,7 @@ const SubStep2: React.FC = () => {
     if (name === 'hotWaterTemperature' && value !== '' && !regex.test(value)) {
         return;
     }
-    updateField(name as keyof typeof thermalNeedsIIState, value);
+    handleUpdateField(name as keyof ThermalEnergyNeedsIIState, value);
   };
 
   return (
@@ -69,7 +76,7 @@ const SubStep2: React.FC = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: '10px' }}>
             <Tooltip title="Click to expand or move on to the next step." placement='right' arrow>
               <FormControlLabel
-                control={<Switch checked={showHotWaterHVAC} onChange={(e) => updateField('showHotWaterHVAC', e.target.checked)} size="small" />}
+                control={<Switch checked={showHotWaterHVAC} onChange={(e) => handleUpdateField('showHotWaterHVAC', e.target.checked)} size="small" />}
                 label="Does your facility require hot water for HVAC / other non-domestic processes?"
                 sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }}
               />
@@ -100,7 +107,7 @@ const SubStep2: React.FC = () => {
                       <TextField name="hotWaterUsageTypeAmount" variant="outlined" placeholder='Enter amount in kGal' size="small" type="text" value={formatNumberWithCommas(hotWaterUsageTypeAmount)} onChange={handleNumberChange} sx={{ flex: 0.25, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
                     </Tooltip>
                     <Tooltip title="Enter reason for usage" placement='top-end' arrow>
-                      <TextField name="hotWaterUsageTypeReason" variant="outlined" placeholder='Enter reason for usage' size="small" type="text" value={hotWaterUsageTypeReason} onChange={(e) => updateField('hotWaterUsageTypeReason', e.target.value)} sx={{ flex: 0.5, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
+                      <TextField name="hotWaterUsageTypeReason" variant="outlined" placeholder='Enter reason for usage' size="small" type="text" value={hotWaterUsageTypeReason} onChange={(e) => handleUpdateField('hotWaterUsageTypeReason', e.target.value)} sx={{ flex: 0.5, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }} />
                     </Tooltip>
                   </Box>
 
@@ -131,7 +138,7 @@ const SubStep2: React.FC = () => {
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pt: '10px', pb: '10px' }}>
             <Tooltip title="Click to expand if you have HW Boilers for domestic use." placement='right' arrow>
-              <FormControlLabel control={<Switch checked={showHotWaterBoilers} onChange={(e) => updateField('showHotWaterBoilers', e.target.checked)} size="small" />} label="Do you have Hot Water Boilers for domestic use?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
+              <FormControlLabel control={<Switch checked={showHotWaterBoilers} onChange={(e) => handleUpdateField('showHotWaterBoilers', e.target.checked)} size="small" />} label="Do you have Hot Water Boilers for domestic use?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
             </Tooltip>
           </Box>
 
@@ -186,13 +193,13 @@ const SubStep2: React.FC = () => {
           )}
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pt: '10px', pb: '10px' }}>
-            <FormControlLabel control={<Switch checked={showSteam2HWDomestic} onChange={(e) => updateField('showSteam2HWDomestic', e.target.checked)} size="small" />} label="Do you have a Steam to HW Heat Exchanger for domestic use?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
+            <FormControlLabel control={<Switch checked={showSteam2HWDomestic} onChange={(e) => handleUpdateField('showSteam2HWDomestic', e.target.checked)} size="small" />} label="Do you have a Steam to HW Heat Exchanger for domestic use?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pt: '10px', pb: '10px' }}>
-            <FormControlLabel control={<Switch checked={showSteam2HWAHU} onChange={(e) => updateField('showSteam2HWAHU', e.target.checked)} size="small" />} label="Do you have Steam to HW Heat Exchangers in the AHU?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
+            <FormControlLabel control={<Switch checked={showSteam2HWAHU} onChange={(e) => handleUpdateField('showSteam2HWAHU', e.target.checked)} size="small" />} label="Do you have Steam to HW Heat Exchangers in the AHU?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pt: '10px', pb: '10px' }}>
-            <FormControlLabel control={<Switch checked={showSteam4Washdowns} onChange={(e) => updateField('showSteam4Washdowns', e.target.checked)} size="small" />} label="Do you use Steam for Wash Downs (Space cleaning, Kitchen cleaning, Industrial Equipment cleaning)?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
+            <FormControlLabel control={<Switch checked={showSteam4Washdowns} onChange={(e) => handleUpdateField('showSteam4Washdowns', e.target.checked)} size="small" />} label="Do you use Steam for Wash Downs (Space cleaning, Kitchen cleaning, Industrial Equipment cleaning)?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography sx={{ mt: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '200px', flex: 1, }}>

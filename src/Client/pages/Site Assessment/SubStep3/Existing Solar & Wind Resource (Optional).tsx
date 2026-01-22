@@ -1,14 +1,20 @@
 import React from 'react';
 import { Box, TextField, Typography, Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material';
-import { useExistingAssets } from '../../../Context/Site Assessment/SubStep3/Existing Solar & Wind Resource (Optional) Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateExistingAssetsField, ExistingAssetsState } from '../../../../store/slices/siteAssessmentSlice';
 
 const SubStep3: React.FC = () => {
-  const { existingAssetsState, updateField } = useExistingAssets();
+  const dispatch = useAppDispatch();
+  const existingAssetsState = useAppSelector((state) => state.siteAssessment.existingAssets);
   const { existingSolar, existingWind, considerWind } = existingAssetsState;
 
-  const handleNumericChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof typeof existingAssetsState) => {
+  const handleUpdateField = (field: keyof ExistingAssetsState, value: string) => {
+      dispatch(updateExistingAssetsField({ field, value }));
+  };
+
+  const handleNumericChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof ExistingAssetsState) => {
     const value = event.target.value.replace(/[^0-9]/g, '');
-    updateField(field, value);
+    handleUpdateField(field, value);
   };
   
   return (
@@ -74,7 +80,7 @@ const SubStep3: React.FC = () => {
           <FormControl sx={{ flex: 0.25, marginLeft: 'auto' }}>
             <Select
               value={considerWind}
-              onChange={(e: SelectChangeEvent) => updateField('considerWind', e.target.value)}
+              onChange={(e: SelectChangeEvent) => handleUpdateField('considerWind', e.target.value)}
               displayEmpty
               size="small"
               sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}

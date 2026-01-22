@@ -2,12 +2,21 @@ import React, { useRef } from 'react';
 import { Box, TextField, Typography, Tooltip, List, ListItem, IconButton, Select, MenuItem, FormControl, InputLabel, Paper } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useNaturalGasBillUpload } from '../../../Context/Energy Profile/SubStep2/Natural Gas Bill Upload Context';
-import { useBillAddress } from '../../../Context/Energy Profile/BillAddressContext';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { 
+    addGasFiles, 
+    removeGasFile,
+    addBill,
+    removeBill,
+    assignAddressToBill,
+    updateBillDateRange 
+} from '../../../../store/slices/energyProfileSlice';
 
 const SubStep2: React.FC = () => {
-  const { addFiles, removeFile } = useNaturalGasBillUpload();
-  const { bills, addBill, removeBill: removeBillFromContext, addresses, assignAddressToBill, updateBillDateRange } = useBillAddress();
+  const dispatch = useAppDispatch();
+  const billAddressState = useAppSelector((state) => state.energyProfile.billAddress);
+  const { bills, addresses } = billAddressState;
+  
   const gasBills = bills.filter(b => b.type === 'gas');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -15,9 +24,9 @@ const SubStep2: React.FC = () => {
       const newFiles = event.target.files;
       if (newFiles) {
         Array.from(newFiles).forEach(file => {
-          addBill({ name: file.name, size: formatFileSize(file.size), type: 'gas' });
+          dispatch(addBill({ name: file.name, size: formatFileSize(file.size), type: 'gas' }));
         });
-        addFiles(Array.from(newFiles));
+        dispatch(addGasFiles(Array.from(newFiles)));
       }
     };
  
@@ -30,9 +39,9 @@ const SubStep2: React.FC = () => {
       const newFiles = event.dataTransfer.files;
       if (newFiles) {
         Array.from(newFiles).forEach(file => {
-          addBill({ name: file.name, size: formatFileSize(file.size), type: 'gas' });
+          dispatch(addBill({ name: file.name, size: formatFileSize(file.size), type: 'gas' }));
         });
-        addFiles(Array.from(newFiles));
+        dispatch(addGasFiles(Array.from(newFiles)));
       }
     };
  
@@ -41,8 +50,16 @@ const SubStep2: React.FC = () => {
     };
 
     const handleRemoveFile = (billId: string, fileName: string) => {
-      removeFile(fileName);
-      removeBillFromContext(billId);
+      dispatch(removeGasFile(fileName));
+      dispatch(removeBill(billId));
+    };
+    
+    const handleAssignAddress = (billId: string, addressId: string) => {
+        dispatch(assignAddressToBill({ billId, addressId }));
+    };
+    
+    const handleUpdateDateRange = (billId: string, start: string, end: string) => {
+        dispatch(updateBillDateRange({ billId, dateRange: { start, end } }));
     };
 
     const formatFileSize = (bytes: number) => {
@@ -166,7 +183,7 @@ const SubStep2: React.FC = () => {
                                 <InputLabel sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}>Address</InputLabel>
                                 <Select
   value={bill.addressId || ''}
-  onChange={(e) => assignAddressToBill(bill.id, e.target.value as string)}
+  onChange={(e) => handleAssignAddress(bill.id, e.target.value as string)}
   label="Address"
   sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }}
 >
@@ -211,7 +228,7 @@ const SubStep2: React.FC = () => {
                                 size="small"
                                 type="date"
                                 value={bill.dateRange.start}
-                                onChange={(e) => updateBillDateRange(bill.id, { ...bill.dateRange, start: e.target.value })}
+                                onChange={(e) => handleUpdateDateRange(bill.id, e.target.value, bill.dateRange.end)}
                                 sx={{
                                 width: '180px',
                                 '& .MuiInputBase-root': { height: '40px' },
@@ -226,7 +243,7 @@ const SubStep2: React.FC = () => {
                                 size="small"
                                 type="date"
                                 value={bill.dateRange.end}
-                                onChange={(e) => updateBillDateRange(bill.id, { ...bill.dateRange, end: e.target.value })}
+                                onChange={(e) => handleUpdateDateRange(bill.id, bill.dateRange.start, e.target.value)}
                                 sx={{
                                 width: '180px',
                                 '& .MuiInputBase-root': { height: '40px' },

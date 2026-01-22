@@ -1,10 +1,16 @@
 import React from 'react';
 import { Box, TextField, Typography } from '@mui/material';
-import { useOtherEnergyCommitments } from '../../../../Context/Financial Info/SubStep2/Own/Other Energy Commitments (Optional) Context';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { updateOtherCommitmentsField } from '../../../../../store/slices/financialInfoSlice';
 
 const SubStep2: React.FC = () => {
-  const { otherEnergyCommitmentsState, updateField } = useOtherEnergyCommitments();
+  const dispatch = useAppDispatch();
+  const otherEnergyCommitmentsState = useAppSelector((state) => state.financialInfo.otherEnergyCommitments);
   const { commitmentsText } = otherEnergyCommitmentsState;
+
+  const handleUpdateField = (field: 'commitmentsText', value: string) => {
+      dispatch(updateOtherCommitmentsField({ field, value }));
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -24,7 +30,7 @@ const SubStep2: React.FC = () => {
             variant="outlined"
             placeholder="Please Describe Any Relevant Energy Commitments..."
             value={commitmentsText}
-            onChange={(e) => updateField('commitmentsText', e.target.value)}
+            onChange={(e) => handleUpdateField('commitmentsText', e.target.value)}
             sx={{
               fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.9rem',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Typography, FormControlLabel, MenuItem, Switch, Select, Tooltip, SelectChangeEvent } from '@mui/material';
-import { useThermalEnergyNeedsI } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - I Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateThermalI, ThermalEnergyNeedsIState } from '../../../../store/slices/energyProfileSlice';
 
 // Helper function to format a string representing a number with commas
 const formatNumberWithCommas = (numStr: string) => {
@@ -16,8 +17,8 @@ const parseNumberString = (str: string) => {
 };
 
 const SubStep2: React.FC = () => {
-  // Get the entire state object and the update function from the context
-  const { thermalNeedsIState, updateField } = useThermalEnergyNeedsI();
+  const dispatch = useAppDispatch();
+  const thermalNeedsIState = useAppSelector((state) => state.energyProfile.thermalNeedsI);
   const { showSteam, annualSteamUsage, steamPressureRange, exactSteamPressure, steamUsageConsistency, condensateReturn, returnFLOW, returnCondensateTemperature, makeUpWater } = thermalNeedsIState;
 
   // This derived state remains local as it's calculated on the fly
@@ -34,23 +35,21 @@ const SubStep2: React.FC = () => {
     }
   }, [annualSteamUsage, condensateReturn]);
   
+  const handleUpdateField = (field: keyof ThermalEnergyNeedsIState, value: string | boolean) => {
+      dispatch(updateThermalI({ field, value }));
+  };
+
   // Generic handler for text fields that should contain numbers
   const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    updateField(name as keyof typeof thermalNeedsIState, parseNumberString(value));
+    handleUpdateField(name as keyof ThermalEnergyNeedsIState, parseNumberString(value));
   };
   
   // Generic handler for Select components
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     const { name, value } = event.target;
-    updateField(name as keyof typeof thermalNeedsIState, value);
+    handleUpdateField(name as keyof ThermalEnergyNeedsIState, value);
   };
-  
-  // Generic handler for regular text fields
-  // const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = event.target;
-  //   updateField(name as keyof typeof thermalNeedsIState, value);
-  // };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -66,7 +65,7 @@ const SubStep2: React.FC = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Tooltip title="Click to expand or move on to the next step." placement='right' arrow>
               <FormControlLabel
-                control={<Switch checked={showSteam} onChange={(e) => updateField('showSteam', e.target.checked)} size="small" />}
+                control={<Switch checked={showSteam} onChange={(e) => handleUpdateField('showSteam', e.target.checked)} size="small" />}
                 label="Does your facility require steam?"
                 sx={{
                   '& .MuiFormControlLabel-label': {

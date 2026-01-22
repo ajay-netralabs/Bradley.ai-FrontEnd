@@ -9,9 +9,24 @@ import L from 'leaflet';
 import { FaMapMarkerAlt, FaTrash } from 'react-icons/fa';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
-import { useFacilityAddress } from '../../../Context/Organizational Profile/SubStep2/Facility Address Context';
-import { useBillAddress } from '../../../Context/Energy Profile/BillAddressContext';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { 
+    addAddress, 
+    updateAddressField, 
+    deleteAddress, 
+    setSelectedAddress,
+    AddressData as ReduxAddressData,
+} from '../../../../store/slices/organizationalProfileSlice';
+import { setAddresses as setBillAddresses } from '../../../../store/slices/energyProfileSlice';
 import CloseIcon from '@mui/icons-material/Close';
+import { v4 as uuidv4 } from 'uuid';
+
+const generateId = (): string => uuidv4();
+
+// Context Interface needs to maintain compatibility with L.LatLng in component logic
+interface AddressData extends Omit<ReduxAddressData, 'position'> {
+  position: L.LatLng; 
+}
 
 // --- Custom Icon Creator ---
 const createCustomIcon = (IconComponent: React.ElementType, color: string = '#e74c3c') => {
@@ -87,28 +102,62 @@ const MapMarkers = ({
 
 // --- Main Component ---
 const SubStep2 = () => {
-  const {
-    facilityAddressState,
-    addAddress,
-    updateAddressField,
-    deleteAddress,
-    setSelectedAddress,
-    getAddressById
-  } = useFacilityAddress();
-  const { setAddresses: setBillAddresses } = useBillAddress();
+  const dispatch = useAppDispatch();
+  const reduxState = useAppSelector((state) => state.organizationalProfile.facilityAddress);
+
+  // Transform Redux state (POJO) to Component state (Leaflet objects)
+  const addresses: AddressData[] = reduxState.addresses
+      .map(addr => ({
+          ...addr,
+          // @ts-ignore
+          position: addr.position ? new L.LatLng(addr.position.lat, addr.position.lng) : null
+      }))
+      .filter(addr => addr.position !== null) as AddressData[];
+
+  const { selectedAddressId } = reduxState;
   
   const mapRef = useRef<L.Map | null>(null);
   const [openNonUSModal, setOpenNonUSModal] = useState(false);
 
   useEffect(() => {
-    setBillAddresses(facilityAddressState.addresses.map(a => ({ id: a.id, address: `${a.streetAddress}, ${a.city}, ${a.state} ${a.zipCode}` })));
-  }, [facilityAddressState.addresses, setBillAddresses]);
+    dispatch(setBillAddresses(addresses.map(a => ({ id: a.id, address: `${a.streetAddress}, ${a.city}, ${a.state} ${a.zipCode}` }))));
+  }, [reduxState.addresses, dispatch]); // Depend on redux state change
 
-  const { addresses, selectedAddressId } = facilityAddressState;
   const defaultUSACenter: L.LatLngExpression = [39.8283, -98.5795];
   const initialCenter: L.LatLngExpression = selectedAddressId
-    ? getAddressById(selectedAddressId)?.position || defaultUSACenter
+    ? addresses.find(a => a.id === selectedAddressId)?.position || defaultUSACenter
     : (addresses.length > 0 ? addresses[0].position : defaultUSACenter);
+
+  const getAddressById = (addressId: string): AddressData | undefined => {
+      return addresses.find(addr => addr.id === addressId);
+  };
+
+  const handleAddAddress = (addressData: Omit<AddressData, 'id'>): string => {
+    const newId = generateId();
+    const position = addressData.position 
+        ? { lat: addressData.position.lat, lng: addressData.position.lng } 
+        : null;
+
+    dispatch(addAddress({
+        ...addressData,
+        id: newId,
+        position
+    }));
+
+    return newId;
+  };
+
+  const handleUpdateAddressField = (addressId: string, field: any, value: string) => {
+      dispatch(updateAddressField({ id: addressId, field, value }));
+  };
+
+  const handleDeleteAddress = (addressId: string) => {
+    dispatch(deleteAddress(addressId));
+  };
+
+  const handleSetSelectedAddress = (addressId: string | null) => {
+      dispatch(setSelectedAddress(addressId));
+  };
 
   // --- Add Location Handler ---
   const handleAddLocation = (position: L.LatLng) => {
@@ -120,7 +169,7 @@ const SubStep2 = () => {
           setOpenNonUSModal(true);
           return;
         }
-        const newAddressId = addAddress({
+        const newAddressId = handleAddAddress({
           streetAddress: '', city: '', state: '', zipCode: '', areaSqFt: '', operationalStart: '', operationalEnd: '', position
         });
         handleFetchAddress(newAddressId, position);
@@ -132,19 +181,15 @@ const SubStep2 = () => {
     fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${position.lat}&lon=${position.lng}`)
       .then(response => response.json())
       .then(data => {
-        updateAddressField(addressId, 'streetAddress', data.address.road || '');
-        updateAddressField(addressId, 'city', data.address.city || data.address.town || '');
-        updateAddressField(addressId, 'state', data.address.state || '');
-        updateAddressField(addressId, 'zipCode', data.address.postcode || '');
-        updateAddressField(addressId, 'areaSqFt', '');
-        updateAddressField(addressId, 'operationalStart', '');
-        updateAddressField(addressId, 'operationalEnd', '');
+        handleUpdateAddressField(addressId, 'streetAddress', data.address.road || '');
+        handleUpdateAddressField(addressId, 'city', data.address.city || data.address.town || '');
+        handleUpdateAddressField(addressId, 'state', data.address.state || '');
+        handleUpdateAddressField(addressId, 'zipCode', data.address.postcode || '');
+        handleUpdateAddressField(addressId, 'areaSqFt', '');
+        handleUpdateAddressField(addressId, 'operationalStart', '');
+        handleUpdateAddressField(addressId, 'operationalEnd', '');
       })
       .catch(error => console.error('Error fetching address:', error));
-  };
-
-  const handleDeleteAddress = (addressId: string) => {
-    deleteAddress(addressId);
   };
 
   const handleRefetchAddress = (addressId: string) => {
@@ -159,7 +204,7 @@ const SubStep2 = () => {
     if (address && mapRef.current) {
       mapRef.current.setView(address.position, 13, { animate: true });
     }
-    setSelectedAddress(addressId);
+    handleSetSelectedAddress(addressId);
   };
 
   // Sleek modal styling (minimal, soft, smaller font)
@@ -306,7 +351,7 @@ const SubStep2 = () => {
                           value={address[key as keyof typeof address] || ""}
                           onChange={(e) => {
                             e.stopPropagation();
-                            updateAddressField(address.id, key as any, e.target.value);
+                            handleUpdateAddressField(address.id, key as any, e.target.value);
                           }}
                           placeholder={placeholder}
                           onClick={(e) => e.stopPropagation()}
@@ -339,7 +384,7 @@ const SubStep2 = () => {
                           value={address.operationalStart || ""}
                           onChange={(e) => {
                             e.stopPropagation();
-                            updateAddressField(address.id, "operationalStart", e.target.value);
+                            handleUpdateAddressField(address.id, "operationalStart", e.target.value);
                           }}
                           onClick={(e) => e.stopPropagation()}
                           sx={{
@@ -368,7 +413,7 @@ const SubStep2 = () => {
                           value={address.operationalEnd || ""}
                           onChange={(e) => {
                             e.stopPropagation();
-                            updateAddressField(address.id, "operationalEnd", e.target.value);
+                            handleUpdateAddressField(address.id, "operationalEnd", e.target.value);
                           }}
                           onClick={(e) => e.stopPropagation()}
                           sx={{

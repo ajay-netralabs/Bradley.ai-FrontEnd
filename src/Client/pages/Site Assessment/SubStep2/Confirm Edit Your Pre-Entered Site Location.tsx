@@ -9,8 +9,14 @@ import { FaMapMarkerAlt, FaTrash } from 'react-icons/fa';
 import { renderToStaticMarkup } from 'react-dom/server';
 // ADDED: Imports for search functionality
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch'; 
-import { useFacilityAddress } from '../../../Context/Organizational Profile/SubStep2/Facility Address Context';
-import { useBillAddress } from '../../../Context/Energy Profile/BillAddressContext';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { 
+    addAddress, 
+    updateAddressField, 
+    deleteAddress, 
+    setSelectedAddress,
+} from '../../../../store/slices/organizationalProfileSlice';
+import { setAddresses as setBillAddresses } from '../../../../store/slices/energyProfileSlice';
 
 // ADDED: Helper component for the search bar
 const MapSearch = () => {
@@ -76,31 +82,48 @@ const MapMarkers = ({
 };
 
 const SubStep2 = () => {
-  const { 
-    facilityAddressState, 
-    addAddress, 
-    updateAddressField, 
-    deleteAddress, 
-    setSelectedAddress,
-    getAddressById 
-  } = useFacilityAddress();
-  const { setAddresses: setBillAddresses } = useBillAddress();
+  const dispatch = useAppDispatch();
+  const reduxFacilityAddress = useAppSelector((state) => state.organizationalProfile.facilityAddress);
+  
+  // Transform Redux state to component compatible format if necessary (Leaflet LatLng)
+  // But for simple markers we can construct LatLng on the fly or keep data as POJO in Redux.
+  // The MapMarkers expects addresses with position: L.LatLng or similar.
+  // We need to map the POJO position {lat, lng} to L.LatLng for Leaflet if required, 
+  // or just pass {lat, lng} if Leaflet accepts it (it usually does as Expression).
+  // However, existing code used L.LatLng. Let's adapt.
+  
+  const addresses = reduxFacilityAddress.addresses.map(a => ({
+      ...a,
+      // @ts-ignore
+      position: a.position ? new L.LatLng(a.position.lat, a.position.lng) : null
+  })).filter(a => a.position !== null) as any[];
+
+  const { selectedAddressId } = reduxFacilityAddress;
   
   useEffect(() => {
-    setBillAddresses(facilityAddressState.addresses.map(a => ({ id: a.id, address: `${a.streetAddress}, ${a.city}, ${a.state} ${a.zipCode}` })));
-  }, [facilityAddressState.addresses, setBillAddresses]);
+    dispatch(setBillAddresses(addresses.map(a => ({ id: a.id, address: `${a.streetAddress}, ${a.city}, ${a.state} ${a.zipCode}` }))));
+  }, [reduxFacilityAddress.addresses, dispatch]);
   
-  const { addresses, selectedAddressId } = facilityAddressState;
   const mapRef = useRef<L.Map | null>(null);
 
+  const getAddressById = (id: string) => addresses.find(a => a.id === id);
+
   const handleAddLocation = (position: L.LatLng) => {
-    const newAddressId = addAddress({
-      streetAddress: '', city: '', state: '', zipCode: '', position,
+    // We need to generate ID here or let reducer do it? 
+    // The reducer logic for addAddress (checked earlier) simply pushes payload.
+    // We need to generate ID.
+    // Importing uuid or simple random.
+    const newId = `addr_${Date.now()}`;
+    const newAddress = {
+      id: newId,
+      streetAddress: '', city: '', state: '', zipCode: '', 
+      position: { lat: position.lat, lng: position.lng }, // Store as POJO
       areaSqFt: '',
       operationalStart: '',
       operationalEnd: ''
-    });
-    handleFetchAddress(newAddressId, position);
+    };
+    dispatch(addAddress(newAddress));
+    handleFetchAddress(newId, position);
   };
 
   const handleFetchAddress = (addressId: string, position: L.LatLng) => {
@@ -108,16 +131,16 @@ const SubStep2 = () => {
     fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
       .then(response => response.json())
       .then(data => {
-        updateAddressField(addressId, 'streetAddress', data.address.road || '');
-        updateAddressField(addressId, 'city', data.address.city || data.address.town || '');
-        updateAddressField(addressId, 'state', data.address.state || '');
-        updateAddressField(addressId, 'zipCode', data.address.postcode || '');
+        dispatch(updateAddressField({ id: addressId, field: 'streetAddress', value: data.address.road || '' }));
+        dispatch(updateAddressField({ id: addressId, field: 'city', value: data.address.city || data.address.town || '' }));
+        dispatch(updateAddressField({ id: addressId, field: 'state', value: data.address.state || '' }));
+        dispatch(updateAddressField({ id: addressId, field: 'zipCode', value: data.address.postcode || '' }));
       })
       .catch(error => console.error('Error fetching address:', error));
   };
 
   const handleDeleteAddress = (addressId: string) => {
-    deleteAddress(addressId);
+    dispatch(deleteAddress(addressId));
   };
 
   const handleRefetchAddress = (addressId: string) => {
@@ -125,6 +148,14 @@ const SubStep2 = () => {
     if (address) {
       handleFetchAddress(addressId, address.position);
     }
+  };
+
+  const handleUpdateAddressField = (id: string, field: any, value: string) => {
+      dispatch(updateAddressField({ id, field, value }));
+  };
+
+  const handleSetSelectedAddress = (id: string) => {
+      dispatch(setSelectedAddress(id));
   };
 
   return (
@@ -229,7 +260,7 @@ const SubStep2 = () => {
                   <Paper 
                     key={address.id} 
                     sx={{ mb: 2, p: 2, border: address.id === selectedAddressId ? '2px solid #2196f3' : '1px solid #e0e0e0', cursor: 'pointer', '&:hover': { bgcolor: '#f9f9f9' } }}
-                    onClick={() => setSelectedAddress(address.id)}
+                    onClick={() => handleSetSelectedAddress(address.id)}
                   >
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                       <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem', fontWeight: 'bold' }}>
@@ -264,9 +295,10 @@ const SubStep2 = () => {
                           <TextField
                             variant="outlined" size="small" type="text"
                             value={address[key as keyof typeof address]}
-                            onChange={(e) => { e.stopPropagation(); updateAddressField(address.id, key as any, e.target.value); }}
+                            onChange={(e) => { e.stopPropagation(); handleUpdateAddressField(address.id, key as any, e.target.value); }}
                             placeholder={placeholder}
                             onClick={(e) => e.stopPropagation()}
+
                             sx={{ fontSize: '0.7rem', fontFamily: 'Nunito Sans, sans-serif', '& .MuiInputBase-root': { height: '28px', padding: '0 6px' }, '& input': { padding: 0, fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' } }}
                           />
                         </Box>

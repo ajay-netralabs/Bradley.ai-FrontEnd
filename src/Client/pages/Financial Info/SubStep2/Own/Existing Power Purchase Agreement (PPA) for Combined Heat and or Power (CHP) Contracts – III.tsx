@@ -2,59 +2,79 @@ import React, { useRef } from 'react';
 import { Box, TextField, Typography, FormControlLabel, Switch, Tooltip, InputAdornment, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useExistingPPAContractsIII } from '../../../../Context/Financial Info/SubStep2/Own/Existing Power Purchase Agreement (PPA) for Combined Heat and or Power (CHP) Contracts – III Context';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { updateContractsIIIField, addContractsIIIFiles, removeContractsIIIFile, ExistingPPAContractsIIIState } from '../../../../../store/slices/financialInfoSlice';
 
 const SubStep2: React.FC = () => {
-  const { ppaContractsIIIState, updateField, addFiles, removeFile } = useExistingPPAContractsIII();
-  const { hasCHP_PPA, ratekWh, rateMMBTu, escalatorkWh, escalatorMMBTu, termkWh, termMMBTu, files } = ppaContractsIIIState;
+  const dispatch = useAppDispatch();
+  const ppaContractsIIIState = useAppSelector((state) => state.financialInfo.existingPPAContractsIII);
+  const { hasCHP_PPA, ratekWh, rateMMBTu, escalatorkWh, escalatorMMBTu, termkWh, termMMBTu, fileMetadata } = ppaContractsIIIState;
+  
+  const handleUpdateField = (field: keyof Omit<ExistingPPAContractsIIIState, 'files' | 'fileMetadata'>, value: string | boolean) => {
+      dispatch(updateContractsIIIField({ field, value }));
+  };
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleRatekWhChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (/^(0(\.\d{0,2})?)?$/.test(value) || value === '0' || value === '') {
-      updateField('ratekWh', value);
+      handleUpdateField('ratekWh', value);
     }
   };
 
   const handleRateMMBTuChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (/^(0(\.\d{0,2})?)?$/.test(value) || value === '0' || value === '') {
-      updateField('rateMMBTu', value);
+      handleUpdateField('rateMMBTu', value);
     }
   };
 
   const handleEscalatorkWhChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.replace('%', '');
     if (/^([1-9](\.\d{0,2})?)?$/.test(value) || value === '') {
-      updateField('escalatorkWh', value);
+      handleUpdateField('escalatorkWh', value);
     }
   };
 
   const handleEscalatorMMBTuChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.replace('%', '');
     if (/^([1-9](\.\d{0,2})?)?$/.test(value) || value === '') {
-      updateField('escalatorMMBTu', value);
+      handleUpdateField('escalatorMMBTu', value);
     }
   };
 
   const handleTermkWhChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (/^(?:[1-9]|[12]\d|30)?$/.test(value) || value === '') {
-      updateField('termkWh', value);
+      handleUpdateField('termkWh', value);
     }
   };
 
   const handleTermMMBTuChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (/^(?:[1-9]|[12]\d|30)?$/.test(value) || value === '') {
-      updateField('termMMBTu', value);
+      handleUpdateField('termMMBTu', value);
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => { if (event.target.files) addFiles(Array.from(event.target.files)); };
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => { 
+      if (event.target.files) {
+          dispatch(addContractsIIIFiles(Array.from(event.target.files)));
+      }
+  };
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => event.preventDefault();
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => { event.preventDefault(); if (event.dataTransfer.files) addFiles(Array.from(event.dataTransfer.files)); };
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => { 
+      event.preventDefault(); 
+      if (event.dataTransfer.files) {
+          dispatch(addContractsIIIFiles(Array.from(event.dataTransfer.files)));
+      }
+  };
   const handleUploadBoxClick = () => { fileInputRef.current?.click(); };
+  const handleRemoveFile = (fileName: string) => {
+      dispatch(removeContractsIIIFile(fileName));
+  };
+
   const formatFileSize = (bytes: number) => { if (bytes === 0) return '0 Bytes'; const k = 1024; const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']; const i = Math.floor(Math.log(bytes) / Math.log(k)); return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]; };
   const textFieldStylesHalf = { flex: 0.25, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } };
 
@@ -67,7 +87,7 @@ const SubStep2: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 0 }}>
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <FormControlLabel control={<Switch checked={hasCHP_PPA} onChange={(e) => updateField('hasCHP_PPA', e.target.checked)} size="small" />} label="Do you have any existing PPAs for thermal energy or Combined Heat and Power (CHP)?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
+            <FormControlLabel control={<Switch checked={hasCHP_PPA} onChange={(e) => handleUpdateField('hasCHP_PPA', e.target.checked)} size="small" />} label="Do you have any existing PPAs for thermal energy or Combined Heat and Power (CHP)?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
           </Box>
           {hasCHP_PPA && (
             <Box sx={{ mb: 0, pl: 0 }}>
@@ -80,8 +100,8 @@ const SubStep2: React.FC = () => {
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Escalator: </b>(in %)</Typography>
-                    <Tooltip title="Escalator for kWh" placement='left' arrow><TextField variant="outlined" size="small" type="text" placeholder='1 - 9% (for kWh)' value={escalatorkWh} onChange={handleEscalatorkWhChange} inputProps={{ onBlur: () => { if (escalatorkWh && !escalatorkWh.includes('%')) updateField('escalatorkWh', escalatorkWh + '%'); } }} sx={textFieldStylesHalf} /></Tooltip>
-                    <Tooltip title="Escalator for MMBTu" placement='right' arrow><TextField variant="outlined" size="small" type="text" placeholder='1 - 9% (for MMBTu)' value={escalatorMMBTu} onChange={handleEscalatorMMBTuChange} inputProps={{ onBlur: () => { if (escalatorMMBTu && !escalatorMMBTu.includes('%')) updateField('escalatorMMBTu', escalatorMMBTu + '%'); } }} sx={textFieldStylesHalf} /></Tooltip>
+                    <Tooltip title="Escalator for kWh" placement='left' arrow><TextField variant="outlined" size="small" type="text" placeholder='1 - 9% (for kWh)' value={escalatorkWh} onChange={handleEscalatorkWhChange} inputProps={{ onBlur: () => { if (escalatorkWh && !escalatorkWh.includes('%')) handleUpdateField('escalatorkWh', escalatorkWh + '%'); } }} sx={textFieldStylesHalf} /></Tooltip>
+                    <Tooltip title="Escalator for MMBTu" placement='right' arrow><TextField variant="outlined" size="small" type="text" placeholder='1 - 9% (for MMBTu)' value={escalatorMMBTu} onChange={handleEscalatorMMBTuChange} inputProps={{ onBlur: () => { if (escalatorMMBTu && !escalatorMMBTu.includes('%')) handleUpdateField('escalatorMMBTu', escalatorMMBTu + '%'); } }} sx={textFieldStylesHalf} /></Tooltip>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Term: </b>(In Years)</Typography>
@@ -96,10 +116,10 @@ const SubStep2: React.FC = () => {
                     </Box>
                   </Tooltip>
                   <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', mb: 0, textAlign: 'right' }}><b>*</b>Accepted File Formats: .xls, .xlsx, .csv, .pdf</Typography>
-                  {files.length > 0 && (
+                  {fileMetadata.length > 0 && (
                     <Box sx={{ mt: 2 }}>
                       <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif', mb: 1, fontWeight: 'bold' }}>Uploaded Files:</Typography>
-                      <List dense>{files.map((file, index) => (<ListItem key={index} secondaryAction={<IconButton edge="end" aria-label="delete" onClick={() => removeFile(file.name)}><DeleteIcon /></IconButton>}><ListItemText primary={file.name} secondary={formatFileSize(file.size)} primaryTypographyProps={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' }} secondaryTypographyProps={{ fontSize: '0.65rem', fontFamily: 'Nunito Sans, sans-serif' }} /></ListItem>))}</List>
+                      <List dense>{fileMetadata.map((file, index) => (<ListItem key={index} secondaryAction={<IconButton edge="end" aria-label="delete" onClick={() => handleRemoveFile(file.name)}><DeleteIcon /></IconButton>}><ListItemText primary={file.name} secondary={formatFileSize(file.size)} primaryTypographyProps={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' }} secondaryTypographyProps={{ fontSize: '0.65rem', fontFamily: 'Nunito Sans, sans-serif' }} /></ListItem>))}</List>
                     </Box>
                   )}
                 </Box>

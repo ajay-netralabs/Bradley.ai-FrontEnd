@@ -2,11 +2,35 @@ import React from 'react';
 import { Box, TextField, Typography, MenuItem, Select, IconButton, InputAdornment, SelectChangeEvent } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useFinancialsII } from '../../../Context/Goals & Priorities/SubStep3/Financials & Investment Information - II Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { 
+    updateFinancialsIIField, 
+    addInvestmentAmount, 
+    removeInvestmentAmount, 
+    updateInvestmentAmount,
+    FinancialsIIState
+} from '../../../../store/slices/goalsSlice';
 
 const SubStep3: React.FC = () => {
-  const { financialsIIState, updateField, addInvestmentAmount, removeInvestmentAmount, updateInvestmentAmount } = useFinancialsII();
+  const dispatch = useAppDispatch();
+  const financialsIIState = useAppSelector((state) => state.goals.financialsII);
   const { investmentAmounts, financeOption, financeDetails, desiredCostReduction, preferredTerm } = financialsIIState;
+
+  const handleUpdateField = (field: keyof Omit<FinancialsIIState, 'investmentAmounts'>, value: string) => {
+      dispatch(updateFinancialsIIField({ field, value }));
+  };
+  
+  const handleAddInvestmentAmount = () => {
+      dispatch(addInvestmentAmount());
+  };
+  
+  const handleRemoveInvestmentAmount = (index: number) => {
+      dispatch(removeInvestmentAmount(index));
+  };
+  
+  const handleUpdateInvestmentAmount = (index: number, value: string) => {
+      dispatch(updateInvestmentAmount({ index, value }));
+  };
 
   const formatCurrency = (value: string): string => {
     const numericValue = value.replace(/[^0-9.]/g, '');
@@ -21,11 +45,11 @@ const SubStep3: React.FC = () => {
   };
 
   const handleInvestmentAmountChange = (index: number, value: string) => {
-    updateInvestmentAmount(index, formatCurrency(value));
+    handleUpdateInvestmentAmount(index, formatCurrency(value));
   };
   
   const handleInvestmentAmountBlur = (index: number) => {
-    updateInvestmentAmount(index, formatCurrency(investmentAmounts[index]));
+    handleUpdateInvestmentAmount(index, formatCurrency(investmentAmounts[index]));
   };
 
   return (
@@ -54,10 +78,10 @@ const SubStep3: React.FC = () => {
                 <TextField key={index} variant="outlined" size="small" type="text" value={value} onChange={(e) => handleInvestmentAmountChange(index, e.target.value)} onBlur={() => handleInvestmentAmountBlur(index)} placeholder={`Yr ${index + 1} - Budget Amt.`} InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }} sx={{ flex: 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
               ))}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
-                <IconButton onClick={addInvestmentAmount} color="primary" sx={{ p: 0, '&:focus': { outline: 'none' } }}>
+                <IconButton onClick={handleAddInvestmentAmount} color="primary" sx={{ p: 0, '&:focus': { outline: 'none' } }}>
                   <AddCircleOutlineIcon fontSize="small" />
                 </IconButton>
-                <IconButton onClick={() => removeInvestmentAmount(investmentAmounts.length - 1)} sx={{ p: 0, '&:focus': { outline: 'none' } }} disabled={investmentAmounts.length === 1}>
+                <IconButton onClick={() => handleRemoveInvestmentAmount(investmentAmounts.length - 1)} sx={{ p: 0, '&:focus': { outline: 'none' } }} disabled={investmentAmounts.length === 1}>
                   <DeleteIcon fontSize="small" />
                 </IconButton>
               </Box>
@@ -65,16 +89,16 @@ const SubStep3: React.FC = () => {
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}><b>Desired Cost Reduction Annually: </b>(in USD)</Typography>
-            <TextField variant="outlined" size="small" type="text" placeholder="Input" value={desiredCostReduction} onChange={(e) => updateField('desiredCostReduction', formatCurrency(e.target.value))} onBlur={() => updateField('desiredCostReduction', formatCurrency(desiredCostReduction))} InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+            <TextField variant="outlined" size="small" type="text" placeholder="Input" value={desiredCostReduction} onChange={(e) => handleUpdateField('desiredCostReduction', formatCurrency(e.target.value))} onBlur={() => handleUpdateField('desiredCostReduction', formatCurrency(desiredCostReduction))} InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}><b>Preferred Term of Finance Arrangement: </b>(in Years)</Typography>
-            <TextField variant="outlined" size="small" type="number" placeholder='Input : EmissionCheckIQ+ needs to know the contract duration in case of a 3rd party DER ownership.' value={preferredTerm} onChange={(e) => updateField('preferredTerm', e.target.value.replace(/[^0-9]/g, ''))} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
+            <TextField variant="outlined" size="small" type="number" placeholder='Input : EmissionCheckIQ+ needs to know the contract duration in case of a 3rd party DER ownership.' value={preferredTerm} onChange={(e) => handleUpdateField('preferredTerm', e.target.value.replace(/[^0-9]/g, ''))} sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
             <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', flex: 0.3 }}><b>How would you prefer to finance your DER system?</b></Typography>
             <Box sx={{ display: 'flex', gap: 1, flex: 0.448 }}>
-              <Select size="small" variant="outlined" value={financeOption} onChange={(e: SelectChangeEvent) => updateField('financeOption', e.target.value)} sx={{ flex: financeOption === "Other" ? 0.5 : 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
+              <Select size="small" variant="outlined" value={financeOption} onChange={(e: SelectChangeEvent) => handleUpdateField('financeOption', e.target.value)} sx={{ flex: financeOption === "Other" ? 0.5 : 1, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}>
                 <MenuItem value="default" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select</MenuItem>
                 <MenuItem value="Cash Purchase" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Cash Purchase</MenuItem>
                 <MenuItem value="Finance" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Finance</MenuItem>
@@ -89,7 +113,7 @@ const SubStep3: React.FC = () => {
                   type="text"
                   placeholder="If Other, please specify"
                   value={financeDetails}
-                  onChange={(e) => updateField('financeDetails', e.target.value)}
+                  onChange={(e) => handleUpdateField('financeDetails', e.target.value)}
                   sx={{
                   flex: 0.5,
                   fontFamily: 'Nunito Sans, sans-serif',

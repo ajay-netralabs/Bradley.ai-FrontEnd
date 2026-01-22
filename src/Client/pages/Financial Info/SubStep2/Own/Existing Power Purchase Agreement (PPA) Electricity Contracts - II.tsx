@@ -2,40 +2,55 @@ import React, { useRef } from 'react';
 import { Box, TextField, Typography, FormControlLabel, Switch, Tooltip, InputAdornment, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useExistingPPAContractsII } from '../../../../Context/Financial Info/SubStep2/Own/Existing Power Purchase Agreement (PPA) Electricity Contracts - II Context';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { updateContractsIIField, addContractsIIFiles, removeContractsIIFile, ExistingPPAContractsIIState } from '../../../../../store/slices/financialInfoSlice';
 
 const SubStep2: React.FC = () => {
-  const { ppaContractsIIState, updateField, addFiles, removeFile } = useExistingPPAContractsII();
-  const { hasPPA, providerName, ppaStartDate, ppaEndDate, ppaRate, ppaEscalation, files } = ppaContractsIIState;
+  const dispatch = useAppDispatch();
+  const ppaContractsIIState = useAppSelector((state) => state.financialInfo.existingPPAContractsII);
+  const { hasPPA, providerName, ppaStartDate, ppaEndDate, ppaRate, ppaEscalation, fileMetadata } = ppaContractsIIState;
+
+  const handleUpdateField = (field: keyof Omit<ExistingPPAContractsIIState, 'files' | 'fileMetadata'>, value: string | boolean) => {
+      dispatch(updateContractsIIField({ field, value }));
+  };
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePpaRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (/^(0(\.\d{0,2})?)?$/.test(value) || value === '0' || value === '') {
-      updateField('ppaRate', value);
+      handleUpdateField('ppaRate', value);
     }
   };
 
   const handlePpaEscalationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.replace('%', '');
     if (/^([1-9](\.\d{0,2})?)?$/.test(value) || value === '') {
-      updateField('ppaEscalation', value);
+      handleUpdateField('ppaEscalation', value);
     }
   };
   
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) addFiles(Array.from(event.target.files));
+    if (event.target.files) {
+        dispatch(addContractsIIFiles(Array.from(event.target.files)));
+    }
   };
   
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => event.preventDefault();
   
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    if (event.dataTransfer.files) addFiles(Array.from(event.dataTransfer.files));
+    if (event.dataTransfer.files) {
+        dispatch(addContractsIIFiles(Array.from(event.dataTransfer.files)));
+    }
   };
 
   const handleUploadBoxClick = () => {
     fileInputRef.current?.click();
+  };
+  
+  const handleRemoveFile = (fileName: string) => {
+      dispatch(removeContractsIIFile(fileName));
   };
   
   const formatFileSize = (bytes: number) => {
@@ -57,7 +72,7 @@ const SubStep2: React.FC = () => {
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Tooltip title="PPAs are a third-party agreements whereby you are buying a specific minimum of kWh at a defined initial rate and escalation rate for electricity or therms. These commitments are critical to properly evaluate the financial performance of the DER recommendation and will help me propose the most optimized DER recommendation to match to your priorities." placement='right' arrow>
-              <FormControlLabel control={<Switch checked={hasPPA} onChange={(e) => updateField('hasPPA', e.target.checked)} size="small" />} label="Do you have any existing Power Purchase Agreements (PPAs)?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
+              <FormControlLabel control={<Switch checked={hasPPA} onChange={(e) => handleUpdateField('hasPPA', e.target.checked)} size="small" />} label="Do you have any existing Power Purchase Agreements (PPAs)?" sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }} />
             </Tooltip>
           </Box>
           {hasPPA && (
@@ -66,15 +81,15 @@ const SubStep2: React.FC = () => {
                 <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>PPA Provider:</b></Typography>
-                    <TextField variant="outlined" size="small" type="text" placeholder='Enter Provider Name' value={providerName} onChange={(e) => updateField('providerName', e.target.value)} sx={textFieldStyles} />
+                    <TextField variant="outlined" size="small" type="text" placeholder='Enter Provider Name' value={providerName} onChange={(e) => handleUpdateField('providerName', e.target.value)} sx={textFieldStyles} />
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>PPA Term Start Date:</b></Typography>
-                    <TextField variant="outlined" size="small" type="date" value={ppaStartDate} onChange={(e) => updateField('ppaStartDate', e.target.value)} sx={textFieldStyles} />
+                    <TextField variant="outlined" size="small" type="date" value={ppaStartDate} onChange={(e) => handleUpdateField('ppaStartDate', e.target.value)} sx={textFieldStyles} />
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>PPA End Date:</b></Typography>
-                    <TextField variant="outlined" size="small" type="date" value={ppaEndDate} onChange={(e) => updateField('ppaEndDate', e.target.value)} sx={textFieldStyles} />
+                    <TextField variant="outlined" size="small" type="date" value={ppaEndDate} onChange={(e) => handleUpdateField('ppaEndDate', e.target.value)} sx={textFieldStyles} />
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>PPA Rate (Initial Year): </b>(Per kWh)</Typography>
@@ -82,7 +97,7 @@ const SubStep2: React.FC = () => {
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>PPA Escalation Rate: </b>(In %)</Typography>
-                    <TextField variant="outlined" size="small" type="text" placeholder="1 - 9.99%" value={ppaEscalation} onChange={handlePpaEscalationChange} sx={textFieldStyles} inputProps={{ onBlur: () => { if (ppaEscalation && !ppaEscalation.includes('%')) updateField('ppaEscalation', ppaEscalation + '%'); } }} />
+                    <TextField variant="outlined" size="small" type="text" placeholder="1 - 9.99%" value={ppaEscalation} onChange={handlePpaEscalationChange} sx={textFieldStyles} inputProps={{ onBlur: () => { if (ppaEscalation && !ppaEscalation.includes('%')) handleUpdateField('ppaEscalation', ppaEscalation + '%'); } }} />
                   </Box>
                   <input type="file" multiple accept=".pdf" onChange={handleFileChange} ref={fileInputRef} style={{ display: 'none' }} />
                   <Tooltip title="Click to upload files here." placement="bottom-start" arrow>
@@ -92,11 +107,11 @@ const SubStep2: React.FC = () => {
                     </Box>
                   </Tooltip>
                   <Typography sx={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif', mt: -1, mb: 0, textAlign: 'right' }}><b>*</b>Accepted File Formats: .pdf</Typography>
-                  {files.length > 0 && (
+                  {fileMetadata.length > 0 && (
                     <Box sx={{ mt: 2 }}>
                       <Typography sx={{ fontSize: '0.8rem', fontFamily: 'Nunito Sans, sans-serif', mb: 1, fontWeight: 'bold' }}>Uploaded Files:</Typography>
                       <List dense>
-                        {files.map((file, index) => (<ListItem key={index} secondaryAction={<IconButton edge="end" aria-label="delete" onClick={() => removeFile(file.name)}><DeleteIcon /></IconButton>}><ListItemText primary={file.name} secondary={formatFileSize(file.size)} primaryTypographyProps={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' }} secondaryTypographyProps={{ fontSize: '0.65rem', fontFamily: 'Nunito Sans, sans-serif' }} /></ListItem>))}
+                        {fileMetadata.map((file, index) => (<ListItem key={index} secondaryAction={<IconButton edge="end" aria-label="delete" onClick={() => handleRemoveFile(file.name)}><DeleteIcon /></IconButton>}><ListItemText primary={file.name} secondary={formatFileSize(file.size)} primaryTypographyProps={{ fontSize: '0.75rem', fontFamily: 'Nunito Sans, sans-serif' }} secondaryTypographyProps={{ fontSize: '0.65rem', fontFamily: 'Nunito Sans, sans-serif' }} /></ListItem>))}
                       </List>
                     </Box>
                   )}

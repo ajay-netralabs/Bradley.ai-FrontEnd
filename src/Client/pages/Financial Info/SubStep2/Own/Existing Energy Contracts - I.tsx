@@ -1,10 +1,16 @@
 import React from 'react';
 import { Box, TextField, Typography, FormControlLabel, Switch } from '@mui/material';
-import { useExistingContractsI } from '../../../../Context/Financial Info/SubStep2/Own/Existing Energy Contracts - I Context';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { updateContractsIField, ExistingContractsIState } from '../../../../../store/slices/financialInfoSlice';
 
 const SubStep2: React.FC = () => {
-  const { existingContractsIState, updateField } = useExistingContractsI();
+  const dispatch = useAppDispatch();
+  const existingContractsIState = useAppSelector((state) => state.financialInfo.existingContractsI);
   const { hasThirdPartyContract, supplierName, contractEndDate, terminationFee, electricityTakeAmount } = existingContractsIState;
+
+  const handleUpdateField = (field: keyof ExistingContractsIState, value: string | boolean) => {
+      dispatch(updateContractsIField({ field, value }));
+  };
 
   const handleTerminationFeeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value.replace(/[^0-9.]/g, '');
@@ -17,12 +23,12 @@ const SubStep2: React.FC = () => {
     if (decimal !== undefined) {
       formatted += `.${decimal}`;
     }
-    updateField('terminationFee', formatted);
+    handleUpdateField('terminationFee', formatted);
   };
 
   const handleElectricityTakeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
-    updateField('electricityTakeAmount', value);
+    handleUpdateField('electricityTakeAmount', value);
   };
 
   const textFieldStyle = {
@@ -44,7 +50,7 @@ const SubStep2: React.FC = () => {
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px', pb: '10px', pl: '160px', pr: '160px' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <FormControlLabel
-              control={<Switch checked={hasThirdPartyContract} onChange={(e) => updateField('hasThirdPartyContract', e.target.checked)} size="small" />}
+              control={<Switch checked={hasThirdPartyContract} onChange={(e) => handleUpdateField('hasThirdPartyContract', e.target.checked)} size="small" />}
               label="Do you have an existing electricity supply contract with a Third Party Supplier?"
               sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }}
             />
@@ -55,11 +61,11 @@ const SubStep2: React.FC = () => {
                 <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, pt: '10px' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Name of 3rd Party Supplier: </b>(Optional)</Typography>
-                    <TextField variant="outlined" size="small" type="text" placeholder='Input' value={supplierName} onChange={(e) => updateField('supplierName', e.target.value)} sx={textFieldStyle} />
+                    <TextField variant="outlined" size="small" type="text" placeholder='Input' value={supplierName} onChange={(e) => handleUpdateField('supplierName', e.target.value)} sx={textFieldStyle} />
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Contract End Date:</b></Typography>
-                    <TextField variant="outlined" size="small" type="date" value={contractEndDate} onChange={(e) => updateField('contractEndDate', e.target.value)} sx={textFieldStyle} />
+                    <TextField variant="outlined" size="small" type="date" value={contractEndDate} onChange={(e) => handleUpdateField('contractEndDate', e.target.value)} sx={textFieldStyle} />
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', minWidth: '150px', flex: 0.5 }}><b>Early Termination Fee: </b>(If any, in $)</Typography>

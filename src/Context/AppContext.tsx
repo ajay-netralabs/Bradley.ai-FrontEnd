@@ -1,14 +1,22 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-
-import { emissioncheckiqLogin, emissioncheckiqLogout, emissioncheckiqSessionCheck, emissioncheckiqBootstrap } from "../Demo/components/Auth";
-
-type ProductKey = "bradley" | "emissioncheckiq" | string;
-
-interface User {
-  role: 'client' | 'analyst' | 'demo' | string;
-  email: string;
-  product: ProductKey;
-}
+import React, { createContext, useContext, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { 
+    setUser, 
+    setBootstrap, 
+    checkSession, 
+    loginUser, 
+    logoutUser,
+    User,
+    ProductKey
+} from '../store/slices/authSlice';
+import {
+    setCurrentStep,
+    setCurrentSubStep,
+    setCurrentFurtherSubStep,
+    setVisitedSteps,
+    setCompletedSubSteps,
+    setWorkflowState
+} from '../store/slices/workflowSlice';
 
 interface AppContextProps {
   currentStep: number;
@@ -23,7 +31,7 @@ interface AppContextProps {
   setCompletedSubSteps: React.Dispatch<React.SetStateAction<boolean[][]>>;
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  credentials: { [key in User['role']]: { email: string; password: string } };
+  credentials: { [key: string]: { email: string; password: string } };
   login: (user: User) => void;
   logout: () => void;
   loginForProduct: (product: ProductKey, email: string, password: string) => Promise<User>;
@@ -36,8 +44,7 @@ interface AppContextProps {
 
 const defaultCredentials = {
   client: { email: 'client@gmail.com', password: 'client@gmail.com' },
-  // analyst: { email: 'analyst@gmail.com', password: 'analyst@gmail.com' },
-  demo: { email: '', password: '' }, // Demo user has no credentials
+  demo: { email: '', password: '' },
 };
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -58,183 +65,175 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPrefix, initialBootstrap = null }) => {
-  const [authReady, setAuthReady] = useState(false);
-  const [bootstrap, setBootstrap] = useState<any | null>(initialBootstrap);
+  const dispatch = useAppDispatch();
+  
+  // Redux State Selectors
+  const { user, authReady, bootstrap } = useAppSelector((state) => state.auth);
+  const { 
+      currentStep, 
+      currentSubStep, 
+      currentFurtherSubStep, 
+      visitedSteps, 
+      completedSubSteps 
+  } = useAppSelector((state) => state.workflow);
 
-  const [currentStep, setCurrentStep] = useState(() => Number(localStorage.getItem(`${appPrefix}_currentStep`) || 0));
-  const [currentSubStep, setCurrentSubStep] = useState(() => Number(localStorage.getItem(`${appPrefix}_currentSubStep`) || 0));
-  const [currentFurtherSubStep, setCurrentFurtherSubStep] = useState(() => Number(localStorage.getItem(`${appPrefix}_currentFurtherSubStep`) || 0));
-  const getSubStepCount = (step: any) => Array.isArray(step.subSteps) ? step.subSteps.length : step.subSteps;
-
-  const [visitedSteps, setVisitedSteps] = useState(() => {
+  // Initialize workflow state from localStorage or defaults (One-time sync on mount)
+  useEffect(() => {
+    const getSubStepCount = (step: any) => Array.isArray(step.subSteps) ? step.subSteps.length : step.subSteps;
+    
+    // Check if we need to hydrate from localStorage
+    // Note: In a full Redux app, you'd use redux-persist. 
+    // Here we manually hydration to respect the existing logic pattern.
+    const savedCurrentStep = Number(localStorage.getItem(`${appPrefix}_currentStep`) || 0);
+    const savedCurrentSubStep = Number(localStorage.getItem(`${appPrefix}_currentSubStep`) || 0);
+    const savedCurrentFurtherSubStep = Number(localStorage.getItem(`${appPrefix}_currentFurtherSubStep`) || 0);
+    
     const savedVisitedSteps = localStorage.getItem(`${appPrefix}_visitedSteps`);
-    return savedVisitedSteps
+    const parsedVisitedSteps = savedVisitedSteps
       ? JSON.parse(savedVisitedSteps)
       : Array.from({ length: steps.length }, (_, i) =>
           Array.from({ length: getSubStepCount(steps[i]) }, (_, j) => i === 0 && j === 0)
         );
-  });
 
-  const [completedSubSteps, setCompletedSubSteps] = useState(() => {
     const savedCompletedSubSteps = localStorage.getItem(`${appPrefix}_completedSubSteps`);
-    return savedCompletedSubSteps
+    const parsedCompletedSubSteps = savedCompletedSubSteps
       ? JSON.parse(savedCompletedSubSteps)
       : Array.from({ length: steps.length }, (_, i) =>
           Array.from({ length: getSubStepCount(steps[i]) }, () => false)
         );
-  });
 
-  const [user, setUser] = useState<User | null>(() => {
-    const savedUser = localStorage.getItem(`${appPrefix}_user`);
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+    dispatch(setWorkflowState({
+        currentStep: savedCurrentStep,
+        currentSubStep: savedCurrentSubStep,
+        currentFurtherSubStep: savedCurrentFurtherSubStep,
+        visitedSteps: parsedVisitedSteps,
+        completedSubSteps: parsedCompletedSubSteps
+    }));
 
+  }, [dispatch, steps, appPrefix]);
+
+  // Persist workflow changes to localStorage
   useEffect(() => {
     localStorage.setItem(`${appPrefix}_currentStep`, currentStep.toString());
     localStorage.setItem(`${appPrefix}_currentSubStep`, currentSubStep.toString());
     localStorage.setItem(`${appPrefix}_currentFurtherSubStep`, currentFurtherSubStep.toString());
     localStorage.setItem(`${appPrefix}_visitedSteps`, JSON.stringify(visitedSteps));
     localStorage.setItem(`${appPrefix}_completedSubSteps`, JSON.stringify(completedSubSteps));
-    if (user) {
-      localStorage.setItem(`${appPrefix}_user`, JSON.stringify(user));
-    } else {
-      localStorage.removeItem(`${appPrefix}_user`);
-    }
-  }, [currentStep, currentSubStep, currentFurtherSubStep, visitedSteps, completedSubSteps, user, appPrefix]);
+  }, [currentStep, currentSubStep, currentFurtherSubStep, visitedSteps, completedSubSteps, appPrefix]);
 
+  // Auth / User Persistence
+  useEffect(() => {
+      if (user) {
+          localStorage.setItem(`${appPrefix}_user`, JSON.stringify(user));
+      } else {
+          localStorage.removeItem(`${appPrefix}_user`);
+      }
+  }, [user, appPrefix]);
+
+  // Initial Bootstrap
   useEffect(() => {
     if (initialBootstrap) {
-      setBootstrap(initialBootstrap);
+      dispatch(setBootstrap(initialBootstrap));
     }
-  }, [initialBootstrap]);
+  }, [initialBootstrap, dispatch]);
 
+  // Session Check
   useEffect(() => {
-  let alive = true;
+    dispatch(checkSession("emissioncheckiq")); 
+  }, [dispatch]);
 
-  (async () => {
-    try {
-      const sessionUser = await emissioncheckiqSessionCheck();
-      if (sessionUser && alive) {
-        setUser({
-          email: sessionUser.email,
-          role: sessionUser.role || "demo",
-          product: "emissioncheckiq",
-        });
-        const bootstrapData = await emissioncheckiqBootstrap();
-        setBootstrap(bootstrapData);
-      } else {
-        if (alive) setUser(null);
-      }
-    } finally {
-      if (alive) setAuthReady(true);
-    }
-  })();
+  // Wrappers for Context API compatibility
+  // Note: These accept functional updates (setState style) because the original Context did.
+  // We need to handle that if we want full compatibility.
+  
+  const handleSetUser = (value: React.SetStateAction<User | null>) => {
+      const newUser = typeof value === 'function' ? value(user) : value;
+      dispatch(setUser(newUser));
+  };
 
-  return () => { alive = false; };
-  }, []);
+  const handleSetBootstrap = (value: React.SetStateAction<any | null>) => {
+      const newBootstrap = typeof value === 'function' ? value(bootstrap) : value;
+      dispatch(setBootstrap(newBootstrap));
+  };
 
-  const login = (user: User) => {
-    setUser(user);
-    localStorage.setItem(`${appPrefix}_user`, JSON.stringify(user));
+  const handleSetCurrentStep = (value: React.SetStateAction<number>) => {
+      const newVal = typeof value === 'function' ? value(currentStep) : value;
+      dispatch(setCurrentStep(newVal));
+  };
+
+  const handleSetCurrentSubStep = (value: React.SetStateAction<number>) => {
+      const newVal = typeof value === 'function' ? value(currentSubStep) : value;
+      dispatch(setCurrentSubStep(newVal));
+  };
+
+  const handleSetCurrentFurtherSubStep = (value: React.SetStateAction<number>) => {
+      const newVal = typeof value === 'function' ? value(currentFurtherSubStep) : value;
+      dispatch(setCurrentFurtherSubStep(newVal));
+  };
+  
+  const handleSetVisitedSteps = (value: React.SetStateAction<boolean[][]>) => {
+      const newVal = typeof value === 'function' ? value(visitedSteps) : value;
+      dispatch(setVisitedSteps(newVal));
+  };
+
+  const handleSetCompletedSubSteps = (value: React.SetStateAction<boolean[][]>) => {
+      const newVal = typeof value === 'function' ? value(completedSubSteps) : value;
+      dispatch(setCompletedSubSteps(newVal));
+  };
+
+  // Actions
+  const login = (u: User) => {
+    dispatch(setUser(u));
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem(`${appPrefix}_user`);
-    localStorage.removeItem('global_user');
-    if (appPrefix === 'emissioncheckiq') {
-      window.location.href = '/login/emissioncheckiq';
-    } else {
-      window.location.href = '/login/bradley';
-    }
+    // This assumes simple logout. For product specific, use logoutForProduct
+    dispatch(logoutUser("bradley")); // Defaulting to bradley cleanup logic
+    window.location.href = '/login/bradley';
   };
 
-  const loginForProduct = React.useCallback(async (product: ProductKey, email: string, password: string): Promise<User> => {
-    if (product === "bradley") {
-      const client = defaultCredentials.client;
-      // const analyst = defaultCredentials.analyst;
+  const loginForProduct = async (product: ProductKey, email: string, password: string): Promise<User> => {
+     const actionResult = await dispatch(loginUser({ product, email, password }));
+     if (loginUser.fulfilled.match(actionResult)) {
+         return actionResult.payload.user;
+     } else {
+         throw new Error(actionResult.payload as string || "Login failed");
+     }
+  };
 
-      if (email === client.email && password === client.password) {
-        const u = { email, role: "client", product: "bradley" as const };
-        setUser(u);
-        return u;
-      }
-      // if (email === analyst.email && password === analyst.password) {
-      //   const u = { email, role: "analyst", product: "bradley" as const };
-      //   setUser(u);
-      //   return u;
-      // }
-      throw new Error("Invalid email or password");
-    }
+  const sessionCheckForProduct = async (product: ProductKey): Promise<User | null> => {
+      // We can reuse the thunk or just check state, but force a check here as requested
+      const actionResult = await dispatch(checkSession(product));
+       if (checkSession.fulfilled.match(actionResult)) {
+           return actionResult.payload ? actionResult.payload.user : null;
+       }
+       return null;
+  };
 
-    if (product === "emissioncheckiq") {
-      const sessionUser = await emissioncheckiqLogin(email, password);
-      const bootstrapData = await emissioncheckiqBootstrap();
-      const u = { email: sessionUser.email, role: sessionUser.role || "demo", product: "emissioncheckiq" as const };
-      setUser(u);
-      setBootstrap(bootstrapData);
-      return u;
-    }
-
-    throw new Error(`Unsupported product: ${product}`);
-  }, [user]);
-
-  const sessionCheckForProduct = React.useCallback(async (product: ProductKey): Promise<User | null> => {
-    console.log("Session check for product:", product);
-    if (product === "emissioncheckiq") {
-      const sessionUser = await emissioncheckiqSessionCheck();
-      if (!sessionUser) {
-        setUser(null);
-        setBootstrap(null);
-        return null;
+  const logoutForProduct = async (product: ProductKey): Promise<void> => {
+      await dispatch(logoutUser(product));
+      if (product === "emissioncheckiq") {
+          window.location.href = "/login/emissioncheckiq";
       } else {
-
-      const u = { email: sessionUser.email, role: sessionUser.role || "demo", product: "emissioncheckiq" as const };
-      console.log("Session check user:", u);
-      setUser(u);
-      const bootstrapData = await emissioncheckiqBootstrap();
-      console.log("Bootstrap data:", bootstrapData);
-      setBootstrap(bootstrapData);
-      return u;
-      };
-    };
-
-    if (product === "bradley") {
-      console.log("Checking session for Bradley");
-      return user?.product === "bradley" ? user : null;
-    };
-
-    return user;
-  }, [user]);
-
-  const logoutForProduct = React.useCallback(async (product: ProductKey): Promise<void> => {
-    if (product === "emissioncheckiq") {
-      await emissioncheckiqLogout();
-    }
-    setUser(null);
-    localStorage.removeItem('global_user'); // if you adopt global auth cookie
-    if (product === "emissioncheckiq") {
-      window.location.href = "/login/emissioncheckiq";
-    } else {
-      window.location.href = "/login/bradley";
-    }
-  }, [user]);
+          window.location.href = "/login/bradley";
+      }
+  };
 
   return (
     <AppContext.Provider
       value={{
       currentStep,
-      setCurrentStep,
+      setCurrentStep: handleSetCurrentStep,
       currentSubStep,
-      setCurrentSubStep,
+      setCurrentSubStep: handleSetCurrentSubStep,
       currentFurtherSubStep,
-      setCurrentFurtherSubStep,
+      setCurrentFurtherSubStep: handleSetCurrentFurtherSubStep,
       visitedSteps,
-      setVisitedSteps,
+      setVisitedSteps: handleSetVisitedSteps,
       completedSubSteps,
-      setCompletedSubSteps,
+      setCompletedSubSteps: handleSetCompletedSubSteps,
       user,
-      setUser,
+      setUser: handleSetUser,
       credentials: defaultCredentials,
       login,
       logout,
@@ -243,7 +242,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, steps, appPr
       logoutForProduct,
       authReady,
       bootstrap,
-      setBootstrap
+      setBootstrap: handleSetBootstrap
     }}
     >
       {children}

@@ -3,7 +3,8 @@ import { AppBar, IconButton, Toolbar, Menu, MenuItem, Tooltip, Box } from '@mui/
 import PersonIcon from '@mui/icons-material/Person';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import { useAppContext } from '../Context/AppContext';
+import { useAppDispatch } from '../store/hooks';
+import { logoutUser } from '../store/slices/authSlice';
 import UserProfileModal from './UserProfileModal';
 
 interface NavbarProps {
@@ -12,7 +13,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ OrganizationDetailsComponent, FacilityAddressComponent }) => {
-  const { logoutForProduct } = useAppContext();
+  const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -47,7 +48,9 @@ const Navbar: React.FC<NavbarProps> = ({ OrganizationDetailsComponent, FacilityA
 
   const handleLogout = () => {
     const isEmissionCheckIQ = window.location.pathname.startsWith('/emissioncheckiq');
-    logoutForProduct(isEmissionCheckIQ ? "emissioncheckiq" : "bradley");
+    const product = isEmissionCheckIQ ? "emissioncheckiq" : "bradley";
+    dispatch(logoutUser(product));
+    window.location.href = isEmissionCheckIQ ? "/login/emissioncheckiq" : "/login/bradley";
     handleMenuClose();
   };
 

@@ -1,10 +1,16 @@
 import React from 'react';
 import { Box, TextField, Typography, Select, MenuItem, Tooltip, SelectChangeEvent } from '@mui/material';
-import { useFinancialPreferences } from '../../../../Context/Financial Info/SubStep2/Own/Financial Preferences Context';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { updateFinancialPrefField, FinancialPreferencesState } from '../../../../../store/slices/financialInfoSlice';
 
 const SubStep2: React.FC = () => {
-  const { financialPreferencesState, updateField } = useFinancialPreferences();
+  const dispatch = useAppDispatch();
+  const financialPreferencesState = useAppSelector((state) => state.financialInfo.financialPreferences);
   const { taxAppetite, taxAppetiteReturnDate, depreciationMethod, taxRate } = financialPreferencesState;
+
+  const handleUpdateField = (field: keyof FinancialPreferencesState, value: string | number) => {
+      dispatch(updateFinancialPrefField({ field, value }));
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -22,7 +28,7 @@ const SubStep2: React.FC = () => {
           <Select
             size="small"
             value={depreciationMethod}
-            onChange={(e: SelectChangeEvent) => updateField('depreciationMethod', e.target.value)}
+            onChange={(e: SelectChangeEvent) => handleUpdateField('depreciationMethod', e.target.value)}
             sx={{ flex: 0.5, marginLeft: 'auto', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}
           >
             <MenuItem value="default" disabled sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Select</MenuItem>
@@ -43,7 +49,7 @@ const SubStep2: React.FC = () => {
             type="number"
             placeholder="Input"
             value={taxRate}
-            onChange={(e) => updateField('taxRate', Number(e.target.value))}
+            onChange={(e) => handleUpdateField('taxRate', Number(e.target.value))}
             sx={{ flex: 0.5, marginLeft: 'auto', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }}
           />
         </Box>
@@ -56,7 +62,7 @@ const SubStep2: React.FC = () => {
           <Select
             size="small"
             value={taxAppetite}
-            onChange={(e: SelectChangeEvent) => updateField('taxAppetite', e.target.value)}
+            onChange={(e: SelectChangeEvent) => handleUpdateField('taxAppetite', e.target.value)}
             sx={{ flex: 0.5, marginLeft: 'auto', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', height: '40px', '& .MuiInputBase-root': { padding: '0 6px' }, '& .MuiSelect-select': { padding: '4px 6px', fontSize: '0.7rem' } }}
           >
             <MenuItem value="yes" sx={{ fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' }}>Yes</MenuItem>
@@ -73,7 +79,7 @@ const SubStep2: React.FC = () => {
             type="date"
             disabled={taxAppetite !== 'no'}
             value={taxAppetiteReturnDate}
-            onChange={(e) => updateField('taxAppetiteReturnDate', e.target.value)}
+            onChange={(e) => handleUpdateField('taxAppetiteReturnDate', e.target.value)}
             sx={{ flex: 0.5, marginLeft: 'auto', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' } }}
           />
         </Box>

@@ -1,13 +1,31 @@
 import React from 'react';
 import { Box, TextField, Select, MenuItem, Typography, SelectChangeEvent } from '@mui/material';
-import { useFacilityUsage } from '../../../Context/Site Assessment/SubStep2/Facility Usage & Operating Days Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { 
+    updateFacilityUsageMultiSelect, 
+    updateFacilityDetails, 
+    updateOperatingHour 
+} from '../../../../store/slices/siteAssessmentSlice';
 
 const SubStep2: React.FC = () => {
-  const { facilityUsageState, updateMultiSelect, updateField, updateOperatingHour } = useFacilityUsage();
+  const dispatch = useAppDispatch();
+  const facilityUsageState = useAppSelector((state) => state.siteAssessment.facilityUsage);
   const { facilityUsage, facilityDetails, daysOfOperation, operatingHours } = facilityUsageState;
 
   const dayAbbreviations: { [key: string]: string } = { Monday: "Mon", Tuesday: "Tue", Wednesday: "Wed", Thursday: "Thu", Friday: "Fri", Saturday: "Sat", Sunday: "Sun" };
   const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  const handleUpdateMultiSelect = (field: 'facilityUsage' | 'daysOfOperation', value: string[]) => {
+      dispatch(updateFacilityUsageMultiSelect({ field, value }));
+  };
+
+  const handleUpdateFacilityDetails = (value: string) => {
+      dispatch(updateFacilityDetails(value));
+  };
+
+  const handleUpdateOperatingHour = (day: string, timeRange: string) => {
+      dispatch(updateOperatingHour({ day, timeRange }));
+  };
 
   const handleTimeRangeChange = (day: string, value: string) => {
     const digits = value.replace(/[^0-9]/g, '');
@@ -18,7 +36,7 @@ const SubStep2: React.FC = () => {
     if (digits.length >= 4) formatted += ' - ' + digits.substring(4, 6);
     if (digits.length >= 6) formatted += ':' + digits.substring(6, 8);
     
-    updateOperatingHour(day, formatted.substring(0, 15));
+    handleUpdateOperatingHour(day, formatted.substring(0, 15));
   };
 
   return (
@@ -39,7 +57,7 @@ const SubStep2: React.FC = () => {
               size="small"
               variant="outlined"
               value={facilityUsage}
-              onChange={(e: SelectChangeEvent<string[]>) => updateMultiSelect('facilityUsage', e.target.value as string[])}
+              onChange={(e: SelectChangeEvent<string[]>) => handleUpdateMultiSelect('facilityUsage', e.target.value as string[])}
               multiple
               MenuProps={{ PaperProps: { style: { maxHeight: 5 * 37, scrollbarWidth: 'none', msOverflowStyle: 'none' }, sx: { '&::-webkit-scrollbar': { display: 'none' } } } }}
               sx={{ flex: 0.448, fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem", height: "40px", "& .MuiInputBase-root": { padding: "0 6px" }, "& .MuiSelect-select": { padding: "4px 6px", fontSize: "0.7rem" } }}
@@ -56,7 +74,7 @@ const SubStep2: React.FC = () => {
             <TextField
               variant="outlined" size="small" type="text" placeholder='Provide any additional information regarding your facility.'
               value={facilityDetails}
-              onChange={(e) => updateField('facilityDetails', e.target.value)}
+              onChange={(e) => handleUpdateFacilityDetails(e.target.value)}
               sx={{ flex: 0.448, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem', '& .MuiInputBase-root': { height: '40px', padding: '0 6px' }, '& input': { padding: 0, fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.8rem' }, '& .MuiInputBase-input::placeholder': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.7rem' } }}
             />
           </Box>
@@ -66,7 +84,7 @@ const SubStep2: React.FC = () => {
               size="small"
               variant="outlined"
               value={daysOfOperation}
-              onChange={(e: SelectChangeEvent<string[]>) => updateMultiSelect('daysOfOperation', e.target.value as string[])}
+              onChange={(e: SelectChangeEvent<string[]>) => handleUpdateMultiSelect('daysOfOperation', e.target.value as string[])}
               multiple
               sx={{ flex: 0.448, fontFamily: "Nunito Sans, sans-serif", fontSize: "0.7rem", height: "40px", "& .MuiInputBase-root": { padding: "0 6px" }, "& .MuiSelect-select": { padding: "4px 6px", fontSize: "0.7rem" } }}
               renderValue={(selected) => (selected as string[]).join(", ")}
@@ -81,7 +99,7 @@ const SubStep2: React.FC = () => {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, justifyContent: "center" }}>
               <Typography sx={{ fontFamily: "Nunito Sans, sans-serif", fontSize: "0.75rem", flex: 0.3 }}><b>Enter the time of each day that the building begins conditioning for occupancy and when the buildings conditioning stops (or when it setsback):</b></Typography>
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center', flex: 0.448 }}>
-                {daysOfOperation.sort((a, b) => daysOfWeek.indexOf(a) - daysOfWeek.indexOf(b)).map((day) => (
+                {[...daysOfOperation].sort((a, b) => daysOfWeek.indexOf(a) - daysOfWeek.indexOf(b)).map((day) => (
                   <TextField
                     key={day}
                     variant="outlined"

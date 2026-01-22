@@ -24,8 +24,8 @@ const CustomStepConnector = styled(StepConnector)(() => ({
 const HorizontalStepper: React.FC<HorizontalStepperProps> = ({
   currentSubStep,
   totalSubSteps,
-  visitedSteps,
-  completedSubSteps,
+  visitedSteps = [],
+  completedSubSteps = [],
   onSubStepChange,
   currentStep,
 }) => {
@@ -70,7 +70,11 @@ const HorizontalStepper: React.FC<HorizontalStepperProps> = ({
               fontFamily: 'Nunito Sans, sans-serif',
               fontSize: '0.800rem',
               color: '#036ca1',
+              cursor: 'pointer',
             },
+            '& .MuiStepLabel-iconContainer': {
+              cursor: 'pointer',
+            }
           }}
               >
           <span className="nunito-sans">{label}</span>

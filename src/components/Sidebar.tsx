@@ -66,23 +66,23 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
   const [completedSteps, setCompletedSteps] = useState<boolean[]>(new Array(steps.length).fill(false));
 
   useEffect(() => {
-    if (currentStep > 0 && !completedSteps[currentStep - 1]) {
-      markStepAsCompleted(currentStep - 1);
+    if (currentStep > 0) {
+      setCompletedSteps((prev) => {
+        // Only update if the previous step is not already marked completed
+        if (!prev[currentStep - 1]) {
+          const newCompleted = [...prev];
+          newCompleted[currentStep - 1] = true;
+          return newCompleted;
+        }
+        return prev;
+      });
     }
-  }, [currentStep, completedSteps]);
+  }, [currentStep]);
 
   const handleStepClick = (index: number) => {
-    if (visitedSteps[index].some(visited => visited)) {
+    if (visitedSteps[index]?.some(visited => visited)) {
       onStepChange(index);
     }
-  };
-
-  const markStepAsCompleted = (step: number) => {
-    setCompletedSteps((prev) => {
-      const newCompleted = [...prev];
-      newCompleted[step] = true;
-      return newCompleted;
-    });
   };
 
   const CustomStepIcon = ({ icon: IconComponent, active, completed, visited, isCurrent }: any) => (
@@ -125,7 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentStep, visitedSteps, onStepChan
       >
         {steps.map((step, index) => {
           const IconComponent = step.icon;
-          const isVisited = visitedSteps[index].some(visited => visited);
+          const isVisited = visitedSteps[index]?.some(visited => visited) || false;
           const isCurrent = currentStep === index;
           return (
             <Step key={step.label} completed={completedSteps[index]}>

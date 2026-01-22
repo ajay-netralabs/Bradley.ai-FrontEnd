@@ -1,19 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box, Typography } from '@mui/material';
+import { useAppSelector } from '../../../../store/hooks';
 
 const SubStep1: React.FC = () => {
   // State for username
-  const [username, setUsername] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Simulating a fetch call for the username
-    const fetchUsername = () => {
-      setTimeout(() => {
-        setUsername('Brad'); // Replace with real data fetch logic
-      }, 1000); // Simulate a delay for fetching
-    };
-    fetchUsername();
-  }, []);
+  const { userName } = useAppSelector((state) => state.organizationalProfile.organizationDetails);
 
   return (
     <Box
@@ -61,7 +52,7 @@ const SubStep1: React.FC = () => {
             fontSize: '0.75rem',
           }}
         >
-          <b>Welcome, {username || 'Loading...'}!</b>
+          <b>Welcome, {userName || 'User'}!</b>
         </Typography>
         <Typography
           sx={{

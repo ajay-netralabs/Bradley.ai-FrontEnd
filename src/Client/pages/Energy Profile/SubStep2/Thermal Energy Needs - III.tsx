@@ -1,9 +1,12 @@
 import React from 'react';
 import { Box, TextField, Typography, FormControlLabel, Switch, Tooltip } from '@mui/material';
-import { useThermalEnergyNeedsIII } from '../../../Context/Energy Profile/SubStep2/Thermal Energy Needs - III Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateThermalIII, ThermalEnergyNeedsIIIState } from '../../../../store/slices/energyProfileSlice';
 
 const SubStep2: React.FC = () => {
-  const { thermalNeedsIIIState, updateField } = useThermalEnergyNeedsIII();
+  const dispatch = useAppDispatch();
+  const thermalNeedsIIIState = useAppSelector((state) => state.energyProfile.thermalNeedsIII);
+  
   const {
     showChilledWater,
     chilledCapacity,
@@ -15,10 +18,14 @@ const SubStep2: React.FC = () => {
     pumpCount
   } = thermalNeedsIIIState;
 
+  const handleUpdateField = (field: keyof ThermalEnergyNeedsIIIState, value: string | boolean) => {
+      dispatch(updateThermalIII({ field, value }));
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const cleanedValue = value.replace(/,/g, "").replace(/\D/g, "");
-    updateField(name as keyof typeof thermalNeedsIIIState, cleanedValue);
+    handleUpdateField(name as keyof ThermalEnergyNeedsIIIState, cleanedValue);
   };
 
   const formatNumber = (value: string) => {
@@ -52,7 +59,7 @@ const SubStep2: React.FC = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Tooltip title="Click to expand or move on to the next step." placement="right" arrow>
               <FormControlLabel
-                control={<Switch checked={showChilledWater} onChange={(e) => updateField('showChilledWater', e.target.checked)} size="small" />}
+                control={<Switch checked={showChilledWater} onChange={(e) => handleUpdateField('showChilledWater', e.target.checked)} size="small" />}
                 label="Does your facility require chilled water?"
                 sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.9rem' } }}
               />

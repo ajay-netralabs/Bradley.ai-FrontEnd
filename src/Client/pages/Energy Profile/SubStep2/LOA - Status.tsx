@@ -1,24 +1,29 @@
 import React, { useEffect } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableRow } from '@mui/material';
-import { useLOA } from '../../../Context/Energy Profile/SubStep2/Letter Of Authorization Context';
-import { useLOAStatus } from '../../../Context/Energy Profile/SubStep2/LOA - Status Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateLOAStatus, LoaStatusType } from '../../../../store/slices/energyProfileSlice';
 
 const SubStep3: React.FC = () => {
-  const { loaState } = useLOA();
+  const dispatch = useAppDispatch();
+  const loaState = useAppSelector((state) => state.energyProfile.loaForm);
   const { utilityCompanyName, agreed, signature } = loaState;
   
-  const { loaStatusState, updateLOAStatus } = useLOAStatus();
+  const loaStatusState = useAppSelector((state) => state.energyProfile.loaStatus);
   const { status } = loaStatusState;
+
+  const handleUpdateLOAStatus = (newStatus: LoaStatusType, details?: string) => {
+      dispatch(updateLOAStatus({ status: newStatus, details }));
+  };
 
   useEffect(() => {
     if (agreed && signature) {
         if (status !== 'Approved' && status !== 'Declined') {
-            updateLOAStatus('Awaiting Approval');
+            handleUpdateLOAStatus('Awaiting Approval');
         }
     } else {
-        updateLOAStatus('LOA Not Signed');
+        handleUpdateLOAStatus('LOA Not Signed');
     }
-  }, [agreed, signature, status, updateLOAStatus]);
+  }, [agreed, signature, status]);
 
   const getStatusColor = () => {
     switch (status) {

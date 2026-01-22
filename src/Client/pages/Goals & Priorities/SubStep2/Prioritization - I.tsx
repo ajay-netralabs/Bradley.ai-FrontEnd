@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Button, Typography, MenuItem, Select, TextField, Tooltip } from '@mui/material';
-import { usePrioritizationI } from '../../../Context/Goals & Priorities/SubStep2/Prioritization - I Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updatePrioritizationIRank, updatePrioritizationIDescription, clearPrioritizationI } from '../../../../store/slices/goalsSlice';
 
 const options = [
   "Select one",
@@ -11,8 +12,21 @@ const options = [
 ];
 
 const SubStep2: React.FC = () => {
-  const { prioritizationIState, updateRank, updateDescription, clearAllPriorities } = usePrioritizationI();
+  const dispatch = useAppDispatch();
+  const prioritizationIState = useAppSelector((state) => state.goals.prioritizationI);
   const { selectedRanks, descriptions } = prioritizationIState;
+
+  const handleUpdateRank = (rank: number, value: string) => {
+      dispatch(updatePrioritizationIRank({ rank, value }));
+  };
+
+  const handleUpdateDescription = (rank: number, value: string) => {
+      dispatch(updatePrioritizationIDescription({ rank, value }));
+  };
+
+  const handleClearAllPriorities = () => {
+      dispatch(clearPrioritizationI());
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: 'Nunito Sans, sans-serif', fontSize: '0.75rem', p: 1, pr: 4, pl: 1, pt: 1 }}>
@@ -30,7 +44,7 @@ const SubStep2: React.FC = () => {
               <p></p>
             </Typography>
             <Tooltip title="Click to clear current form" placement='right' arrow>
-              <Button variant="outlined" size="small" onClick={clearAllPriorities} sx={{ fontSize: '0.7rem', textTransform: 'none', flex: 0.06 }}>
+              <Button variant="outlined" size="small" onClick={handleClearAllPriorities} sx={{ fontSize: '0.7rem', textTransform: 'none', flex: 0.06 }}>
                 Clear All
               </Button>
             </Tooltip>
@@ -45,7 +59,7 @@ const SubStep2: React.FC = () => {
                 size="small"
                 variant="outlined"
                 value={selectedRanks[rank] || "Select one"}
-                onChange={(e) => updateRank(rank, e.target.value)}
+                onChange={(e) => handleUpdateRank(rank, e.target.value)}
                 sx={{
                   flex: 0.21,
                   fontFamily: 'Nunito Sans, sans-serif',
@@ -74,7 +88,7 @@ const SubStep2: React.FC = () => {
                   name={`description-${rank}`}
                   size="small"
                   value={descriptions[rank]}
-                  onChange={(e) => updateDescription(rank, e.target.value)}
+                  onChange={(e) => handleUpdateDescription(rank, e.target.value)}
                   disabled={selectedRanks[rank] === "Select one"}
                   sx={{
                     flex: 0.43,

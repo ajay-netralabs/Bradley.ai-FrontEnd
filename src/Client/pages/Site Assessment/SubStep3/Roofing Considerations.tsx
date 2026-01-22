@@ -1,20 +1,26 @@
 import React from 'react';
 import { Box, Typography, TextField, Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material';
-import { useRoofingConsiderations } from '../../../Context/Site Assessment/SubStep3/Roofing Considerations Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateRoofingField, RoofingConsiderationsState } from '../../../../store/slices/siteAssessmentSlice';
 
 const SubStep3: React.FC = () => {
-  const { roofingConsiderationsState, updateField } = useRoofingConsiderations();
+  const dispatch = useAppDispatch();
+  const roofingConsiderationsState = useAppSelector((state) => state.siteAssessment.roofingConsiderations);
   const { roofPenetration, roofWarrantyTerm, roofCondition, insuranceProvider, policyId } = roofingConsiderationsState;
 
+  const handleUpdateField = (field: keyof RoofingConsiderationsState, value: string) => {
+      dispatch(updateRoofingField({ field, value }));
+  };
+
   const handleSelectChange = (event: SelectChangeEvent<string>, field: keyof typeof roofingConsiderationsState) => {
-    updateField(field, event.target.value);
+    handleUpdateField(field, event.target.value);
   };
   
   const handleTextChange = (
   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, 
   field: keyof Omit<typeof roofingConsiderationsState, 'roofWarrantyTerm'>
 ) => {
-  updateField(field, event.target.value);
+  handleUpdateField(field, event.target.value);
 };
 
   const handleRoofWarrantyTermChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,13 +28,13 @@ const SubStep3: React.FC = () => {
   const numericValue = value.replace(/[^0-9]/g, '');
 
   if (numericValue === '') {
-    updateField('roofWarrantyTerm', '');
+    handleUpdateField('roofWarrantyTerm', '');
     return;
   }
   
   const num = parseInt(numericValue, 10);
   if (!isNaN(num) && num >= 1 && num <= 99) {
-    updateField('roofWarrantyTerm', value);
+    handleUpdateField('roofWarrantyTerm', value);
   }
 };
 

@@ -1,51 +1,61 @@
 import React/* , { useState } */ from 'react';
 import { Box, Typography, Radio, RadioGroup, FormControlLabel, TextField, Tooltip, Select, MenuItem/* , Checkbox */ } from '@mui/material';
-import { useOtherDetails } from '../../../Context/Organizational Profile/SubStep2/Other Details Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { 
+    updateOtherDetails, 
+    updateOtherDetailsNested, 
+    OtherDetailsState 
+} from '../../../../store/slices/organizationalProfileSlice';
 
 const SubStep2: React.FC = () => {
-  const { otherDetails, updateOtherDetails, updateNestedField } = useOtherDetails();
+  const dispatch = useAppDispatch();
+  const otherDetails = useAppSelector((state) => state.organizationalProfile.otherDetails);
   const { propertyOwnership, leasePeriod, longTermOccupancy, ownerEntityDetails, financialDetails, tenantDetails, leaseQuestions } = otherDetails;
+
+  const handleUpdateOtherDetails = (newState: Partial<OtherDetailsState>) => {
+      dispatch(updateOtherDetails(newState));
+  };
+
+  const handleUpdateNestedField = <K extends keyof OtherDetailsState>(
+    section: K,
+    field: keyof OtherDetailsState[K],
+    value: string | string[]
+  ) => {
+      // @ts-ignore
+      dispatch(updateOtherDetailsNested({ section, field: field as string, value }));
+  };
 
   // --- Handlers now update the central context state ---
 
   // Handler for lease period start date
   const setLeasePeriodStart = (start: string) => {
-    updateOtherDetails({ leasePeriod: { ...leasePeriod, start } });
+    handleUpdateOtherDetails({ leasePeriod: { ...leasePeriod, start } });
   };
 
   // Handler for lease period end date
   const setLeasePeriodEnd = (end: string) => {
-    updateOtherDetails({ leasePeriod: { ...leasePeriod, end } });
+    handleUpdateOtherDetails({ leasePeriod: { ...leasePeriod, end } });
   };
 
   const handlePropertyOwnershipChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    updateOtherDetails({ propertyOwnership: event.target.value });
+    handleUpdateOtherDetails({ propertyOwnership: event.target.value });
   };
 
   const handleLongTermOccupancyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    updateOtherDetails({ longTermOccupancy: event.target.value });
+    handleUpdateOtherDetails({ longTermOccupancy: event.target.value });
   };
   
-  // A generic handler for most text inputs within nested state objects
-  const handleNestedChange = <K extends keyof typeof otherDetails>(
-    section: K,
-    field: keyof (typeof otherDetails)[K],
-    value: string | string[]
-  ) => {
-    updateNestedField(section, field, value);
-  };
-
   // Handler for financial details fields
   const handleFinancialDetailsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    handleNestedChange('financialDetails', name as keyof typeof financialDetails, value);
+    handleUpdateNestedField('financialDetails', name as keyof typeof financialDetails, value);
   };
 
   // Handler for lease questions fields
   const handleLeaseQuestionsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
     if (name) {
-      handleNestedChange('leaseQuestions', name as keyof typeof leaseQuestions, value as string);
+      handleUpdateNestedField('leaseQuestions', name as keyof typeof leaseQuestions, value as string);
     }
   };
 
@@ -55,7 +65,7 @@ const SubStep2: React.FC = () => {
     value: string
 ) => {
     const cleanedValue = value.replace(/[^0-9]/g, '');
-    updateNestedField(section, field, cleanedValue);
+    handleUpdateNestedField(section, field, cleanedValue);
 };
 
   const commonInputStyle = {
@@ -191,7 +201,7 @@ const SubStep2: React.FC = () => {
                   name="legalName"
                   placeholder='Enter legal name of entity'
                   value={ownerEntityDetails.legalName}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'legalName', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'legalName', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -204,7 +214,7 @@ const SubStep2: React.FC = () => {
                   name="organizationalStructure"
                   placeholder='Enter organizational structure'
                   value={ownerEntityDetails.organizationalStructure}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'organizationalStructure', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'organizationalStructure', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -217,7 +227,7 @@ const SubStep2: React.FC = () => {
                   name="ownershipPercentages"
                   placeholder='Enter ownership percentages'
                   value={ownerEntityDetails.ownershipPercentages}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'ownershipPercentages', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'ownershipPercentages', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -230,7 +240,7 @@ const SubStep2: React.FC = () => {
                   name="propertyType"
                   placeholder='Enter property type (office, industrial, multifamily, retail, etc.)'
                   value={ownerEntityDetails.propertyType}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'propertyType', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'propertyType', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -243,7 +253,7 @@ const SubStep2: React.FC = () => {
                   name="propertyAddressAndType"
                   placeholder='Enter property address and type'
                   value={ownerEntityDetails.propertyAddressAndType}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'propertyAddressAndType', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'propertyAddressAndType', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -257,7 +267,7 @@ const SubStep2: React.FC = () => {
                   type='number'
                   placeholder='Enter year built'
                   value={ownerEntityDetails.yearBuilt}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'yearBuilt', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'yearBuilt', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -271,7 +281,7 @@ const SubStep2: React.FC = () => {
                   type='number'
                   placeholder='Enter year last renovated'
                   value={ownerEntityDetails.yearLastRenovated}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'yearLastRenovated', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'yearLastRenovated', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -298,7 +308,7 @@ const SubStep2: React.FC = () => {
                   name="parcelId"
                   placeholder='Enter parcel ID or legal description'
                   value={ownerEntityDetails.parcelId}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'parcelId', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'parcelId', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -311,7 +321,7 @@ const SubStep2: React.FC = () => {
                   name="currentOccupancyStatus"
                   value={ownerEntityDetails.currentOccupancyStatus || ''}
                   onChange={(e) =>
-                    handleNestedChange('ownerEntityDetails', 'currentOccupancyStatus', e.target.value as string)
+                    handleUpdateNestedField('ownerEntityDetails', 'currentOccupancyStatus', e.target.value as string)
                   }
                   sx={{
                   flex: 1,
@@ -336,7 +346,7 @@ const SubStep2: React.FC = () => {
                   name="leasedOrVacant"
                   value={ownerEntityDetails.leasedOrVacant || ''}
                   onChange={(e) =>
-                    handleNestedChange('ownerEntityDetails', 'leasedOrVacant', e.target.value as string)
+                    handleUpdateNestedField('ownerEntityDetails', 'leasedOrVacant', e.target.value as string)
                   }
                   sx={{
                   flex: 1,
@@ -362,7 +372,7 @@ const SubStep2: React.FC = () => {
                   type='number'
                   placeholder='Enter occupancy rate'
                   value={ownerEntityDetails.occupancyRate}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'occupancyRate', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'occupancyRate', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -376,7 +386,7 @@ const SubStep2: React.FC = () => {
                   type="date"
                   placeholder='Enter lease start date'
                   value={ownerEntityDetails.leaseStartEndDates}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'leaseStartEndDates', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'leaseStartEndDates', e.target.value)}
                   size="small"
     sx={{
       flex: 0.47,
@@ -393,7 +403,7 @@ const SubStep2: React.FC = () => {
                   type="date"
                   placeholder='Enter lease end date'
                   value={ownerEntityDetails.leaseStartEndDates}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'leaseStartEndDates', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'leaseStartEndDates', e.target.value)}
                   size="small"
     sx={{
       flex: 0.49,
@@ -412,7 +422,7 @@ const SubStep2: React.FC = () => {
                   name="majorTenants"
                   placeholder='Enter major tenants'
                   value={ownerEntityDetails.majorTenants}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'majorTenants', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'majorTenants', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -425,7 +435,7 @@ const SubStep2: React.FC = () => {
                   name="leaseExpirationSchedule"
                   placeholder='Enter lease expiration schedule'
                   value={ownerEntityDetails.leaseExpirationSchedule}
-                  onChange={(e) => handleNestedChange('ownerEntityDetails', 'leaseExpirationSchedule', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('ownerEntityDetails', 'leaseExpirationSchedule', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -454,7 +464,7 @@ const SubStep2: React.FC = () => {
                   onChange={(e) => {
                     // Only allow numbers and dot, strip % if user types it
                     const raw = e.target.value.replace(/[^0-9.]/g, '');
-                    handleNestedChange('financialDetails', 'estimatedLTV', raw);
+                    handleUpdateNestedField('financialDetails', 'estimatedLTV', raw);
                   }}
                   size="small"
                   sx={commonInputStyle}
@@ -526,7 +536,7 @@ const SubStep2: React.FC = () => {
                   placeholder="Enter cap rate"
                   onChange={e => {
                     const raw = e.target.value.replace(/[^0-9.]/g, '');
-                    handleNestedChange('financialDetails', 'capRate', raw);
+                    handleUpdateNestedField('financialDetails', 'capRate', raw);
                   }}
                   size="small"
                   sx={commonInputStyle}
@@ -542,7 +552,7 @@ const SubStep2: React.FC = () => {
                   name="submitProFormaFinancials"
                   value={financialDetails.submitProFormaFinancials || ''}
                   onChange={(e) =>
-                    handleNestedChange('financialDetails', 'submitProFormaFinancials', e.target.value as string)
+                    handleUpdateNestedField('financialDetails', 'submitProFormaFinancials', e.target.value as string)
                   }
                   sx={{
                     flex: 1,
@@ -581,7 +591,7 @@ const SubStep2: React.FC = () => {
                   name="leaseTerms"
                   value={tenantDetails.leaseTerms}
                   placeholder='Enter lease terms'
-                  onChange={(e) => handleNestedChange('tenantDetails', 'leaseTerms', e.target.value)}
+                  onChange={(e) => handleUpdateNestedField('tenantDetails', 'leaseTerms', e.target.value)}
                   size="small"
                   sx={commonInputStyle}
                 />
@@ -689,7 +699,7 @@ const SubStep2: React.FC = () => {
                   name="renewalOptions"
                   value={leaseQuestions.renewalOptions || ''}
                   onChange={(e) =>
-                    handleNestedChange('leaseQuestions', 'renewalOptions', e.target.value as string)
+                    handleUpdateNestedField('leaseQuestions', 'renewalOptions', e.target.value as string)
                   }
                   sx={{
                     flex: 1,
@@ -734,7 +744,7 @@ const SubStep2: React.FC = () => {
                   name="earlyTerminationClause"
                   value={leaseQuestions.earlyTerminationClause || ''}
                   onChange={(e) =>
-                    handleNestedChange('leaseQuestions', 'earlyTerminationClause', e.target.value as string)
+                    handleUpdateNestedField('leaseQuestions', 'earlyTerminationClause', e.target.value as string)
                   }
                   sx={{
                   flex: 1,

@@ -1,20 +1,26 @@
 import React from 'react';
 import { Box, TextField, Select, MenuItem, Typography, FormControl, SelectChangeEvent } from '@mui/material';
-import { useSiteCharacteristicsII } from '../../../Context/Site Assessment/SubStep2/Site Characteristics - II Context';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { updateSiteIIField, SiteCharacteristicsIIState } from '../../../../store/slices/siteAssessmentSlice';
 
 const SubStep2: React.FC = () => {
-  const { siteCharacteristicsIIState, updateField } = useSiteCharacteristicsII();
+  const dispatch = useAppDispatch();
+  const siteCharacteristicsIIState = useAppSelector((state) => state.siteAssessment.siteCharacteristicsII);
   const { shifts, humidification, hotColdSpots, outdoorAirSupply, hvacOperation } = siteCharacteristicsIIState;
+
+  const handleUpdateField = (field: keyof SiteCharacteristicsIIState, value: string) => {
+      dispatch(updateSiteIIField({ field, value }));
+  };
 
   const handleShiftsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (/^[0-3]?$/.test(value)) {
-      updateField('shifts', value);
+      handleUpdateField('shifts', value);
     }
   };
 
   const handleSelectChange = (event: SelectChangeEvent<string>, field: keyof typeof siteCharacteristicsIIState) => {
-    updateField(field, event.target.value);
+    handleUpdateField(field, event.target.value);
   };
 
   return (
